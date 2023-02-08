@@ -1,0 +1,52 @@
+-----------------------------------------------------------------------------------------------------------------------------------------------
+W - Walk Through It
+
+We are going to create a social media web application. It's goal is to connect likeminded people with common interests and hobbies and/or
+students with common subjects. The users are able to create posts describing specific interests, hobbies, activities or uni subjects. 
+The posts are all public and other users can express interest by liking them and/or commenting them. Also they have the ability to make
+a friend request to the user behind the post. If that person accepts both of them will be added to each others' contact list. After that 
+they will be able to send instant messages to each other. Additionally, users can form group chats with multiple people from their
+contacts list. 
+
+Users will be able to:
+1) Authenticate with Azure Active Director B2C through google and/or a WebFlexers account
+2) Create public posts and add tags to them (e.g. Science, Music, History...)
+3) Search the posts by tag and/or by keywords
+4) Add others as personal contacts
+5) Exchange instant messages between each other or
+with multiple people in a group chat. 
+6) Get notified for new messages
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+O - Open up the requirements
+
+* .NET 7
+* Azure Active Director B2C with google and local account support
+* Blazor Server
+* Microsoft SQL server for the database
+* Entity Framework 7 for the ORM
+* SignalR for instant messaging
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+U - User Interface design
+https://www.figma.com/file/huPvpS8zf5hKzEJWC4lE4h/FlexHub-Wireframe?t=7zEpPadbjIGoLvf7-0
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+L - Logic
+* The account will be created using Azure Active Directory B2C
+* 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+D - Database Design
+
+In diagrams/database_diagram.pdf
+
+
+
+
+
+
