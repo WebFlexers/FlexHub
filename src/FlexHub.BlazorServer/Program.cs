@@ -1,12 +1,20 @@
 using FlexHub.BlazorServer.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using FlexHub.Data;
+using FlexHub.Data.Seeding;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+builder.Services.AddSingleton<ISampleData, SampleData>();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseSqlServer("name=Default");
+});
+
 builder.Services.AddSingleton<WeatherForecastService>();
 
 var app = builder.Build();

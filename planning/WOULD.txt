@@ -36,16 +36,14 @@ https://www.figma.com/file/huPvpS8zf5hKzEJWC4lE4h/FlexHub-Wireframe?t=7zEpPadbjI
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 L - Logic
-* The account will be created using Azure Active Directory B2C
+* The account will be created using Azure Active Directory B2C custom accounts and Google
 * 
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 D - Database Design
 
-In diagrams/database_diagram.pdf
-
-
+Users -> ObjectId, EmailAddress, GivenName, Surname, DisplayName, Country/Region 
 
 
 
