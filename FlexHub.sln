@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{75E19E46-5717-4889-9055-E71A3A0032D8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0F4D9935-A697-4D8C-A91D-543132643B10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexHub.BlazorServer", "src\FlexHub.BlazorServer\FlexHub.BlazorServer.csproj", "{459A01B8-9C66-430E-89E4-950CF1711ED7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexHub.Data", "src\FlexHub.Data\FlexHub.Data.csproj", "{D491C47E-EC75-4702-B122-8520D4A4E1F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexHub.Services", "src\FlexHub.Services\FlexHub.Services.csproj", "{64E61112-D2E0-4FDD-99DF-60C8B81B0614}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexHub.Services.UnitTests", "tests\FlexHub.Services.UnitTests\FlexHub.Services.UnitTests.csproj", "{CEED42F0-3AE8-4CDF-B12E-8F7A3748B7CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{459A01B8-9C66-430E-89E4-950CF1711ED7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{459A01B8-9C66-430E-89E4-950CF1711ED7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{459A01B8-9C66-430E-89E4-950CF1711ED7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{459A01B8-9C66-430E-89E4-950CF1711ED7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D491C47E-EC75-4702-B122-8520D4A4E1F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D491C47E-EC75-4702-B122-8520D4A4E1F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D491C47E-EC75-4702-B122-8520D4A4E1F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D491C47E-EC75-4702-B122-8520D4A4E1F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64E61112-D2E0-4FDD-99DF-60C8B81B0614}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64E61112-D2E0-4FDD-99DF-60C8B81B0614}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64E61112-D2E0-4FDD-99DF-60C8B81B0614}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64E61112-D2E0-4FDD-99DF-60C8B81B0614}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEED42F0-3AE8-4CDF-B12E-8F7A3748B7CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEED42F0-3AE8-4CDF-B12E-8F7A3748B7CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEED42F0-3AE8-4CDF-B12E-8F7A3748B7CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEED42F0-3AE8-4CDF-B12E-8F7A3748B7CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{459A01B8-9C66-430E-89E4-950CF1711ED7} = {75E19E46-5717-4889-9055-E71A3A0032D8}
+		{D491C47E-EC75-4702-B122-8520D4A4E1F6} = {75E19E46-5717-4889-9055-E71A3A0032D8}
+		{64E61112-D2E0-4FDD-99DF-60C8B81B0614} = {75E19E46-5717-4889-9055-E71A3A0032D8}
+		{CEED42F0-3AE8-4CDF-B12E-8F7A3748B7CC} = {0F4D9935-A697-4D8C-A91D-543132643B10}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FC050CD2-1B97-40C6-B821-85BC7A21E8E5}
+	EndGlobalSection
+EndGlobal
