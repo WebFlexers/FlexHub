@@ -43,8 +43,10 @@ L - Logic
 
 D - Database Design
 
-Users -> ObjectId, EmailAddress, GivenName, Surname, DisplayName, Country/Region 
+1) Users -> ObjectId, EmailAddress, GivenName, Surname, DisplayName, Country/Region 
 
+2) Contacts -> UserObjectId, ContactId
+(UserId refers to the logged in user and ContactId to their friend (or contact))
 
 
 
