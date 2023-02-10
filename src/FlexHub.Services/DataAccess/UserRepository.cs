@@ -36,10 +36,10 @@ public class UserRepository
     }
 
     /// <summary>
-    /// Sends a contact request from the primary user
+    /// Creates a contact request from the primary user
     /// to the receiver user
     /// </summary>
-    public async Task SendContactRequest(string senderUserObjectId, string receiverUserObjectId)
+    public async Task CreateContactRequest(string senderUserObjectId, string receiverUserObjectId)
     {
         throw new NotImplementedException();
     }

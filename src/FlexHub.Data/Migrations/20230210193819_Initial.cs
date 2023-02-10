@@ -58,6 +58,28 @@ namespace FlexHub.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContactRequests",
+                columns: table => new
+                {
+                    SenderUserObjectId = table.Column<string>(type: "nvarchar(40)", nullable: false),
+                    ReceiverUserObjectId = table.Column<string>(type: "nvarchar(40)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContactRequests", x => new { x.SenderUserObjectId, x.ReceiverUserObjectId });
+                    table.ForeignKey(
+                        name: "FK_ContactRequests_Users_ReceiverUserObjectId",
+                        column: x => x.ReceiverUserObjectId,
+                        principalTable: "Users",
+                        principalColumn: "ObjectId");
+                    table.ForeignKey(
+                        name: "FK_ContactRequests_Users_SenderUserObjectId",
+                        column: x => x.SenderUserObjectId,
+                        principalTable: "Users",
+                        principalColumn: "ObjectId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Contacts",
                 columns: table => new
                 {
@@ -230,6 +252,11 @@ namespace FlexHub.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ContactRequests_ReceiverUserObjectId",
+                table: "ContactRequests",
+                column: "ReceiverUserObjectId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Contacts_ContactObjectId",
                 table: "Contacts",
                 column: "ContactObjectId");
@@ -280,6 +307,9 @@ namespace FlexHub.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ContactRequests");
+
             migrationBuilder.DropTable(
                 name: "Contacts");
 

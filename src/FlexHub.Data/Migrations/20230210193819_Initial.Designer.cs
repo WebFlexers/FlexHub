@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlexHub.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230209023254_Initial")]
+    [Migration("20230210193819_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -38,6 +38,21 @@ namespace FlexHub.Data.Migrations
                     b.HasIndex("ContactObjectId");
 
                     b.ToTable("Contacts");
+                });
+
+            modelBuilder.Entity("FlexHub.Data.Entities.ContactRequest", b =>
+                {
+                    b.Property<string>("SenderUserObjectId")
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("ReceiverUserObjectId")
+                        .HasColumnType("nvarchar(40)");
+
+                    b.HasKey("SenderUserObjectId", "ReceiverUserObjectId");
+
+                    b.HasIndex("ReceiverUserObjectId");
+
+                    b.ToTable("ContactRequests");
                 });
 
             modelBuilder.Entity("FlexHub.Data.Entities.DirectMessage", b =>
@@ -289,6 +304,25 @@ namespace FlexHub.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FlexHub.Data.Entities.ContactRequest", b =>
+                {
+                    b.HasOne("FlexHub.Data.Entities.User", "ReceiverUser")
+                        .WithMany()
+                        .HasForeignKey("ReceiverUserObjectId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("FlexHub.Data.Entities.User", "SenderUser")
+                        .WithMany("ContactRequests")
+                        .HasForeignKey("SenderUserObjectId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ReceiverUser");
+
+                    b.Navigation("SenderUser");
+                });
+
             modelBuilder.Entity("FlexHub.Data.Entities.DirectMessage", b =>
                 {
                     b.HasOne("FlexHub.Data.Entities.User", "ReceiverUser")
@@ -414,6 +448,8 @@ namespace FlexHub.Data.Migrations
 
             modelBuilder.Entity("FlexHub.Data.Entities.User", b =>
                 {
+                    b.Navigation("ContactRequests");
+
                     b.Navigation("Contacts");
 
                     b.Navigation("DirectMessages");

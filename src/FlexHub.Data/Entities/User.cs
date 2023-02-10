@@ -12,6 +12,7 @@ public class User
     public DateTime UpdatedAt { get; set; }
 
     public HashSet<Contact> Contacts { get; set; }
+    public HashSet<ContactRequest> ContactRequests { get; set; }
     public List<Post> Posts { get; set; }
     public HashSet<UserGroupChat> GroupChatsUsers { get; set; }
     public List<DirectMessage> DirectMessages { get; set; }

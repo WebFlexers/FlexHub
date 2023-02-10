@@ -21,7 +21,8 @@ public class PostRepository
     /// of tags that are provided asynchronously.
     /// For example, if science and philosophy are selected,
     /// then the posts that contain these tags should come up first.
-    /// After that the posts that contain at least one of the tags and so on
+    /// After that the posts that contain just one of the tags
+    /// and finally the posts that contain neither of these tags
     /// </summary>
     /// <param name="pageNumber">The page number</param>
     /// <param name="numberOfPostsToLoad">The number of posts to load in a single request</param>

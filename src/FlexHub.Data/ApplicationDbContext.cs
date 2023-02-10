@@ -23,6 +23,7 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<Contact> Contacts { get; set; }
+    public DbSet<ContactRequest> ContactRequests { get; set; }
     public DbSet<DirectMessage> DirectMessages { get; set; }
     public DbSet<GroupChat> GroupChats { get; set; }
     public DbSet<GroupMessage> GroupMessages { get; set; }
