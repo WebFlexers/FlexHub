@@ -39,11 +39,14 @@ L - Logic
 * The account will be created using Azure Active Directory B2C custom accounts and Google
 * 
 
+When a user makes a contact request the HasNewContactRequest column on the 
+receiving user should become true.
+
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 D - Database Design
 
-1) Users -> ObjectId, EmailAddress, GivenName, Surname, DisplayName, Country/Region 
+1) Users -> ObjectId, EmailAddress, GivenName, Surname, DisplayName, Country/Region, HasNewContactRequest
 
 2) Contacts -> UserObjectId, ContactId
 (UserId refers to the logged in user and ContactId to their friend (or contact))
