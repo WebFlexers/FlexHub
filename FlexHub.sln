@@ -7,13 +7,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{75E19E46-571
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0F4D9935-A697-4D8C-A91D-543132643B10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexHub.BlazorServer", "src\FlexHub.BlazorServer\FlexHub.BlazorServer.csproj", "{459A01B8-9C66-430E-89E4-950CF1711ED7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlexHub.BlazorServer", "src\FlexHub.BlazorServer\FlexHub.BlazorServer.csproj", "{459A01B8-9C66-430E-89E4-950CF1711ED7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexHub.Data", "src\FlexHub.Data\FlexHub.Data.csproj", "{D491C47E-EC75-4702-B122-8520D4A4E1F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlexHub.Data", "src\FlexHub.Data\FlexHub.Data.csproj", "{D491C47E-EC75-4702-B122-8520D4A4E1F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexHub.Services", "src\FlexHub.Services\FlexHub.Services.csproj", "{64E61112-D2E0-4FDD-99DF-60C8B81B0614}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlexHub.Services", "src\FlexHub.Services\FlexHub.Services.csproj", "{64E61112-D2E0-4FDD-99DF-60C8B81B0614}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexHub.Services.UnitTests", "tests\FlexHub.Services.UnitTests\FlexHub.Services.UnitTests.csproj", "{CEED42F0-3AE8-4CDF-B12E-8F7A3748B7CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlexHub.Services.IntegrationTests", "tests\FlexHub.Services.UnitTests\FlexHub.Services.IntegrationTests.csproj", "{CEED42F0-3AE8-4CDF-B12E-8F7A3748B7CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -60,7 +60,8 @@ public class PostRepository
     /// <summary>
     /// Creates a post for the user with the given user object id.
     /// </summary>
-    public async Task CreatePost(CreatePostDTO postDTO)
+    /// <returns>True if the operation is successful and false if it fails</returns>
+    public async Task<bool> CreatePost(CreatePostDTO postDTO)
     {
         throw new NotImplementedException();  
     }

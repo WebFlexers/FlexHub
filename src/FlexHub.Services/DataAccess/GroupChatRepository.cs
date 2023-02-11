@@ -41,7 +41,8 @@ public class GroupChatRepository
     /// <summary>
     /// Stores a message sent by the sender user to the group chat asynchronously
     /// </summary>
-    public async Task StoreGroupMessage(string senderUserObjectId, int groupChatId, string message)
+    /// <returns>True if the operation is successful and false if it fails</returns>
+    public async Task<bool> StoreGroupMessage(string senderUserObjectId, int groupChatId, string message)
     {
         throw new NotImplementedException();
     }

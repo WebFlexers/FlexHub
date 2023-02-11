@@ -9,7 +9,7 @@ public class SampleData
 {
     private const int SeedNumber = 869236954;
 
-    private readonly string[] _userObjectIds = new[]
+    public static readonly string[] UserObjectIds = new[]
     {
         "30ed3c05-7777-45a1-b940-5f99e20030a7",
         "ea664eff-c559-4f93-a794-ae26e5824ed3",
@@ -23,7 +23,7 @@ public class SampleData
         "fd77f7d0-b55f-4485-bef4-c4d14cb47fe7"
     };
 
-    private readonly string[] _tagsStrings = new[]
+    public static string[] TagsStrings = new[]
     {
         "Science", "Music", "History", "Mathematics", "Literature", "Geography", 
         "Philosophy", "Art", "Religion", "Sports", "Technology", "Economics", "Political Science"
@@ -83,7 +83,7 @@ public class SampleData
 
                 var user = new User
                 {
-                    ObjectId = _userObjectIds[objectIdIndex],
+                    ObjectId = UserObjectIds[objectIdIndex],
                     EmailAddress = f.Person.Email,
                     GivenName = f.Person.FirstName,
                     Surname = f.Person.LastName,
@@ -98,14 +98,14 @@ public class SampleData
                 return user;
             });
 
-        _users.AddRange(userFaker.Generate(_userObjectIds.Length));
+        _users.AddRange(userFaker.Generate(UserObjectIds.Length));
     }
 
     public void CreateTags()
     {
         int tagId = 1;
 
-        foreach (var tag in _tagsStrings)
+        foreach (var tag in TagsStrings)
         {
             _tags.Add(new Tag
             {
@@ -142,13 +142,13 @@ public class SampleData
                     Content = f.Lorem.Paragraphs(count: f.Random.Int(1, 4)),
                     CreatedAt = updatedAt.Subtract(TimeSpan.FromDays(f.Random.Int(1, 100))),
                     UpdatedAt = updatedAt,
-                    UserObjectId = f.PickRandom(_userObjectIds)
+                    UserObjectId = f.PickRandom(UserObjectIds)
                 };
 
                 return post;
             });
 
-        _posts.AddRange(postFaker.Generate(_userObjectIds.Length * 8));
+        _posts.AddRange(postFaker.Generate(UserObjectIds.Length * 8));
     }
 
     public void CreatePostsTags()

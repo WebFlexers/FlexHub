@@ -39,7 +39,8 @@ public class UserRepository
     /// Creates a contact request from the primary user
     /// to the receiver user
     /// </summary>
-    public async Task CreateContactRequest(string senderUserObjectId, string receiverUserObjectId)
+    /// <returns>True if the operation is successful and false if it fails</returns>
+    public async Task<bool> CreateContactRequest(string senderUserObjectId, string receiverUserObjectId)
     {
         throw new NotImplementedException();
     }
@@ -50,7 +51,8 @@ public class UserRepository
     /// </summary>
     /// <param name="receiverUserObjectId">The receiving user object id</param>
     /// <param name="senderUserObjectId">The user object id of the user who sent the contact request</param>
-    public async Task AcceptContactRequest(string receiverUserObjectId, string senderUserObjectId)
+    /// <returns>True if the operation is successful and false if it fails</returns>
+    public async Task<bool> AcceptContactRequest(string receiverUserObjectId, string senderUserObjectId)
     {
         throw new NotImplementedException();
     }
@@ -58,7 +60,8 @@ public class UserRepository
     /// <summary>
     /// Deletes the contact between the primary user and the contact to delete user asynchronously
     /// </summary>
-    public async Task DeleteContact(string primaryUserObjectId, string contactToDeleteUserObjectId)
+    /// <returns>True if the operation is successful and false if it fails</returns>
+    public async Task<bool> DeleteContact(string primaryUserObjectId, string contactToDeleteUserObjectId)
     {
         throw new NotImplementedException();
     }
@@ -67,7 +70,8 @@ public class UserRepository
     /// Removes the user with the given user object id
     /// from the group chat with the given id asynchronously
     /// </summary>
-    public async Task RemoveUserFromGroupChat(string userObjectId, int groupChatId)
+    /// <returns>True if the operation is successful and false if it fails</returns>
+    public async Task<bool> RemoveUserFromGroupChat(string userObjectId, int groupChatId)
     {
         throw new NotImplementedException(); 
     }
