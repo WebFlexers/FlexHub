@@ -1,5 +1,6 @@
 ﻿using FlexHub.Data;
 using FlexHub.Data.DTOs;
+using FlexHub.Data.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.DataAccess;
@@ -32,8 +33,35 @@ public class DirectMessageRepository
     /// <summary>
     /// Stores a message sent from the sender user to the receiver user asynchronously
     /// </summary>
-    public async Task StoreMessage(string senderUserObjectId, string receiverUserObjectId, string message)
+    /// <returns>True if the operation is successful and false if it fails</returns>
+    public async Task<bool> StoreMessage(string senderUserObjectId, string receiverUserObjectId, string message)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var nowUtc = DateTime.UtcNow;
+
+            DirectMessage directMessage = new()
+            {
+                Message = message,
+                CreatedAt = nowUtc,
+                SenderUserObjectId = senderUserObjectId,
+                ReceiverUserObjectId = receiverUserObjectId
+            };
+
+            _dbContext.DirectMessages.Add(directMessage);
+
+            await _dbContext.SaveChangesAsync();
+
+            _logger.LogInformation("Successfully stored direct message from {id1} to {id2}", senderUserObjectId,
+                receiverUserObjectId);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while trying to store a direct message from {id1} to {id2}",
+                senderUserObjectId, receiverUserObjectId);
+            return false;
+        }
     }
 }
