@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlexHub.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230210193819_Initial")]
+    [Migration("20230211001504_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

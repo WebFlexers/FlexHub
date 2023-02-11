@@ -39,7 +39,7 @@ L - Logic
 * The account will be created using Azure Active Directory B2C custom accounts and Google
 * 
 
-When a user makes a contact request the HasNewContactRequest column on the 
+When a user makes a contact request the HasNewContactRequest column on the
 receiving user should become true.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------

@@ -7,11 +7,9 @@ namespace FlexHub.Data;
 
 public class ApplicationDbContext : DbContext
 {
-    private readonly ISampleData _sampleData;
-
-    public ApplicationDbContext(DbContextOptions options, ISampleData sampleData) : base(options)
+    public ApplicationDbContext(DbContextOptions options) : base(options)
     {
-        _sampleData = sampleData;
+;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -19,7 +17,7 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-        _sampleData.Seed();
+        new SampleData().Seed(modelBuilder);
     }
 
     public DbSet<Contact> Contacts { get; set; }

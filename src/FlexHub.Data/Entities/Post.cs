@@ -8,8 +8,8 @@ public class Post
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public List<PostTag> PostsTags { get; set; }
-
     public string UserObjectId { get; set; }
     public User User { get; set; }
+
+    public List<PostTag> PostsTags { get; set; }
 }
