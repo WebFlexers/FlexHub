@@ -1,7 +1,11 @@
-﻿using FlexHub.Data;
+﻿using Bogus;
+using FlexHub.Data;
 using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
+using FlexHub.Services.Utilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace FlexHub.Services.DataAccess;
 
@@ -35,9 +39,35 @@ public class PostRepository
     /// <summary>
     /// Gets the posts that contain the given title paginated and asynchronously
     /// </summary>
-    public async Task<List<PostDTO>> GetPaginatedPostsFilteredByTitle(string title, int pageNumber, int numberOfPostsToLoad)
+    public async Task<List<PostDTO>?> GetPaginatedPostsFilteredByTitle(string title, int pageNumber, int numberOfPostsToLoad)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var posts = await _dbContext.Posts
+                .Where(post => post.Title.Contains(title))
+                .OrderByDescending(post => post.CreatedAt)
+                .Paginate(pageNumber, numberOfPostsToLoad)
+                .Select(post => new PostDTO
+                {
+                    PostId = post.Id,
+                    Title = post.Title,
+                    Content = post.Content,
+                    Tags = post.PostsTags.Select(postTag => new TagDTO
+                    {
+                        Id = postTag.TagId,
+                        Value = postTag.Tag.Value
+                    }).ToList()
+                }).ToListAsync();
+
+            return posts;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get paginated posts filtered by title");
+
+            return default;
+        }
     }
 
     /// <summary>
