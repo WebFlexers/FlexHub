@@ -21,6 +21,18 @@ public class TagRepository
     /// </summary>
     public async Task<List<TagDTO>> GetUserTags(string userObjectId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            return _dbContext.UsersTags
+               .Where(userTag => userTag.UserObjectId == userObjectId)
+               .Select(userTag => new TagDTO { Id = userTag.TagId, Value = userTag.Tag.Value })
+               .ToList();
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Failed to fetch user tags");
+
+            return null;
+        }
     }
 }
