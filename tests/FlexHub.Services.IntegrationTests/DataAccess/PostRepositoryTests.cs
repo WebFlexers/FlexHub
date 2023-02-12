@@ -7,12 +7,13 @@ using Xunit.Abstractions;
 
 namespace FlexHub.Services.IntegrationTests.DataAccess;
 
-public class PostRepositoryTests : IClassFixture<LocalDbInitializerTestsFixture>
+[Collection("Database collection")]
+public class PostRepositoryTests
 {
-    private readonly LocalDbInitializerTestsFixture _fixture;
+    private readonly LocalDbInitializerFixture _fixture;
     private readonly ILogger<PostRepository> _logger;
 
-    public PostRepositoryTests(ITestOutputHelper testOutputHelper, LocalDbInitializerTestsFixture fixture)
+    public PostRepositoryTests(ITestOutputHelper testOutputHelper, LocalDbInitializerFixture fixture)
     {
         _fixture = fixture;
         _logger = XUnitLogger.CreateLogger<PostRepository>(testOutputHelper);

@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FlexHub.Services.IntegrationTests.Fixtures;
 
-public class LocalDbInitializerTestsFixture : IDisposable
+public class LocalDbInitializerFixture : IDisposable
 {
     private readonly string _dbName = "FlexHubIntegrationTests";
 
-    public LocalDbInitializerTestsFixture()
+    public LocalDbInitializerFixture()
     {
         DeleteDB();
         CreateDB();
@@ -113,6 +113,6 @@ public class LocalDbInitializerTestsFixture : IDisposable
 
     private string Filename => Path.Combine(
         Path.GetDirectoryName(
-            typeof(LocalDbInitializerTestsFixture).GetTypeInfo().Assembly.Location)!,
+            typeof(LocalDbInitializerFixture).GetTypeInfo().Assembly.Location)!,
         $"{_dbName}.mdf");
 }

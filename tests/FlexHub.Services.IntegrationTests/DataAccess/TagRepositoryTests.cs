@@ -8,12 +8,13 @@ using Xunit.Abstractions;
 
 namespace FlexHub.Services.IntegrationTests.DataAccess;
 
-public class TagRepositoryTests : IClassFixture<LocalDbInitializerTestsFixture>
+[Collection("Database collection")]
+public class TagRepositoryTests
 {
-    private readonly LocalDbInitializerTestsFixture _fixture;
+    private readonly LocalDbInitializerFixture _fixture;
     private readonly ILogger<TagRepository> _logger;
 
-    public TagRepositoryTests(ITestOutputHelper testOutputHelper, LocalDbInitializerTestsFixture fixture)
+    public TagRepositoryTests(ITestOutputHelper testOutputHelper, LocalDbInitializerFixture fixture)
     {
         _fixture = fixture;
         _logger = XUnitLogger.CreateLogger<TagRepository>(testOutputHelper);

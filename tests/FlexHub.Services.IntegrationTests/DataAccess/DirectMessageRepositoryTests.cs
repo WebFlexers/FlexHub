@@ -7,12 +7,13 @@ using Xunit.Abstractions;
 
 namespace FlexHub.Services.IntegrationTests.DataAccess;
 
-public class DirectMessageRepositoryTests : IClassFixture<LocalDbInitializerTestsFixture>
+[Collection("Database collection")]
+public class DirectMessageRepositoryTests
 {
-    private readonly LocalDbInitializerTestsFixture _fixture;
+    private readonly LocalDbInitializerFixture _fixture;
     private readonly ILogger<DirectMessageRepository> _logger;
 
-    public DirectMessageRepositoryTests(ITestOutputHelper testOutputHelper, LocalDbInitializerTestsFixture fixture)
+    public DirectMessageRepositoryTests(ITestOutputHelper testOutputHelper, LocalDbInitializerFixture fixture)
     {
         _fixture = fixture;
         _logger = XUnitLogger.CreateLogger<DirectMessageRepository>(testOutputHelper);
