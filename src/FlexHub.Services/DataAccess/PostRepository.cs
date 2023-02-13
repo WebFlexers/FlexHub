@@ -99,9 +99,34 @@ public class PostRepository
     /// <summary>
     /// Gets the posts that have all the given tags paginated and asynchronously.
     /// </summary>
-    public async Task<List<PostDTO>> GetPaginatedPostsFilteredByTags(List<string> tags, int pageNumber, int numberOfPostsToLoad)
+    public async Task<List<PostDTO>> GetPaginatedPostsFilteredByTags(List<Tag> tags, int pageNumber, int numberOfPostsToLoad)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var posts = await _dbContext.Posts
+                .Where(post => tags.Except(post.PostsTags.Select(postTag => postTag.Tag)).Any())
+                .Paginate(pageNumber, numberOfPostsToLoad)
+                .Select(post => new PostDTO
+                {
+                    PostId = post.Id,
+                    Title = post.Title,
+                    Content = post.Content,
+                    Tags = post.PostsTags.Select(postTag => new TagDTO
+                    {
+                        Id = postTag.TagId,
+                        Value = postTag.Tag.Value
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return posts;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation(ex, "Failed to get paginated posts filtered by tags");
+
+            return default;
+        }
     }
 
     /// <summary>          
