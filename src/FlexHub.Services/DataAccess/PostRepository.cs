@@ -6,6 +6,7 @@ using FlexHub.Services.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 namespace FlexHub.Services.DataAccess;
 
@@ -103,8 +104,9 @@ public class PostRepository
     {
         try
         {
-            var posts = await _dbContext.Posts
-                .Where(post => tags.Except(post.PostsTags.Select(postTag => postTag.Tag)).Any())
+            // Currently its gettings all the posts, whose tags are contained in the given tags list. Is it ok??
+            var posts = await _dbContext.Posts    
+                .Where(post => post.PostsTags.All(postTag => tags.Contains(postTag.Tag)))
                 .Paginate(pageNumber, numberOfPostsToLoad)
                 .Select(post => new PostDTO
                 {
@@ -127,6 +129,7 @@ public class PostRepository
 
             return default;
         }
+
     }
 
     /// <summary>          

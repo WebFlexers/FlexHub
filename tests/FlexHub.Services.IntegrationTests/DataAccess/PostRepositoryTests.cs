@@ -122,7 +122,6 @@ public class PostRepositoryTests
         };
 
         List<Tag> tags = new List<Tag>();
-
         foreach (var tagDTO in tagsDTOs)
         {
             tags.Add(new Tag
@@ -133,7 +132,7 @@ public class PostRepositoryTests
         }
 
         // Testing
-        var posts = await postRepository.GetPaginatedPostsFilteredByTags(tags, 3, 10);
+        var posts = await postRepository.GetPaginatedPostsFilteredByTags(tags, 1, 10);
 
         foreach (var tag in tags)
         {
@@ -145,7 +144,7 @@ public class PostRepositoryTests
         {
             matchedTagsCounter = 0;
 
-            _logger.LogInformation("--------- POST: " + post.Title + " ---------");
+            _logger.LogInformation("--------- POST: " + post.PostId + " " + post.Title + "---------");
 
             foreach (var tag in post.Tags)
             {
