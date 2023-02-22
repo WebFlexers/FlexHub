@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.IntegrationTests.Fixtures;
 
-public class LocalDbInitializerFixture : IDisposable
+public class LocalDbInitializerFixture : IDisposable, IAsyncDisposable
 {
     private readonly string _dbName = "FlexHubIntegrationTests";
 
@@ -15,6 +15,12 @@ public class LocalDbInitializerFixture : IDisposable
     {
         DeleteDB();
         CreateDB();
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 
     public void Dispose()

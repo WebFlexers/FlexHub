@@ -25,9 +25,9 @@ public class PostRepositoryTests
     public async Task GetPaginatedPostsFilteredByTitle_FetchPaginatedPostsFilteredByTitle()
     {
         // Preparation
-        using var dbContext = _fixture.GetDbContextLocalDb(true);
+        await using var dbContext = _fixture.GetDbContextLocalDb(true);
         var postRepository = new PostRepository(_logger, dbContext);
-        var postTitle = "I Like";
+        var postTitle = "I Adore";
 
         // Testing
         var posts = await postRepository.GetPaginatedPostsFilteredByTitle(postTitle, 1, 10);
@@ -46,7 +46,7 @@ public class PostRepositoryTests
     public async Task GetPaginatedPostsSortedByPreferredTags_FetchPaginatedPostsSortedByPreferredTags()
     {
         // Preparation
-        using var dbContext = _fixture.GetDbContextLocalDb(true);
+        await using var dbContext = _fixture.GetDbContextLocalDb(true);
 
         var postRepository = new PostRepository(_logger, dbContext);
 
@@ -108,7 +108,7 @@ public class PostRepositoryTests
     public async Task GetPaginatedPostsFilteredByTags_FetchPaginatedPostsFilteredByTags()
     {
         // Preparation
-        using var dbContext = _fixture.GetDbContextLocalDb(true);
+        await using var dbContext = _fixture.GetDbContextLocalDb(true);
 
         var postRepository = new PostRepository(_logger, dbContext);
 
