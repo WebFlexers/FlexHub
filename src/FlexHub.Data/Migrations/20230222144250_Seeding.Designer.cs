@@ -4,6 +4,7 @@ using FlexHub.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlexHub.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230222144250_Seeding")]
+    partial class Seeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasIndex("ContactObjectId");
 
-                    b.ToTable("Contacts", (string)null);
+                    b.ToTable("Contacts");
 
                     b.HasData(
                         new
@@ -231,7 +234,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasIndex("ReceiverUserObjectId");
 
-                    b.ToTable("ContactRequests", (string)null);
+                    b.ToTable("ContactRequests");
                 });
 
             modelBuilder.Entity("FlexHub.Data.Entities.DirectMessage", b =>
@@ -265,7 +268,7 @@ namespace FlexHub.Data.Migrations
                     b.HasIndex("SenderUserObjectId", "ReceiverUserObjectId", "CreatedAt")
                         .IsUnique();
 
-                    b.ToTable("DirectMessages", (string)null);
+                    b.ToTable("DirectMessages");
 
                     b.HasData(
                         new
@@ -3091,7 +3094,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GroupChats", (string)null);
+                    b.ToTable("GroupChats");
 
                     b.HasData(
                         new
@@ -3147,7 +3150,7 @@ namespace FlexHub.Data.Migrations
                     b.HasIndex("GroupChatId", "CreatedAt")
                         .IsUnique();
 
-                    b.ToTable("GroupMessages", (string)null);
+                    b.ToTable("GroupMessages");
 
                     b.HasData(
                         new
@@ -4783,7 +4786,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasIndex("UserObjectId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
 
                     b.HasData(
                         new
@@ -5520,7 +5523,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("PostsTags", (string)null);
+                    b.ToTable("PostsTags");
 
                     b.HasData(
                         new
@@ -6810,7 +6813,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags", (string)null);
+                    b.ToTable("Tags");
 
                     b.HasData(
                         new
@@ -6919,7 +6922,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasKey("ObjectId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasData(
                         new
@@ -7046,7 +7049,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasIndex("GroupChatId");
 
-                    b.ToTable("UsersGroupChats", (string)null);
+                    b.ToTable("UsersGroupChats");
 
                     b.HasData(
                         new
@@ -7113,7 +7116,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("UsersTags", (string)null);
+                    b.ToTable("UsersTags");
 
                     b.HasData(
                         new

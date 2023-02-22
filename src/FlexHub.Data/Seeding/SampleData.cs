@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Bogus;
+using Bogus.DataSets;
 using FlexHub.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +8,16 @@ namespace FlexHub.Data.Seeding;
 
 public class SampleData
 {
+#pragma warning disable IDE1006
     private const int SeedNumber = 869236954;
+    private const int ReferenceYear = 2023;
+    private const int ReferenceMonth = 2;
+    private const int ReferenceDay = 22;
+#pragma warning restore IDE1006
+
+    private readonly Random _random = new(SeedNumber);
+    private readonly DateTime _referenceDateTime = new(ReferenceYear, ReferenceMonth, ReferenceDay);
+
 
     public static readonly string[] UserObjectIds = new[]
     {
@@ -47,7 +57,8 @@ public class SampleData
         //    System.Diagnostics.Debugger.Launch();
         //}
 
-        Randomizer.Seed = new Random(SeedNumber);
+        Randomizer.Seed = _random;
+        Date.SystemClock = () => new DateTime(ReferenceYear, ReferenceMonth, ReferenceDay);
 
         CreateUsers();
         CreatePosts();
@@ -89,7 +100,7 @@ public class SampleData
                     Surname = f.Person.LastName,
                     DisplayName = f.Person.UserName,
                     Country = "USA",
-                    CreatedAt = updatedAt.Subtract(TimeSpan.FromDays(f.Random.Int(1, 100))),
+                    CreatedAt = updatedAt.Subtract(TimeSpan.FromDays(1)),
                     UpdatedAt = updatedAt
                 };
 
@@ -140,7 +151,7 @@ public class SampleData
                     Id = postId++,
                     Title = f.PickRandom(feelingIndicatingWords) + f.Commerce.ProductName() + "!",
                     Content = f.Lorem.Paragraphs(count: f.Random.Int(1, 4)),
-                    CreatedAt = updatedAt.Subtract(TimeSpan.FromDays(f.Random.Int(1, 100))),
+                    CreatedAt = updatedAt.Subtract(TimeSpan.FromDays(1)),
                     UpdatedAt = updatedAt,
                     UserObjectId = f.PickRandom(UserObjectIds)
                 };
@@ -153,15 +164,13 @@ public class SampleData
 
     public void CreatePostsTags()
     {
-        Random random = new(SeedNumber);
-
         foreach (var post in _posts)
         {
             var tagsTemp = _tags.ToList();
 
-            for (int i = 0; i < random.Next(1, tagsTemp.Count); i++)
+            for (int i = 0; i < _random.Next(1, tagsTemp.Count); i++)
             {
-                int tagId = tagsTemp.ElementAt(random.Next(1, tagsTemp.Count)).Id;
+                int tagId = tagsTemp.ElementAt(_random.Next(1, tagsTemp.Count)).Id;
 
                 _postTags.Add(new PostTag
                 {
@@ -176,15 +185,13 @@ public class SampleData
 
     public void CreateUsersTags()
     {
-        Random random = new(235789843);
-
         foreach (var user in _users)
         {
             var tagsTemp = _tags.ToList();
 
-            for (int i = 0; i < random.Next(1, tagsTemp.Count); i++)
+            for (int i = 0; i < _random.Next(1, tagsTemp.Count); i++)
             {
-                int tagId = tagsTemp.ElementAt(random.Next(1, tagsTemp.Count)).Id;
+                int tagId = tagsTemp.ElementAt(_random.Next(1, tagsTemp.Count)).Id;
 
                 _userTags.Add(new UserTag
                 {
@@ -210,7 +217,7 @@ public class SampleData
                 {
                     Id = groupId++,
                     Title = $"The {f.Commerce.ProductMaterial()} Heads Chat",
-                    CreatedAt = updatedAt.Subtract(TimeSpan.FromDays(f.Random.Int(1, 100))),
+                    CreatedAt = updatedAt.Subtract(TimeSpan.FromDays(1)),
                     UpdatedAt = updatedAt,
                 };
 
@@ -253,7 +260,7 @@ public class SampleData
 
     public void CreateGroupMessages()
     {
-        var oneYearAgo = DateTime.Now.Subtract(TimeSpan.FromDays(365)).ToUniversalTime();
+        var oneYearAgo = _referenceDateTime.ToUniversalTime();
         var numberOfMinutesToAdd = TimeSpan.Zero;
         int groupMessageId = 1;
 
@@ -301,22 +308,20 @@ public class SampleData
 
     public void CreateContacts()
     {
-        Random random = new Random(SeedNumber);
-
         foreach (var user in _users)
         {
-            for (int i = 0; i < random.Next(2, 5); i++)
+            for (int i = 0; i < _random.Next(2, 5); i++)
             {
                 User randomUser;
 
                 do
                 {
-                    randomUser = _users.ElementAt(random.Next(0, _users.Count));
+                    randomUser = _users.ElementAt(_random.Next(0, _users.Count));
                 } while 
                     (randomUser != user 
                     && _contacts.Any(contact => 
-                         contact.UserObjectId == user.ObjectId || contact.ContactObjectId == user.ObjectId ||
-                         contact.ContactObjectId == randomUser.ObjectId || contact.ContactObjectId == randomUser.ObjectId) == false);
+                        (contact.UserObjectId == user.ObjectId && contact.ContactObjectId == randomUser.ObjectId) ||
+                        contact.UserObjectId == randomUser.ObjectId && contact.ContactObjectId == user.ObjectId));
 
                 _contacts.Add(new Contact
                 {
@@ -329,7 +334,7 @@ public class SampleData
 
     public void CreateDirectMessages()
     {
-        var oneYearAgo = DateTime.Now.Subtract(TimeSpan.FromDays(365)).ToUniversalTime();
+        var oneYearAgo = _referenceDateTime.ToUniversalTime();
         var numberOfMinutesToAdd = TimeSpan.Zero;
         var directMessageId = 1;
 
@@ -343,11 +348,11 @@ public class SampleData
                 foreach (var word in words)
                 {
                     messageBuilder.Append(word);
-                    messageBuilder.Append(" ");
+                    messageBuilder.Append(' ');
                 }
 
-                string senderUserId = string.Empty;
-                string receiverUserId = string.Empty;
+                string senderUserId;
+                string receiverUserId;
 
                 do
                 {
