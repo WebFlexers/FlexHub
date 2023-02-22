@@ -10,11 +10,13 @@ namespace FlexHub.Services.IntegrationTests.DataAccess;
 [Collection("Database collection")]
 public class DirectMessageRepositoryTests
 {
+    private readonly ITestOutputHelper _testOutputHelper;
     private readonly LocalDbInitializerFixture _fixture;
     private readonly ILogger<DirectMessageRepository> _logger;
 
     public DirectMessageRepositoryTests(ITestOutputHelper testOutputHelper, LocalDbInitializerFixture fixture)
     {
+        _testOutputHelper = testOutputHelper;
         _fixture = fixture;
         _logger = XUnitLogger.CreateLogger<DirectMessageRepository>(testOutputHelper);
     }
@@ -23,7 +25,9 @@ public class DirectMessageRepositoryTests
     public async Task StoreMessage_ShouldSaveAMessageToTheDB()
     {
         // Preparation
-        using var dbContext = _fixture.GetDbContextLocalDb(true);
+        var loggerFactory = new LoggerFactory();
+        loggerFactory.AddProvider(new XUnitLoggerProvider(_testOutputHelper));
+        using var dbContext = _fixture.GetDbContextLocalDb(loggerFactory, true);
         var directMessageRepository = new DirectMessageRepository(_logger, dbContext);
 
         var senderUserObjectId = SampleData.UserObjectIds.First();

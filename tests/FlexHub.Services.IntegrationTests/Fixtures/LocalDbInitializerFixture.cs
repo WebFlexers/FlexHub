@@ -3,6 +3,7 @@ using System.Reflection;
 using FlexHub.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.IntegrationTests.Fixtures;
 
@@ -23,11 +24,16 @@ public class LocalDbInitializerFixture : IDisposable
 
     public ApplicationDbContext GetDbContextLocalDb(bool beginTransaction = true)
     {
+        return GetDbContextLocalDb(null, beginTransaction);
+    }
+
+    public ApplicationDbContext GetDbContextLocalDb(ILoggerFactory? loggerFactory, bool beginTransaction = true)
+    {
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseSqlServer($"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog={_dbName};Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False")
             .Options;
 
-        var context = new ApplicationDbContext(options);
+        var context = new ApplicationDbContext(options, loggerFactory);
         if (beginTransaction)
         {
             context.Database.BeginTransaction();

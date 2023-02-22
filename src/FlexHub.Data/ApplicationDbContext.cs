@@ -2,14 +2,27 @@
 using System.Reflection;
 using FlexHub.Data.Entities;
 using FlexHub.Data.Seeding;
+using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Data;
 
 public class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions options) : base(options)
+    private readonly ILoggerFactory _loggerFactory;
+
+    public ApplicationDbContext(DbContextOptions options, ILoggerFactory loggerFactory) : base(options)
     {
-;
+        _loggerFactory = loggerFactory;
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+
+        if (_loggerFactory != null)
+        {
+            optionsBuilder.UseLoggerFactory(_loggerFactory);
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
