@@ -149,6 +149,42 @@ public class PostRepository
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> CreatePost(CreatePostDTO postDTO)
     {
+        try
+        {
+            // Create post
+            var post = new Post()
+            {
+                Title = postDTO.Title,
+                Content = postDTO.Content,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                UserObjectId = postDTO.UserObjectId,
+            };
+
+            _dbContext.Posts.Add(post);
+            _dbContext.SaveChanges();
+
+            // Create the post tags associated with the above post
+            var postTags = new List<PostTag>();
+            foreach (var tag in postDTO.Tags)
+            {
+                postTags.Add(new PostTag() { 
+                    PostId = post.Id,                
+                    TagId = tag.Id
+                });
+            }
+
+            _dbContext.PostsTags.AddRange(postTags);
+            _dbContext.SaveChanges();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation(ex, "Failed to create post");
+
+            return false;
+        }
         throw new NotImplementedException();  
     }
 }

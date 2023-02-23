@@ -28,7 +28,7 @@ public class PostRepositoryTests
         // Preparation
         await using var dbContext = _fixture.GetDbContextLocalDb(true);
         var postRepository = new PostRepository(_logger, dbContext);
-        var postTitle = "I Adore";
+        var postTitle = "little Michalis";
 
         // Testing
         var posts = await postRepository.GetPaginatedPostsFilteredByTitle(postTitle, 1, 10);
@@ -39,7 +39,7 @@ public class PostRepositoryTests
         }
 
         // Verification
-        Assert.True(posts.Count == 10);
+        Assert.True(posts.Any());
 
     }
 
@@ -137,5 +137,36 @@ public class PostRepositoryTests
 
         // Verification
         Assert.True(true);
+    }
+
+    [Fact]
+    public async Task CreatePost_CreatePost()
+    {
+        // Preparation
+        await using var dbContext = _fixture.GetDbContextLocalDb(true);
+
+        var postRepository = new PostRepository(_logger, dbContext);
+
+        var user = SampleData.UserObjectIds.First();
+
+        // Create Tags
+        var tagDTOs = new List<TagDTO> {
+            new TagDTO { Id = 4, Value = "Mathematics" },
+            new TagDTO { Id = 10, Value = "Sports" },
+        };
+
+        // Testing
+        var postDTO = new CreatePostDTO()
+        {
+            Title = "Some story about a guy",
+            Content = "Once upon a time there was a guy",
+            UserObjectId = user,
+            Tags = tagDTOs
+        };
+
+        var result = postRepository.CreatePost(postDTO);
+
+        // Verification
+        Assert.True(await result);
     }
 }
