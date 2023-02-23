@@ -32,14 +32,14 @@ public class UserRepository
                 .Take(numberOfContacts)
                 .Select(contact => new UserDTO()
                 {
-                    ObjectId = contact.User.ObjectId,
-                    EmailAddress = contact.User.EmailAddress,
-                    GivenName = contact.User.GivenName,
-                    Surname= contact.User.Surname,
-                    DisplayName = contact.User.DisplayName,
-                    Country = contact.User.Country,
-                    CreatedAt = contact.User.CreatedAt,
-                    UpdatedAt = contact.User.UpdatedAt,
+                    ObjectId = contact.ContactUser.ObjectId,
+                    EmailAddress = contact.ContactUser.EmailAddress,
+                    GivenName = contact.ContactUser.GivenName,
+                    Surname= contact.ContactUser.Surname,
+                    DisplayName = contact.ContactUser.DisplayName,
+                    Country = contact.ContactUser.Country,
+                    CreatedAt = contact.ContactUser.CreatedAt,
+                    UpdatedAt = contact.ContactUser.UpdatedAt,
                 })
                 .ToListAsync();
 
@@ -47,7 +47,7 @@ public class UserRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to get contacts");
+            _logger.LogError(ex, "Failed to get latest contacts");
 
             return default;
         }
@@ -59,7 +59,31 @@ public class UserRepository
     /// </summary>
     public async Task<List<UserDTO>> GetUserContactsFilteredByName(string userObjectId, string name)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var contacts = await _dbContext.Contacts
+                .Where(contact => contact.UserObjectId == userObjectId && contact.ContactUser.DisplayName.Contains(name))
+                .Select(contact => new UserDTO()
+                {
+                    ObjectId = contact.ContactUser.ObjectId,
+                    EmailAddress = contact.ContactUser.EmailAddress,
+                    GivenName = contact.ContactUser.GivenName,
+                    Surname = contact.ContactUser.Surname,
+                    DisplayName = contact.ContactUser.DisplayName,
+                    Country = contact.ContactUser.Country,
+                    CreatedAt = contact.ContactUser.CreatedAt,
+                    UpdatedAt = contact.ContactUser.UpdatedAt,
+                })
+                .ToListAsync();
+
+            return contacts;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get contacts filtered by name");
+
+            return default;
+        }
     }
 
     /// <summary>

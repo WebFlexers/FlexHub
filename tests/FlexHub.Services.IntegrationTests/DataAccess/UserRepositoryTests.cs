@@ -1,4 +1,5 @@
-﻿using FlexHub.Data.Seeding;
+﻿using FlexHub.Data.Entities;
+using FlexHub.Data.Seeding;
 using FlexHub.Services.DataAccess;
 using FlexHub.Services.IntegrationTests.Fixtures;
 using FlexHub.Services.IntegrationTests.Utilities;
@@ -38,5 +39,26 @@ public class UserRepositoryTests
 
         // Verification
         Assert.True(contactUsers.Any());
+    }
+
+    [Fact]
+    public async Task GetUserContactsFilteredByName_FetchUserContactsFilteredByName()
+    {
+        // Preparation
+        await using var dbContext = _fixture.GetDbContextLocalDb(true);
+        var userRepository = new UserRepository(_logger, dbContext);
+
+        var userObjectId = SampleData.UserObjectIds.Last();
+
+        // Testing
+        var contactsByName = await userRepository.GetUserContactsFilteredByName(userObjectId, "Rickie");
+
+        foreach (var user in contactsByName)
+        {
+            _logger.LogInformation(user.GivenName);
+        }
+        
+        // Verification
+        Assert.True(contactsByName.Any());
     }
 }
