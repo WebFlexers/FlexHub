@@ -28,6 +28,7 @@ public class DirectMessageRepositoryTests
         var loggerFactory = new LoggerFactory();
         loggerFactory.AddProvider(new XUnitLoggerProvider(_testOutputHelper));
         using var dbContext = _fixture.GetDbContextLocalDb(loggerFactory, true);
+
         var directMessageRepository = new DirectMessageRepository(_logger, dbContext);
 
         var senderUserObjectId = SampleData.UserObjectIds.First();
@@ -49,5 +50,29 @@ public class DirectMessageRepositoryTests
 #pragma warning disable xUnit2012
         Assert.True(storedMessage.Any(dm => dm.Message.Equals(message)));
 #pragma warning restore xUnit2012
+    }
+
+    [Fact]
+    public async Task GetDirectMessagesOf2UsersPaginated_FetchDirectMessagesOf2UsersPaginated()
+    {
+        // Preparation
+        await using var dbContext = _fixture.GetDbContextLocalDb(false);
+
+        var directMessageRepository = new DirectMessageRepository(_logger, dbContext);
+
+        var senderUserId = SampleData.UserObjectIds.First();
+        var contactUserId = SampleData.UserObjectIds.Last();
+
+        //Testing
+        var directMessages = await directMessageRepository.GetDirectMessagesOf2UsersPaginated(senderUserId, contactUserId, 1, 10);
+
+        _logger.LogInformation("Sender: " + senderUserId + ", Contact: " + contactUserId);
+        foreach ( var directMessage in directMessages )
+        {
+            _logger.LogInformation("Meesage: " + directMessage);
+        }
+
+        // Verification
+        Assert.True(directMessages.Any());
     }
 }

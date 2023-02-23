@@ -1,6 +1,8 @@
 ﻿using FlexHub.Data;
 using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
+using FlexHub.Services.Utilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.DataAccess;
@@ -27,7 +29,28 @@ public class DirectMessageRepository
     public async Task<List<DirectMessageDTO>> GetDirectMessagesOf2UsersPaginated(
         string primaryUserObjectId, string contactUserObjectId, int pageNumber, int numberOfMessagesToLoad)
     {
-        throw new NotImplementedException();
+
+        try
+        {
+            var msgs = await _dbContext.DirectMessages
+            .Where(dm => dm.SenderUserObjectId == primaryUserObjectId && dm.ReceiverUserObjectId == contactUserObjectId)
+            .Paginate(pageNumber, numberOfMessagesToLoad)
+            .Select(dm => new DirectMessageDTO()
+            {
+                Message = dm.Message,
+                CreatedAt = DateTime.UtcNow,
+                SenderUserObjectId = primaryUserObjectId,
+                ReceiverUserObjectId = contactUserObjectId
+            }).ToListAsync();
+
+            return msgs;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get direct messages");
+
+            return default;
+        }
     }
 
     /// <summary>
