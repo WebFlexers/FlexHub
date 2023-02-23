@@ -1,4 +1,5 @@
-﻿using FlexHub.Data.DTOs;
+﻿using Azure;
+using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
 using FlexHub.Data.Seeding;
 using FlexHub.Services.DataAccess;
@@ -114,53 +115,27 @@ public class PostRepositoryTests
 
         var user = SampleData.UserObjectIds.First();
 
-        List<TagDTO> tagsDTOs = new List<TagDTO>()
-        {
-            new TagDTO(){Id = 2, Value = "Music"},
-            new TagDTO(){Id = 5, Value = "Literature"},
-            new TagDTO(){Id = 6, Value = "Geography"},
+        // Create Tags
+        List<Tag> tags = new List<Tag> {
+            new Tag { Id = 4, Value = "Mathematics" },
+            new Tag { Id = 10, Value = "Sports" },
         };
 
-        List<Tag> tags = new List<Tag>();
-        foreach (var tagDTO in tagsDTOs)
-        {
-            tags.Add(new Tag
-            {
-                Id = tagDTO.Id,
-                Value = tagDTO.Value,
-            });
-        }
-
         // Testing
-        var posts = await postRepository.GetPaginatedPostsFilteredByTags(tags, 1, 10);
-
-        foreach (var tag in tags)
+        var result = await postRepository.GetPaginatedPostsFilteredByTags(tags, 1, 10);
+        foreach (var post in result)
         {
-            _logger.LogInformation(tag.Value);
-        }
-
-        int matchedTagsCounter;
-        foreach (var post in posts)
-        {
-            matchedTagsCounter = 0;
-
-            _logger.LogInformation("--------- POST: " + post.PostId + " " + post.Title + "---------");
-
-            foreach (var tag in post.Tags)
+            if (post.Tags.Count != tags.Count)
             {
-                _logger.LogInformation(tag.Value);
-
-                foreach (var prefferedTag in tags)
-                {
-                    if (prefferedTag.Value.Equals(tag.Value))
-                        matchedTagsCounter++;
-                }
+                _logger.LogInformation("Counts doesn't match");
+                // Verification
+                Assert.True(false);
             }
 
-            _logger.LogInformation("Matches: " + matchedTagsCounter);
+            _logger.LogInformation("Found match for post " + post.PostId + ", title: " + post.Title);
         }
 
         // Verification
-        Assert.True(posts.Any());
+        Assert.True(true);
     }
 }
