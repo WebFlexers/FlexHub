@@ -260,7 +260,7 @@ public class SampleData
 
     public void CreateGroupMessages()
     {
-        var oneYearAgo = _referenceDateTime.ToUniversalTime();
+        var oneYearAgo = _referenceDateTime.Subtract(TimeSpan.FromDays(365)).ToUniversalTime();
         var numberOfMinutesToAdd = TimeSpan.Zero;
         int groupMessageId = 1;
 
@@ -308,10 +308,15 @@ public class SampleData
 
     public void CreateContacts()
     {
+        var oneYearAgo = _referenceDateTime.Subtract(TimeSpan.FromDays(365)).ToUniversalTime();
+        var numberOfMinutesToAdd = TimeSpan.Zero;
+
         foreach (var user in _users)
         {
+            numberOfMinutesToAdd = numberOfMinutesToAdd.Add(TimeSpan.FromMinutes(5));
+
             for (int i = 0; i < _random.Next(2, 5); i++)
-            {
+            {             
                 User randomUser;
 
                 do
@@ -322,11 +327,12 @@ public class SampleData
                     && _contacts.Any(contact => 
                         (contact.UserObjectId == user.ObjectId && contact.ContactObjectId == randomUser.ObjectId) ||
                         contact.UserObjectId == randomUser.ObjectId && contact.ContactObjectId == user.ObjectId));
-
+              
                 _contacts.Add(new Contact
                 {
                     UserObjectId = user.ObjectId,
                     ContactObjectId = randomUser.ObjectId,
+                    CreatedAt = oneYearAgo.Add(numberOfMinutesToAdd),
                 });
             }
         }

@@ -7,4 +7,5 @@ public class Contact
 
     public string ContactObjectId { get; set; }
     public User ContactUser { get; set; }
+    public DateTime CreatedAt { get; set; }
 }

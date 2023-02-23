@@ -1,6 +1,7 @@
 ﻿using FlexHub.Data;
 using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.DataAccess;
@@ -23,7 +24,33 @@ public class UserRepository
     /// <param name="numberOfContacts">The number of contacts to load</param>
     public async Task<List<UserDTO>> GetLastAddedContacts(string userObjectId, int numberOfContacts)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var latestContacts = await _dbContext.Contacts
+                .Where(contact => contact.UserObjectId == userObjectId)
+                .OrderByDescending(contact => contact.CreatedAt)
+                .Take(numberOfContacts)
+                .Select(contact => new UserDTO()
+                {
+                    ObjectId = contact.User.ObjectId,
+                    EmailAddress = contact.User.EmailAddress,
+                    GivenName = contact.User.GivenName,
+                    Surname= contact.User.Surname,
+                    DisplayName = contact.User.DisplayName,
+                    Country = contact.User.Country,
+                    CreatedAt = contact.User.CreatedAt,
+                    UpdatedAt = contact.User.UpdatedAt,
+                })
+                .ToListAsync();
+
+            return latestContacts;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get contacts");
+
+            return default;
+        }
     }
 
     /// <summary>
