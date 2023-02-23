@@ -107,9 +107,8 @@ public class PostRepository
             // Remove duplicate tags
             var distinctTags = tags.Distinct().ToList();
 
-            // Currently its gettings all the posts, whose tags are contained in the given tags list. Is it ok??
             var posts = await _dbContext.Posts
-                .Where(post => post.PostsTags.Count == tags.Count && post.PostsTags.All(pt => tags.Contains(pt.Tag)))
+                .Where(post => post.PostsTags.Count == distinctTags.Count && post.PostsTags.All(pt => tags.Contains(pt.Tag)))
                 .Paginate(pageNumber, numberOfPostsToLoad)
                 .Select(post => new PostDTO
                 {
