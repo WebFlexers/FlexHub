@@ -93,7 +93,26 @@ public class UserRepository
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> CreateContactRequest(string senderUserObjectId, string receiverUserObjectId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var contactRequest = new ContactRequest()
+            {
+                SenderUserObjectId = senderUserObjectId,
+                ReceiverUserObjectId = receiverUserObjectId,
+            };
+
+            _dbContext.ContactRequests.Add(contactRequest);
+            _dbContext.SaveChanges();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create contact request");
+
+            return false;
+        }
+
     }
 
     /// <summary>
