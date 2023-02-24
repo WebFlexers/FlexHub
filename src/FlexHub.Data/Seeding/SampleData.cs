@@ -40,6 +40,7 @@ public class SampleData
     };
 
     private List<Contact> _contacts = new();
+    private List<ContactRequest> _contactRequests = new();
     private List<DirectMessage> _directMessages = new();
     private List<GroupChat> _groupChats = new();
     private List<GroupMessage> _groupMessages = new();
@@ -69,6 +70,7 @@ public class SampleData
         CreateUserGroupChats();
         CreateGroupMessages();
         CreateContacts();
+        CreateContactRequests();
         CreateDirectMessages();
 
         modelBuilder.Entity<User>().HasData(_users);
@@ -80,7 +82,30 @@ public class SampleData
         modelBuilder.Entity<UserGroupChat>().HasData(_userGroupChats);
         modelBuilder.Entity<GroupMessage>().HasData(_groupMessages);
         modelBuilder.Entity<Contact>().HasData(_contacts);
+        modelBuilder.Entity<ContactRequest>().HasData(_contactRequests);
         modelBuilder.Entity<DirectMessage>().HasData(_directMessages);
+    }
+
+    private void CreateContactRequests()
+    {
+        _contactRequests = new List<ContactRequest>()
+        {
+            new ContactRequest() {SenderUserObjectId = _users[0].ObjectId, ReceiverUserObjectId = _users[1].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users[0].ObjectId, ReceiverUserObjectId = _users[2].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users[0].ObjectId, ReceiverUserObjectId = _users[3].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users[0].ObjectId, ReceiverUserObjectId = _users.Last().ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users[1].ObjectId, ReceiverUserObjectId = _users[0].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users[1].ObjectId, ReceiverUserObjectId = _users[2].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users[1].ObjectId, ReceiverUserObjectId = _users[3].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users[1].ObjectId, ReceiverUserObjectId = _users[6].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users[2].ObjectId, ReceiverUserObjectId = _users[4].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users[2].ObjectId, ReceiverUserObjectId = _users[1].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users[4].ObjectId, ReceiverUserObjectId = _users[3].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users[4].ObjectId, ReceiverUserObjectId = _users[5].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users[4].ObjectId, ReceiverUserObjectId = _users[1].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users.Last().ObjectId, ReceiverUserObjectId = _users[6].ObjectId},
+            new ContactRequest() {SenderUserObjectId = _users.Last().ObjectId, ReceiverUserObjectId = _users[2].ObjectId},
+        };
     }
 
     public void CreateUsers()

@@ -4,6 +4,7 @@ using FlexHub.Services.DataAccess;
 using FlexHub.Services.IntegrationTests.Fixtures;
 using FlexHub.Services.IntegrationTests.Utilities;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 using Xunit.Abstractions;
 
 namespace FlexHub.Services.IntegrationTests.DataAccess;
@@ -71,12 +72,29 @@ public class UserRepositoryTests
         var userRepository = new UserRepository(_logger, dbContext);
 
         var senderUserObjectId = SampleData.UserObjectIds.First();
-        var receiverUserObjectId = SampleData.UserObjectIds.ElementAt(3);
+        var receiverUserObjectId = SampleData.UserObjectIds.ElementAt(6);
 
         // Testing
         var result = await userRepository.CreateContactRequest(senderUserObjectId, receiverUserObjectId);
 
         // Verification
         Assert.True(result);
+    }
+
+    [Fact]
+    public async Task AcceptContactRequest_AcceptContactRequest()
+    {
+        // Preparation
+        await using var dbContext = _fixture.GetDbContextLocalDb(true);
+        var userRepository = new UserRepository(_logger, dbContext);
+
+        var senderUserObjectId = SampleData.UserObjectIds.ElementAt(2);
+        var receiverUserObjectId = SampleData.UserObjectIds.ElementAt(4);
+
+        // Testing
+        var resultAccept = await userRepository.AcceptContactRequest(receiverUserObjectId, senderUserObjectId);
+
+        // Verification
+        Assert.True(resultAccept);
     }
 }

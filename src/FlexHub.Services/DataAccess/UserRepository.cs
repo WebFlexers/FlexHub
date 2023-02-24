@@ -112,7 +112,6 @@ public class UserRepository
 
             return false;
         }
-
     }
 
     /// <summary>
@@ -123,8 +122,36 @@ public class UserRepository
     /// <param name="senderUserObjectId">The user object id of the user who sent the contact request</param>
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> AcceptContactRequest(string receiverUserObjectId, string senderUserObjectId)
-    {
-        throw new NotImplementedException();
+    {      
+        try
+        {
+            // Remove contact request
+            var contactRequest = _dbContext.ContactRequests
+                .Where(contactRequest => contactRequest.SenderUserObjectId == senderUserObjectId && contactRequest.ReceiverUserObjectId == receiverUserObjectId)
+                .FirstOrDefault();
+
+            _dbContext.ContactRequests.Remove(contactRequest);
+            _dbContext.SaveChanges();
+
+            // Add contact to user's contact list
+            var contact = new Contact()
+            {
+                UserObjectId = receiverUserObjectId,
+                ContactObjectId = senderUserObjectId,
+                CreatedAt = DateTime.UtcNow
+            };
+            _dbContext.Contacts.Add(contact);
+            _dbContext.SaveChanges();
+
+            return true;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to accept contact request");
+
+            return false;
+        }
     }
 
     /// <summary>
