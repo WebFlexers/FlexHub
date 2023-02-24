@@ -35,4 +35,25 @@ public class GroupChatRepositoryTests
         // Verification
         Assert.True(groupChats.Any());
     }
+
+    [Fact]
+    public async Task GetSortedGroupMessagesPaginated_FetchSortedGroupMessagesPaginated()
+    {
+        // Preparation
+        await using var dbContext = _fixture.GetDbContextLocalDb(true);
+        var groupChatRepository = new GroupChatRepository(_logger, dbContext);
+
+        // Testing
+        var groupMessages = await groupChatRepository.GetSortedGroupMessagesPaginated(2, 1, 10);
+        foreach (var msg in groupMessages)
+        {
+            _logger.LogInformation("------------------------");
+            _logger.LogInformation(msg.Message);
+            _logger.LogInformation(msg.CreatedAt.ToString());
+            _logger.LogInformation(msg.GroupChatId.ToString());
+        }
+
+        // Verification
+        Assert.True(groupMessages.Any());
+    }
 }

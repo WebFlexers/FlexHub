@@ -1,6 +1,7 @@
 ﻿using FlexHub.Data;
 using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
+using FlexHub.Services.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -43,8 +44,6 @@ public class GroupChatRepository
 
             return default;
         }
-
-        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -57,7 +56,28 @@ public class GroupChatRepository
     public async Task<List<GroupMessageDTO>> GetSortedGroupMessagesPaginated(
         int groupChatId, int pageNumber, int numberOfMessagesToLoad)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var groupChatMessages = await _dbContext.GroupMessages
+                .Where(groupChatMessage => groupChatMessage.GroupChatId == groupChatId)
+                .Paginate(pageNumber, numberOfMessagesToLoad)
+                .OrderBy(groupChatMessage => groupChatMessage.CreatedAt)
+                .Select(groupChatMessage => new GroupMessageDTO()
+                {
+                    Message = groupChatMessage.Message,
+                    CreatedAt = groupChatMessage.CreatedAt,
+                    SenderUserObjectId = groupChatMessage.SenderUserObjectId,
+                    GroupChatId = groupChatMessage.GroupChatId
+                }).ToListAsync();
+
+            return groupChatMessages;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get sorted group messages of group chat: " + groupChatId);
+
+            return default;
+        }
     }
 
     /// <summary>
