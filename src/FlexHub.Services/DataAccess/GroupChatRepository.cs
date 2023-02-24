@@ -1,6 +1,7 @@
 ﻿using FlexHub.Data;
 using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.DataAccess;
@@ -22,6 +23,27 @@ public class GroupChatRepository
     /// </summary>
     public async Task<List<GroupChatDTO>> GetGroupChatsFilteredByName(string userObjectId, string groupChatTitle)
     {
+        try
+        {
+            var groupChats = await _dbContext.UsersGroupChats
+                .Where(groupChat => groupChat.UserObjectId == userObjectId && groupChat.GroupChat.Title.Contains(groupChatTitle))
+                .Select(groupChat => new GroupChatDTO
+                {
+                    Id = groupChat.GroupChat.Id,
+                    Title = groupChat.GroupChat.Title,
+                    CreatedAt = groupChat.GroupChat.CreatedAt,
+                    UpdatedAt = groupChat.GroupChat.UpdatedAt
+                }).ToListAsync();
+
+            return groupChats;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get group chats filtered by name");
+
+            return default;
+        }
+
         throw new NotImplementedException();
     }
 
