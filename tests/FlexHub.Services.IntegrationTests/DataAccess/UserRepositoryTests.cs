@@ -97,4 +97,21 @@ public class UserRepositoryTests
         // Verification
         Assert.True(resultAccept);
     }
+
+    [Fact]
+    public async Task DeleteContact_DeleteContact()
+    {
+        // Preparation
+        await using var dbContext = _fixture.GetDbContextLocalDb(true);
+        var userRepository = new UserRepository(_logger, dbContext);
+
+        var primaryUserObjectId = SampleData.UserObjectIds.First();
+        var contactToDeleteUserObjectId = SampleData.UserObjectIds.ElementAt(2);
+
+        // Testing
+        var resultAccept = await userRepository.DeleteContact(primaryUserObjectId, contactToDeleteUserObjectId);
+
+        // Verification
+        Assert.True(resultAccept);
+    }
 }

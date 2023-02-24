@@ -160,7 +160,25 @@ public class UserRepository
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> DeleteContact(string primaryUserObjectId, string contactToDeleteUserObjectId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            // Find contact
+            var contact = _dbContext.Contacts
+                .Where(contact => contact.UserObjectId == primaryUserObjectId && contact.ContactObjectId == contactToDeleteUserObjectId)
+                .FirstOrDefault();
+
+            _dbContext.Contacts.Remove(contact);
+            _dbContext.SaveChanges();
+
+            return true;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to delete contact");
+
+            return false;
+        }
     }
 
     /// <summary>
