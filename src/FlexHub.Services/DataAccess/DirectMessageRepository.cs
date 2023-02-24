@@ -38,7 +38,7 @@ public class DirectMessageRepository
             .Select(dm => new DirectMessageDTO()
             {
                 Message = dm.Message,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = dm.CreatedAt,
                 SenderUserObjectId = primaryUserObjectId,
                 ReceiverUserObjectId = contactUserObjectId
             }).ToListAsync();

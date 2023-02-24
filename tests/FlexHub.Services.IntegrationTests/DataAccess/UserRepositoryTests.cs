@@ -61,4 +61,22 @@ public class UserRepositoryTests
         // Verification
         Assert.True(contactsByName.Any());
     }
+
+
+    [Fact]
+    public async Task CreateContactRequest_AddContactRequest()
+    {
+        // Preparation
+        await using var dbContext = _fixture.GetDbContextLocalDb(true);
+        var userRepository = new UserRepository(_logger, dbContext);
+
+        var senderUserObjectId = SampleData.UserObjectIds.First();
+        var receiverUserObjectId = SampleData.UserObjectIds.ElementAt(3);
+
+        // Testing
+        var result = await userRepository.CreateContactRequest(senderUserObjectId, receiverUserObjectId);
+
+        // Verification
+        Assert.True(result);
+    }
 }
