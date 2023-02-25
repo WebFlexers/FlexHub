@@ -28,7 +28,7 @@ public class PostRepositoryTests
         // Preparation
         await using var dbContext = _fixture.GetDbContextLocalDb(true);
         var postRepository = new PostRepository(_logger, dbContext);
-        var postTitle = "little Michalis";
+        var postTitle = "I Love Awesome Steel Car!";
 
         // Testing
         var posts = await postRepository.GetPaginatedPostsFilteredByTitle(postTitle, 1, 10);
@@ -39,8 +39,7 @@ public class PostRepositoryTests
         }
 
         // Verification
-        Assert.True(posts.Any());
-
+        Assert.True(posts.Count == 1);
     }
 
     [Fact]
