@@ -1,14 +1,26 @@
 .navbar-toggler {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--rz-primary);
+    color: var(--rz-secondary-text);
 }
 
 .top-row {
     height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+    
 }
 
-.navbar-brand {
-    font-size: 1.1rem;
+a {
+    color: var(--rz-primary-text);
+}
+
+.brand-title {
+    font-size: 1.2rem;
+    color: var(--rz-primary-text);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.brand-image {
+    width: 2.5rem;
 }
 
 .oi {
@@ -16,6 +28,11 @@
     font-size: 1.1rem;
     vertical-align: text-top;
     top: -2px;
+}
+
+.right-side-shadow {
+    box-shadow: -15px 10px 20px rgba(0,0,0,0.75);
+    clip-path: inset(0px -15px 0px 0px);
 }
 
 .nav-item {
@@ -32,7 +49,7 @@
     }
 
     .nav-item ::deep a {
-        color: #d7d7d7;
+        color: var(--rz-primary-text-light);
         border-radius: 4px;
         height: 3rem;
         display: flex;
@@ -41,12 +58,12 @@
     }
 
 .nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.25);
+    background-color: var(--rz-primary);
     color: white;
 }
 
 .nav-item ::deep a:hover {
-    background-color: rgba(255,255,255,0.1);
+    background-color: var(--rz-primary);
     color: white;
 }
 

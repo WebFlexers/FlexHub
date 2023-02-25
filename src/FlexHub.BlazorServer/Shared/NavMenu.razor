@@ -1,27 +1,43 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿<div class="ps-3 navbar navbar-dark shadow-sm">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">FlexHub.BlazorServer</a>
+        <div class="flex-fill">
+            <a href="/">
+                <div>
+                    <img class="brand-image" src="favicon.png" alt="FlexHub_brand_icon"/>
+                    <label class="brand-title ms-2">FlexHub</label>
+                </div>
+            </a>
+        </div>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
+            <RadzenIcon Icon="menu"/>
         </button>
     </div>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+<div class="@NavMenuCssClass nav-scrollable right-side-shadow" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
+                <RadzenIcon Icon="home"/> 
+                <label class="ms-2">Main Feed</label>
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+                <RadzenIcon Icon="contacts" /> 
+                <label class="ms-2">Contacts</label>
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+                <RadzenIcon Icon="account_box" /> 
+                <label class="ms-2">My Profile</label>
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="fetchdata">
+                <RadzenIcon Icon="post_add" />
+                <label class="ms-2">Create Post</label>
             </NavLink>
         </div>
     </nav>

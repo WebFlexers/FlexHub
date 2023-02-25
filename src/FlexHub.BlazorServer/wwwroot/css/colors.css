@@ -1,0 +1,12 @@
+﻿:root {
+    --rz-primary: hsl(198, 100%, 75%);
+    --rz-primary-light: hsl(198, 100%, 90%);
+    --rz-secondary: hsl(54, 100%, 75%);
+    --rz-background-primary: hsl(0, 100%, 100%);
+    --rz-primary-text: hsl(0, 0, 0);
+    --rz-primary-text-light: hsl(0, 1%, 25%);
+    --rz-secondary-text: hsl(0, 100%, 100%);
+    --rz-success: hsl(122, 100%, 70%);
+    --rz-warning: hsl(29, 100%, 70%);
+    --rz-danger: hsl(360, 100%, 70%)
+}
