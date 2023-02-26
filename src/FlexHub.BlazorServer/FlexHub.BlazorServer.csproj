@@ -11,11 +11,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Identity.Web" Version="1.26.0" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="1.26.0" />
     <PackageReference Include="Radzen.Blazor" Version="4.7.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FlexHub.Data\FlexHub.Data.csproj" />
+    <ProjectReference Include="..\FlexHub.Services\FlexHub.Services.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,16 +1,14 @@
-﻿using Bogus;
-using FlexHub.Data;
+﻿using FlexHub.Data;
 using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
+using FlexHub.Services.DataAccess.Interfaces;
 using FlexHub.Services.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 
 namespace FlexHub.Services.DataAccess;
 
-public class PostRepository
+public class PostRepository : IPostRepository
 {
     private readonly ILogger<PostRepository> _logger;
     private readonly ApplicationDbContext _dbContext;
@@ -39,7 +37,7 @@ public class PostRepository
             var posts = await _dbContext.Posts
                 .Where(post => post.PostsTags.Any(post => preferredTags.Contains(post.Tag)))
                 .Paginate(pageNumber, numberOfPostsToLoad)
-                .OrderByDescending(post => post.PostsTags.Where(postTag => preferredTags.Contains(postTag.Tag)).Count())
+                .OrderByDescending(post => post.PostsTags.Count(postTag => preferredTags.Contains(postTag.Tag)))
                 .Select(post => new PostDTO
                 {
                     PostId = post.Id,
@@ -51,14 +49,13 @@ public class PostRepository
                         Value = postTag.Tag.Value
                     }).ToList()
                 })
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
 
             return posts;
         }
         catch (Exception ex)
         {
             _logger.LogInformation(ex, "Failed to get paginated posts sorted by preferred tags");
-
             return default;
         }
     }
@@ -84,7 +81,7 @@ public class PostRepository
                         Id = postTag.TagId,
                         Value = postTag.Tag.Value
                     }).ToList()
-                }).ToListAsync();
+                }).ToListAsync().ConfigureAwait(false);
 
             return posts;
 
@@ -121,14 +118,13 @@ public class PostRepository
                         Value = postTag.Tag.Value
                     }).ToList()
                 })
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
 
             return posts;
         }
         catch (Exception ex)
         {
             _logger.LogInformation(ex, "Failed to get paginated posts filtered by tags");
-
             return default;
         }
 
@@ -161,8 +157,8 @@ public class PostRepository
                 UserObjectId = postDTO.UserObjectId,
             };
 
-            _dbContext.Posts.Add(post);
-            _dbContext.SaveChanges();
+            await _dbContext.Posts.AddAsync(post).ConfigureAwait(false);
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             // Create the post tags associated with the above post
             var postTags = new List<PostTag>();
@@ -174,17 +170,15 @@ public class PostRepository
                 });
             }
 
-            _dbContext.PostsTags.AddRange(postTags);
-            _dbContext.SaveChanges();
+            await _dbContext.PostsTags.AddRangeAsync(postTags).ConfigureAwait(false);
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return true;
         }
         catch (Exception ex)
         {
             _logger.LogInformation(ex, "Failed to create post");
-
             return false;
         }
-        throw new NotImplementedException();  
     }
 }

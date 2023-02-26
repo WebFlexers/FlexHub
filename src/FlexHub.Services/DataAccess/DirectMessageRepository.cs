@@ -1,13 +1,14 @@
 ﻿using FlexHub.Data;
 using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
+using FlexHub.Services.DataAccess.Interfaces;
 using FlexHub.Services.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.DataAccess;
 
-public class DirectMessageRepository
+public class DirectMessageRepository : IDirectMessageRepository
 {
     private readonly ILogger<DirectMessageRepository> _logger;
     private readonly ApplicationDbContext _dbContext;
@@ -41,14 +42,13 @@ public class DirectMessageRepository
                 CreatedAt = dm.CreatedAt,
                 SenderUserObjectId = primaryUserObjectId,
                 ReceiverUserObjectId = contactUserObjectId
-            }).ToListAsync();
+            }).ToListAsync().ConfigureAwait(false);
 
             return msgs;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to get direct messages");
-
             return default;
         }
     }
@@ -73,7 +73,7 @@ public class DirectMessageRepository
 
             _dbContext.DirectMessages.Add(directMessage);
 
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             _logger.LogInformation("Successfully stored direct message from {id1} to {id2}", senderUserObjectId,
                 receiverUserObjectId);

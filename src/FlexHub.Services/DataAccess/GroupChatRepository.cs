@@ -1,13 +1,13 @@
 ﻿using FlexHub.Data;
 using FlexHub.Data.DTOs;
-using FlexHub.Data.Entities;
+using FlexHub.Services.DataAccess.Interfaces;
 using FlexHub.Services.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.DataAccess;
 
-public class GroupChatRepository
+public class GroupChatRepository : IGroupChatRepository
 {
     private readonly ILogger<GroupChatRepository> _logger;
     private readonly ApplicationDbContext _dbContext;
@@ -34,14 +34,13 @@ public class GroupChatRepository
                     Title = groupChat.GroupChat.Title,
                     CreatedAt = groupChat.GroupChat.CreatedAt,
                     UpdatedAt = groupChat.GroupChat.UpdatedAt
-                }).ToListAsync();
+                }).ToListAsync().ConfigureAwait(false);
 
             return groupChats;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to get group chats filtered by name");
-
             return default;
         }
     }
@@ -68,14 +67,13 @@ public class GroupChatRepository
                     CreatedAt = groupChatMessage.CreatedAt,
                     SenderUserObjectId = groupChatMessage.SenderUserObjectId,
                     GroupChatId = groupChatMessage.GroupChatId
-                }).ToListAsync();
+                }).ToListAsync().ConfigureAwait(false);
 
             return groupChatMessages;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to get sorted group messages of group chat: " + groupChatId);
-
             return default;
         }
     }
