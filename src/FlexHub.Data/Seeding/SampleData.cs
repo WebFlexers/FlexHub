@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System;
+using System.Text;
 using Bogus;
 using Bogus.DataSets;
 using FlexHub.Data.Entities;
@@ -21,7 +23,7 @@ public class SampleData
 
     public static readonly string[] UserObjectIds = new[]
     {
-        "30ed3c05-7777-45a1-b940-5f99e20030a7",
+        "88906cdb-ff0d-4031-9276-aaab0f9b5d8c",
         "ea664eff-c559-4f93-a794-ae26e5824ed3",
         "a26d0ee1-33b5-44da-9cbd-c472aeeb0c75",
         "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5",
@@ -73,6 +75,8 @@ public class SampleData
         CreateContactRequests();
         CreateDirectMessages();
 
+        CreateExtraData();
+
         modelBuilder.Entity<User>().HasData(_users);
         modelBuilder.Entity<Tag>().HasData(_tags);
         modelBuilder.Entity<Post>().HasData(_posts);
@@ -84,6 +88,48 @@ public class SampleData
         modelBuilder.Entity<Contact>().HasData(_contacts);
         modelBuilder.Entity<ContactRequest>().HasData(_contactRequests);
         modelBuilder.Entity<DirectMessage>().HasData(_directMessages);
+    }
+
+    private void CreateExtraData()
+    {
+        List<Post> posts = new List<Post>()
+        {
+            new Post
+            {
+                Id = 350,
+                Title = "Post 350",
+                Content = "Lorem ipsum dolor sit amet",
+                UserObjectId = SampleData.UserObjectIds.First(),
+            },
+            new Post
+            {
+                Id = 956,
+                Title = "Post 956",
+                Content = "Lorem ipsum dolor sit amet",
+                UserObjectId = SampleData.UserObjectIds.First(),
+            },
+            new Post
+            {
+                Id = 876,
+                Title = "Post 876",
+                Content = "Lorem ipsum dolor sit amet",
+                UserObjectId = SampleData.UserObjectIds.Last(),
+            },
+        };
+
+        List<PostTag> postTags = new List<PostTag>()
+        {
+            new PostTag() { PostId = posts[0].Id, TagId = 4 },
+            new PostTag() { PostId = posts[0].Id, TagId = 10 },
+            new PostTag() { PostId = posts[1].Id, TagId = 4 },
+            new PostTag() { PostId = posts[1].Id, TagId = 10 },
+            new PostTag() { PostId = posts[2].Id, TagId = 4 },
+            new PostTag() { PostId = posts[2].Id, TagId = 10 },
+            new PostTag() { PostId = posts[2].Id, TagId = 3 },
+        };
+
+        _posts.AddRange(posts);
+        _postTags.AddRange(postTags);
     }
 
     private void CreateContactRequests()
@@ -134,7 +180,31 @@ public class SampleData
                 return user;
             });
 
-        _users.AddRange(userFaker.Generate(UserObjectIds.Length));
+        var generatedUsers = AssociateRandomUsersWithRealAccounts(userFaker.Generate(UserObjectIds.Length));
+
+        _users.AddRange(generatedUsers);
+    }
+
+    public List<User> AssociateRandomUsersWithRealAccounts(List<User> users)
+    {
+        // Michalis
+        DateTime.TryParseExact("2023-02-26 18:36:02.0000000", "yyyy-MM-dd HH:mm:ss.fffffff",
+            CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var dateTimeMichalis);
+
+        users.ElementAt(0).ObjectId = "88906cdb-ff0d-4031-9276-aaab0f9b5d8c";
+        users.ElementAt(0).EmailAddress = "maik.stylianidis@gmail.com";
+        users.ElementAt(0).GivenName = "Michail";
+        users.ElementAt(0).Surname = "Stylianidis";
+        users.ElementAt(0).DisplayName = "StyleM";
+        users.ElementAt(0).Country = "Greece";
+        users.ElementAt(0).CreatedAt = dateTimeMichalis.ToUniversalTime();
+        users.ElementAt(0).UpdatedAt = dateTimeMichalis.ToUniversalTime();
+
+        // Lefteris
+
+        // Kostas
+
+        return users;
     }
 
     public void CreateTags()

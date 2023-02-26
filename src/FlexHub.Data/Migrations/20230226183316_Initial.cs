@@ -84,7 +84,8 @@ namespace FlexHub.Data.Migrations
                 columns: table => new
                 {
                     UserObjectId = table.Column<string>(type: "nvarchar(40)", nullable: false),
-                    ContactObjectId = table.Column<string>(type: "nvarchar(40)", nullable: false)
+                    ContactObjectId = table.Column<string>(type: "nvarchar(40)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
