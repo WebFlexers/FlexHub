@@ -265,6 +265,22 @@ public class UserRepository : IUserRepository
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> RemoveUserFromGroupChat(string userObjectId, int groupChatId)
     {
-        throw new NotImplementedException(); 
+        try
+        {
+            var user = _dbContext.UsersGroupChats
+                .Where(user => user.UserObjectId == userObjectId && user.GroupChatId == groupChatId)
+                .FirstOrDefault();
+
+            _dbContext.UsersGroupChats.Remove(user);
+            _dbContext.SaveChanges();
+
+            return true;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to remove user from group chat");
+            return false;
+        }
     }
 }

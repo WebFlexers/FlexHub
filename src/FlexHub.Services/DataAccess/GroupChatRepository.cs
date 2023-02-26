@@ -1,5 +1,6 @@
 ﻿using FlexHub.Data;
 using FlexHub.Data.DTOs;
+using FlexHub.Data.Entities;
 using FlexHub.Services.DataAccess.Interfaces;
 using FlexHub.Services.Utilities;
 using Microsoft.EntityFrameworkCore;

@@ -114,4 +114,21 @@ public class UserRepositoryTests
         // Verification
         Assert.True(resultAccept);
     }
+
+    [Fact]
+    public async Task RemoveUserFromGroupChat_RemoveUserFromGroupChat()
+    {
+        // Preparation
+        await using var dbContext = _fixture.GetDbContextLocalDb(true);
+        var userRepository = new UserRepository(_logger, dbContext);
+
+        var userObjectId = SampleData.UserObjectIds.First();
+        var groupChatId = 1;
+
+        // Testing
+        var result = await userRepository.RemoveUserFromGroupChat(userObjectId, groupChatId);
+
+        // Verification
+        Assert.True(result);
+    }
 }
