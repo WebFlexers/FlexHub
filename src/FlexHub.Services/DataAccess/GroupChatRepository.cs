@@ -86,6 +86,28 @@ public class GroupChatRepository
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> StoreGroupMessage(string senderUserObjectId, int groupChatId, string message)
     {
+        try
+        {
+            var groupMessage = new GroupMessage()
+            {
+                Message = message,
+                CreatedAt = DateTime.UtcNow,
+                SenderUserObjectId = senderUserObjectId,
+                GroupChatId = groupChatId
+            };
+
+            _dbContext.GroupMessages.Add(groupMessage);
+            _dbContext.SaveChanges();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to store message to group chat with id " + groupChatId);
+
+            return false;
+        }
+
         throw new NotImplementedException();
     }
 }

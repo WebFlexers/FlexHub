@@ -56,4 +56,22 @@ public class GroupChatRepositoryTests
         // Verification
         Assert.True(groupMessages.Any());
     }
+
+    [Fact]
+    public async Task StoreGroupMessage_StoreGroupMessage()
+    {
+        // Preparation
+        await using var dbContext = _fixture.GetDbContextLocalDb(true);
+        var groupChatRepository = new GroupChatRepository(_logger, dbContext);
+
+        var userObjectId = SampleData.UserObjectIds.First();
+        var groupId = 2;
+        var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
+        // Testing
+        var storeMessage = await groupChatRepository.StoreGroupMessage(userObjectId, groupId, message);
+
+        // Verification
+        Assert.True(storeMessage);
+    }
 }
