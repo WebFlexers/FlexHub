@@ -1,10 +1,10 @@
-﻿<div class="ps-3 navbar navbar-dark shadow-sm">
+﻿<div class="ps-3 top-row navbar navbar-dark shadow-sm">
     <div class="container-fluid">
         <div class="flex-fill">
             <a href="/">
-                <div>
+                <div class="d-inline-flex align-items-center">
                     <img class="brand-image" src="favicon.png" alt="FlexHub_brand_icon"/>
-                    <label class="brand-title ms-2">FlexHub</label>
+                    <h1 class="brand-title ms-3 mt-2">FlexHub</h1>
                 </div>
             </a>
         </div>
@@ -14,30 +14,30 @@
     </div>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable right-side-shadow" @onclick="ToggleNavMenu">
+<div class="@NavMenuCssClass right-side-shadow nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
                 <RadzenIcon Icon="home"/> 
-                <label class="ms-2">Main Feed</label>
+                <p class="ms-2 mt-3">Main Feed</p>
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="counter">
                 <RadzenIcon Icon="contacts" /> 
-                <label class="ms-2">Contacts</label>
+                <p class="ms-2 mt-3">Contacts</p>
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="fetchdata">
                 <RadzenIcon Icon="account_box" /> 
-                <label class="ms-2">My Profile</label>
+                <p class="ms-2 mt-3">My Profile</p>
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="fetchdata">
                 <RadzenIcon Icon="post_add" />
-                <label class="ms-2">Create Post</label>
+                <p class="ms-2 mt-3">Create Post</p>
             </NavLink>
         </div>
     </nav>

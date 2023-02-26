@@ -1,11 +1,12 @@
 ﻿using FlexHub.Data;
 using FlexHub.Data.DTOs;
-using FlexHub.Data.Entities;
+using FlexHub.Services.DataAccess.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.DataAccess;
 
-public class TagRepository
+public class TagRepository : ITagRepository
 {
     private readonly ILogger<TagRepository> _logger;
     private readonly ApplicationDbContext _dbContext;
@@ -23,16 +24,15 @@ public class TagRepository
     {
         try
         {
-            return _dbContext.UsersTags
+            return await _dbContext.UsersTags
                .Where(userTag => userTag.UserObjectId == userObjectId)
                .Select(userTag => new TagDTO { Id = userTag.TagId, Value = userTag.Tag.Value })
-               .ToList();
+               .ToListAsync().ConfigureAwait(false);
         }
         catch(Exception ex)
         {
             _logger.LogError(ex, "Failed to fetch user tags");
-
-            return null;
+            return default;
         }
     }
 }

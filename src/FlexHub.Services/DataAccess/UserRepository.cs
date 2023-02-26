@@ -1,12 +1,13 @@
 ﻿using FlexHub.Data;
 using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
+using FlexHub.Services.DataAccess.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.DataAccess;
 
-public class UserRepository
+public class UserRepository : IUserRepository
 {
     private readonly ILogger<UserRepository> _logger;
     private readonly ApplicationDbContext _dbContext;
@@ -41,14 +42,13 @@ public class UserRepository
                     CreatedAt = contact.ContactUser.CreatedAt,
                     UpdatedAt = contact.ContactUser.UpdatedAt,
                 })
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
 
             return latestContacts;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to get latest contacts");
-
             return default;
         }
     }
@@ -74,15 +74,90 @@ public class UserRepository
                     CreatedAt = contact.ContactUser.CreatedAt,
                     UpdatedAt = contact.ContactUser.UpdatedAt,
                 })
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
 
             return contacts;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to get contacts filtered by name");
-
             return default;
+        }
+    }
+
+    /// <summary>
+    /// Creates a user from the given UserDTO
+    /// <returns>True if the user was created successfully and false otherwise</returns>
+    /// </summary>
+    public async Task<bool> CreateUser(UserDTO userDTO)
+    {
+        try
+        {
+            var existingUser = await _dbContext.Users.FindAsync(userDTO.ObjectId);
+
+            if (existingUser == null)
+            {
+                await _dbContext.AddAsync(new User
+                {
+                    ObjectId = userDTO.ObjectId,
+                    EmailAddress = userDTO.EmailAddress,
+                    GivenName = userDTO.GivenName,
+                    Surname = userDTO.Surname,
+                    DisplayName = userDTO.DisplayName,
+                    Country = userDTO.Country,
+                    CreatedAt = userDTO.CreatedAt,
+                    UpdatedAt = userDTO.UpdatedAt
+                }).ConfigureAwait(false);
+
+                await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+
+                _logger.LogInformation("Successfully created user with id {objectId}", userDTO.ObjectId);
+                return true;
+            }
+
+            _logger.LogWarning("Tried to create user with object id: {objectId}, but they already existed", userDTO.ObjectId);
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while trying to create a user");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Updates a user from the given UserDTO
+    /// <returns>True if the user was updated successfully and false otherwise</returns>
+    /// </summary>
+    public async Task<bool> UpdateUser(UserDTO userDTO)
+    {
+        try
+        {
+            var existingUser = await _dbContext.Users.FindAsync(userDTO.ObjectId);
+
+            if (existingUser == null)
+            {
+                _logger.LogWarning("Tried to update user with object id: {objectId}, but they didn't exist in the database", userDTO.ObjectId);
+                return false;
+            }
+
+            existingUser.EmailAddress = userDTO.EmailAddress;
+            existingUser.GivenName = userDTO.GivenName;
+            existingUser.Surname = userDTO.Surname;
+            existingUser.DisplayName = userDTO.DisplayName;
+            existingUser.Country = userDTO.Country;
+            existingUser.UpdatedAt = userDTO.UpdatedAt;
+
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+
+            _logger.LogInformation("Successfully updated user with id {objectId}", existingUser.ObjectId);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while trying to update a user");
+            return false;
         }
     }
 
@@ -101,8 +176,8 @@ public class UserRepository
                 ReceiverUserObjectId = receiverUserObjectId,
             };
 
-            _dbContext.ContactRequests.Add(contactRequest);
-            _dbContext.SaveChanges();
+            await _dbContext.ContactRequests.AddAsync(contactRequest).ConfigureAwait(false);
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return true;
         }
@@ -127,11 +202,13 @@ public class UserRepository
         {
             // Remove contact request
             var contactRequest = _dbContext.ContactRequests
-                .Where(contactRequest => contactRequest.SenderUserObjectId == senderUserObjectId && contactRequest.ReceiverUserObjectId == receiverUserObjectId)
-                .FirstOrDefault();
+                .FirstOrDefault(contactRequest => contactRequest.SenderUserObjectId == senderUserObjectId && contactRequest.ReceiverUserObjectId == receiverUserObjectId);
 
-            _dbContext.ContactRequests.Remove(contactRequest);
-            _dbContext.SaveChanges();
+            if (contactRequest != null)
+            {
+                _dbContext.ContactRequests.Remove(contactRequest);
+                await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+            }
 
             // Add contact to user's contact list
             var contact = new Contact()
@@ -140,8 +217,8 @@ public class UserRepository
                 ContactObjectId = senderUserObjectId,
                 CreatedAt = DateTime.UtcNow
             };
-            _dbContext.Contacts.Add(contact);
-            _dbContext.SaveChanges();
+            await _dbContext.Contacts.AddAsync(contact).ConfigureAwait(false);
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return true;
 
@@ -149,7 +226,6 @@ public class UserRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to accept contact request");
-
             return false;
         }
     }
@@ -164,11 +240,13 @@ public class UserRepository
         {
             // Find contact
             var contact = _dbContext.Contacts
-                .Where(contact => contact.UserObjectId == primaryUserObjectId && contact.ContactObjectId == contactToDeleteUserObjectId)
-                .FirstOrDefault();
+                .FirstOrDefault(contact => contact.UserObjectId == primaryUserObjectId && contact.ContactObjectId == contactToDeleteUserObjectId);
 
-            _dbContext.Contacts.Remove(contact);
-            _dbContext.SaveChanges();
+            if (contact != null)
+            {
+                _dbContext.Contacts.Remove(contact);
+                await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+            }
 
             return true;
 
@@ -176,7 +254,6 @@ public class UserRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to delete contact");
-
             return false;
         }
     }
