@@ -19,6 +19,40 @@ public class UserRepository : IUserRepository
     }
 
     /// <summary>
+    /// Gets the user display name of the user with the given object id
+    /// </summary>
+    public async Task<UserDTO> GetUser(string userObjectId)
+    {
+        try
+        {
+            var user = await _dbContext.Users
+                .FindAsync(userObjectId);
+
+            if (user != null)
+            {
+                return new UserDTO
+                {
+                    ObjectId = user.ObjectId,
+                    EmailAddress = user.EmailAddress,
+                    GivenName = user.GivenName,
+                    Surname = user.Surname,
+                    DisplayName = user.DisplayName,
+                    Country = user.Country,
+                    CreatedAt = user.CreatedAt,
+                    UpdatedAt = user.UpdatedAt,
+                };
+            }
+
+            return default;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get user display name with user object id: {id}", userObjectId);
+            return default;
+        }
+    }
+
+    /// <summary>
     /// Gets the last X number of contacts of the user asynchronously
     /// </summary>
     /// <param name="userObjectId">The object Id of the user</param>
@@ -28,7 +62,7 @@ public class UserRepository : IUserRepository
         try
         {
             var latestContacts = await _dbContext.Contacts
-                .Where(contact => contact.UserObjectId == userObjectId)
+                .Where(contact => contact.UserObjectId == userObjectId && contact.ContactObjectId != userObjectId)
                 .OrderByDescending(contact => contact.CreatedAt)
                 .Take(numberOfContacts)
                 .Select(contact => new UserDTO()

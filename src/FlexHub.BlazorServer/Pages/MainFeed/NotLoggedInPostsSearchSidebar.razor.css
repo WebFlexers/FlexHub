@@ -1,0 +1,7 @@
+﻿.centered-element {
+    margin: 0;
+    position: absolute;
+    top: 20%;
+    left: 43%;
+    max-width: 400px;
+}

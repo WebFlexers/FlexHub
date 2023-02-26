@@ -5,6 +5,11 @@ namespace FlexHub.Services.DataAccess.Interfaces;
 public interface IUserRepository
 {
     /// <summary>
+    /// Gets the user display name of the user with the given object id
+    /// </summary>
+    Task<UserDTO> GetUser(string userObjectId);
+
+    /// <summary>
     /// Gets the last X number of contacts of the user asynchronously
     /// </summary>
     /// <param name="userObjectId">The object Id of the user</param>

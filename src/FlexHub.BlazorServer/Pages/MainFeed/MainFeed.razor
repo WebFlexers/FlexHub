@@ -1,124 +1,80 @@
 ﻿@page "/"
-@using FlexHub.Data.DTOs
-@using System.Security.Claims
-@using FlexHub.Services.DataAccess.Interfaces
-@inject ILogger<MainFeed> Logger
-@inject IUserRepository UserRepository
 
 <AuthorizeView>
     <Authorized>
         @{
             _userClaims = context.User.Claims.ToArray();
         }
+        
+        <div class="main-feed-page">
+            <div class="container">
+                <div class="text-center mt-3">
+                    <ContactsHorizontalBar @ref="ContactsHorizontalBarComponent" />
+                </div>
+                
+                @if (_areRecentContactsEmpty == false)
+                {
+                    <div class="screen-divider mt-3"></div>
+                }
 
-        <div class="right-side-panel left-side-shadow">
-            <div class="profile-container shadow-sm">
-                <RadzenProfileMenu Style="background-color: var(--rz-background-primary); margin: 0; padding-right: 0;">
-                    <Template>
-                        <RadzenImage Path="uploaded-images/user-profiles/generic-user.png" Style="width: 3rem;" />
-                    </Template>
-                    
-                    <ChildContent>
-                        <RadzenProfileMenuItem Path="MicrosoftIdentity/Account/SignOut" Icon="logout" Text="Logout"></RadzenProfileMenuItem>
-                    </ChildContent>
-                </RadzenProfileMenu>
-
-                <div>
-                    <p class="mb-0 mt-0">@_userDTO?.GivenName @_userDTO?.Surname</p>
-                    <p class="mb-0 mt-0">@@@_userDTO?.DisplayName</p>
+                <div class="text-center mt-3">
+                    <MainPostsFeed @ref="MainPostsFeedComponent"/>
                 </div>
             </div>
 
-            <div class="text-center mt-3 pb-3 shadow-sm">
-                <RadzenTextBox type="search" Placeholder="Search..."/>
-            </div>
+            <div class="right-side-panel left-side-shadow">
+                <div class="profile-container shadow-sm">
+                    <RadzenProfileMenu Style="background-color: var(--rz-background-primary); margin: 0; padding-right: 0;">
+                        <Template>
+                            <RadzenImage Path="uploaded-images/user-profiles/generic-user.png" Style="width: 3rem;" />
+                        </Template>
 
-            <div class="tags-container text-center mt-3">
-                <h2 class="fs-5">Tags</h2>
-                <RadzenStack Orientation="Orientation.Vertical" Gap="1rem" JustifyContent="JustifyContent.SpaceEvenly" AlignItems="AlignItems.Start">
-                    @for (int i = 0; i <= 15; i++)
-                    {
-                        <div class="ms-3">
-                            <RadzenCheckBox @bind-Value="@testBool" Name="@($"Tag{i.ToString()}")"></RadzenCheckBox>
-                            <RadzenLabel Text="@i.ToString()" Component="@($"Tag{i.ToString()}")" Style="margin-left: 0.5rem; vertical-align: middle;" />
-                        </div>
-                    }
-                </RadzenStack>
-            </div>
+                        <ChildContent>
+                            <RadzenProfileMenuItem Path="MicrosoftIdentity/Account/SignOut" Icon="logout" Text="Logout"></RadzenProfileMenuItem>
+                        </ChildContent>
+                    </RadzenProfileMenu>
 
-            <div class="text-center mt-4">
-                <RadzenButton>Search</RadzenButton>
+                    <div>
+                        <p class="mb-0 mt-0">@_userDTO?.GivenName @_userDTO?.Surname</p>
+                        <p class="mb-0 mt-0">@@@_userDTO?.DisplayName</p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-3 pb-3 px-2 shadow-sm">
+                    <RadzenTextBox type="search" Placeholder="Search..." />
+                </div>
+
+                <div class="tags-container text-center mt-3">
+                    <h2 class="fs-5">Preferred Tags</h2>
+                    <RadzenStack Orientation="Orientation.Vertical" Gap="1rem" JustifyContent="JustifyContent.SpaceEvenly" AlignItems="AlignItems.Start">
+                        @if (_userTags.Any())
+                        {
+                            foreach (var tag in _userTags)
+                            {
+                                <div class="ms-3">
+                                    <RadzenCheckBox @bind-Value="@testBool" Name="@($"Tag{tag.Id}")"></RadzenCheckBox>
+                                    <RadzenLabel Text="@tag.Value" Component="@($"Tag{tag.Id}")" Style="margin-left: 0.5rem; vertical-align: middle;"/>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="ms-3 mt-3">
+                                <p>No favorite tags found. Go to your profile to customize your tags</p>
+                            </div>
+                        }
+
+                    </RadzenStack>
+                </div>
+
+                <div class="text-center mt-4">
+                    <RadzenButton>Search</RadzenButton>
+                </div>
             </div>
         </div>
+
     </Authorized>
     <NotAuthorized>
-        <div class="right-side-panel left-side-shadow">
-            <NotLoggedInPostsSearchSidebar />
-        </div>
+        <NotLoggedInPostsSearchSidebar/>
     </NotAuthorized>
 </AuthorizeView>
-
-@code
-{
-    bool testBool = true;
-    UserDTO? _userDTO;
-    Claim[]? _userClaims;
-    List<TagDTO> _userTags;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (_userClaims == null)
-        {
-            return;
-        }
-
-        _userDTO = CreateUserDtoFromClaims(_userClaims);
-
-        StateHasChanged();
-
-        if (firstRender)
-        {
-            var isUserNew = _userClaims.FirstOrDefault(c => c.Type.Contains("newUser"))?.Value;
-            if (isUserNew != null && _userDTO != null && bool.Parse(isUserNew))
-            {
-                await UserRepository.CreateUser(_userDTO);
-            }
-        }
-    }
-
-    public UserDTO? CreateUserDtoFromClaims(Claim[] claims)
-    {
-        var userObjectId = claims.FirstOrDefault(c => c.Type.Contains("nameidentifier"))?.Value;
-        var email = claims.FirstOrDefault(c => c.Type.Contains("emails"))?.Value;
-        var givenName = claims.FirstOrDefault(c => c.Type.Contains("givenname"))?.Value;
-        var surname = claims.FirstOrDefault(c => c.Type.Contains("surname"))?.Value;
-        var displayName = claims.FirstOrDefault(c => c.Type.Equals("name"))?.Value;
-        var country = claims.FirstOrDefault(c => c.Type.Contains("country"))?.Value;
-        var createdAtUnix = claims.FirstOrDefault(c => c.Type.Contains("auth_time"))?.Value;
-
-        if (string.IsNullOrWhiteSpace(userObjectId) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(givenName) ||
-            string.IsNullOrWhiteSpace(surname) || string.IsNullOrWhiteSpace(displayName) || string.IsNullOrWhiteSpace(country) ||
-            string.IsNullOrWhiteSpace(createdAtUnix))
-        {
-            Logger.LogError("1 or more properties from jwt token where null after registration. The properties are " +
-                            "objectId: {userObjectId}, email: {email}, given name: {givenName}, surname: {surname}, displayname: {displayName}" +
-                            "country: {country}, createdAtUnix: {createdAtUnix}", 
-    userObjectId, email, givenName, surname, displayName, country, createdAtUnix);
-            return default;
-        }
-
-        var createdAt = DateTimeOffset.FromUnixTimeSeconds(long.Parse(createdAtUnix)).UtcDateTime;
-
-        return new UserDTO
-        {
-            ObjectId = userObjectId,
-            EmailAddress = email,
-            GivenName = givenName,
-            Surname = surname,
-            DisplayName = displayName,
-            Country = country,
-            CreatedAt = createdAt,
-            UpdatedAt = createdAt
-        };
-    }
-}

@@ -1,0 +1,15 @@
+﻿.contacts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(50px, 150px));
+    justify-content: center;
+    justify-items: center;
+}
+
+.contact-name {
+    margin: 0;
+    padding: 0;
+    max-width: 6rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}

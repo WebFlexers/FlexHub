@@ -8,10 +8,6 @@ main {
     flex: 1;
 }
 
-.sidebar {
-    background-color: var(--rz-background-primary);
-}
-
 @media (max-width: 640.98px) {
     .top-row:not(.auth) {
         display: none;
@@ -42,10 +38,5 @@ main {
         position: sticky;
         top: 0;
         z-index: 1;
-    }
-
-    .top-row, article {
-        padding-left: 2rem;
-        padding-right: 1.5rem;
     }
 }

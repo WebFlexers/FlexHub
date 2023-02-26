@@ -12,10 +12,6 @@ h1:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-.content {
-    padding-top: 1.1rem;
-}
-
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -56,3 +52,14 @@ h1:focus {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+
+.screen-divider {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    background-color: var(--rz-primary-text-light);
+    width: 50vw;
+    height: 1px;
+    border-radius: 30px;
+}

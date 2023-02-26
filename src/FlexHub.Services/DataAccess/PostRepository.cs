@@ -35,9 +35,9 @@ public class PostRepository : IPostRepository
         try
         {
             var posts = await _dbContext.Posts
-                .Where(post => post.PostsTags.Any(post => preferredTags.Contains(post.Tag)))
-                .Paginate(pageNumber, numberOfPostsToLoad)
+                .AsNoTracking()
                 .OrderByDescending(post => post.PostsTags.Count(postTag => preferredTags.Contains(postTag.Tag)))
+                .Paginate(pageNumber, numberOfPostsToLoad)
                 .Select(post => new PostDTO
                 {
                     PostId = post.Id,
@@ -47,7 +47,8 @@ public class PostRepository : IPostRepository
                     {
                         Id = postTag.TagId,
                         Value = postTag.Tag.Value
-                    }).ToList()
+                    }).ToList(),
+                    UserObjectId = post.UserObjectId
                 })
                 .ToListAsync().ConfigureAwait(false);
 
@@ -68,6 +69,7 @@ public class PostRepository : IPostRepository
         try
         {
             var posts = await _dbContext.Posts
+                .AsNoTracking()
                 .Where(post => post.Title.Contains(title))
                 .OrderByDescending(post => post.CreatedAt)
                 .Paginate(pageNumber, numberOfPostsToLoad)
@@ -105,6 +107,7 @@ public class PostRepository : IPostRepository
             var distinctTags = tags.Distinct().ToList();
 
             var posts = await _dbContext.Posts
+                .AsNoTracking()
                 .Where(post => post.PostsTags.Count == distinctTags.Count && post.PostsTags.All(pt => tags.Contains(pt.Tag)))
                 .Paginate(pageNumber, numberOfPostsToLoad)
                 .Select(post => new PostDTO

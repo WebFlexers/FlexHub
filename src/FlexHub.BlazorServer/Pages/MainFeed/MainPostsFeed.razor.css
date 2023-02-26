@@ -1,0 +1,16 @@
+﻿.post-container {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    width: 70%;
+}
+
+.secondary-background-color {
+    color: red;
+}
+
+@media (max-width: 950px) {
+    .post-container {
+        width: 90%;
+    }
+}
