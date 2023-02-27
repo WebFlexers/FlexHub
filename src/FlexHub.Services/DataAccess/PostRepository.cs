@@ -82,7 +82,8 @@ public class PostRepository : IPostRepository
                     {
                         Id = postTag.TagId,
                         Value = postTag.Tag.Value
-                    }).ToList()
+                    }).ToList(),
+                    UserObjectId = post.UserObjectId
                 }).ToListAsync().ConfigureAwait(false);
 
             return posts;
@@ -99,17 +100,26 @@ public class PostRepository : IPostRepository
     /// <summary>
     /// Gets the posts that have all the given tags paginated and asynchronously.
     /// </summary>
-    public async Task<List<PostDTO>> GetPaginatedPostsFilteredByTags(List<Tag> tags, int pageNumber, int numberOfPostsToLoad)
+    public async Task<List<PostDTO>?> GetPaginatedPostsFilteredByTags(List<Tag> tags, int pageNumber, int numberOfPostsToLoad)
     {
         try
         {
-            // Remove duplicate tags
-            var distinctTags = tags.Distinct().ToList();
+            var postIds = await _dbContext.PostsTags
+                .AsNoTracking()
+                .Where(pt => tags.Contains(pt.Tag))
+                .GroupBy(pt => pt.PostId)
+                .Where(group => group.Count() == tags.Count)
+                .Paginate(pageNumber, numberOfPostsToLoad)
+                .Select(group =>  group.Key)
+                .ToListAsync();
+
+            if (postIds.Any() == false)
+            {
+                return default;
+            }
 
             var posts = await _dbContext.Posts
-                .AsNoTracking()
-                .Where(post => post.PostsTags.Count == distinctTags.Count && post.PostsTags.All(pt => tags.Contains(pt.Tag)))
-                .Paginate(pageNumber, numberOfPostsToLoad)
+                .Where(post => postIds.Contains(post.Id))
                 .Select(post => new PostDTO
                 {
                     PostId = post.Id,
@@ -119,9 +129,10 @@ public class PostRepository : IPostRepository
                     {
                         Id = postTag.TagId,
                         Value = postTag.Tag.Value
-                    }).ToList()
+                    }).ToList(),
+                    UserObjectId = post.UserObjectId
                 })
-                .ToListAsync().ConfigureAwait(false);
+                .ToListAsync();
 
             return posts;
         }
@@ -137,9 +148,48 @@ public class PostRepository : IPostRepository
     /// Gets the posts that contain the given title and
     /// have all the given posts paginated and asynchronously
     /// </summary>
-    public async Task<List<PostDTO>> GetPaginatedPostsFilteredByTitleAndTags(string title, List<string> tags, int pageNumber, int numberOfPostsToLoad)
+    public async Task<List<PostDTO>?> GetPaginatedPostsFilteredByTitleAndTags(string title, List<Tag> tags, int pageNumber, int numberOfPostsToLoad)
     {
-        throw new NotImplementedException(); 
+        try
+        {
+            var postIds = await _dbContext.PostsTags
+                .AsNoTracking()
+                .Where(pt => pt.Post.Title.Contains(title) && 
+                                    tags.Contains(pt.Tag))
+                .GroupBy(pt => pt.PostId)
+                .Where(group => group.Count() == tags.Count)
+                .Paginate(pageNumber, numberOfPostsToLoad)
+                .Select(group =>  group.Key)
+                .ToListAsync();
+
+            if (postIds.Any() == false)
+            {
+                return default;
+            }
+
+            var posts = await _dbContext.Posts
+                .Where(post => postIds.Contains(post.Id))
+                .Select(post => new PostDTO
+                {
+                    PostId = post.Id,
+                    Title = post.Title,
+                    Content = post.Content,
+                    Tags = post.PostsTags.Select(postTag => new TagDTO
+                    {
+                        Id = postTag.TagId,
+                        Value = postTag.Tag.Value
+                    }).ToList(),
+                    UserObjectId = post.UserObjectId
+                })
+                .ToListAsync();
+
+            return posts;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation(ex, "An error occurred while trying to Get Paginated Posts Filtered By Title And Tags");
+            return default;
+        }
     }
 
     /// <summary>

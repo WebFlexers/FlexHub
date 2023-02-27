@@ -26,13 +26,13 @@ public interface IPostRepository
     /// <summary>
     /// Gets the posts that have all the given tags paginated and asynchronously.
     /// </summary>
-    Task<List<PostDTO>> GetPaginatedPostsFilteredByTags(List<Tag> tags, int pageNumber, int numberOfPostsToLoad);
+    Task<List<PostDTO>?> GetPaginatedPostsFilteredByTags(List<Tag> tags, int pageNumber, int numberOfPostsToLoad);
 
     /// <summary>          
     /// Gets the posts that contain the given title and
     /// have all the given posts paginated and asynchronously
     /// </summary>
-    Task<List<PostDTO>> GetPaginatedPostsFilteredByTitleAndTags(string title, List<string> tags, int pageNumber, int numberOfPostsToLoad);
+    Task<List<PostDTO>?> GetPaginatedPostsFilteredByTitleAndTags(string title, List<Tag> tags, int pageNumber, int numberOfPostsToLoad);
 
     /// <summary>
     /// Creates a post for the user with the given user object id.

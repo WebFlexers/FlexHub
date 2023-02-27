@@ -4,7 +4,7 @@
 <div class="post-container pt-3">
     @if (Posts != null && Posts.Any())
     {
-        <InfiniteScroll ObserverTargetId="observerTarget" ObservableTargetReached="(e) => FetchPostsByPreferredTags(_pageNum++, 5)">
+        <InfiniteScroll ObserverTargetId="observerTarget" ObservableTargetReached="(e) => FetchPosts(PageNum++, 5)">
             @foreach (var post in Posts)
             {
                 <div class="mb-5">
@@ -16,7 +16,7 @@
                             <span class="fw-normal">Posted by - </span> @post.PublisherDisplayName
                         </p>
 
-                        <div class="d-inline-flex justify-content-start fst-italic mt-2">
+                        <div class="d-inline-flex flex-wrap justify-content-start fst-italic mt-2">
                             @foreach (var tag in post.Tags)
                             {
                                 <p class="text-end ms-2">

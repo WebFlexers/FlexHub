@@ -1,4 +1,5 @@
 using FlexHub.BlazorServer.Data;
+using FlexHub.BlazorServer.Stores.Search;
 using FlexHub.Data;
 using FlexHub.Services.DataAccess;
 using FlexHub.Services.DataAccess.Interfaces;
@@ -18,7 +19,7 @@ builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor()
-    .AddMicrosoftIdentityConsentHandler();;
+    .AddMicrosoftIdentityConsentHandler();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -29,6 +30,8 @@ builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<ContextMenuService>();
+
+builder.Services.AddScoped<ISearchPostsTermsStore, SearchPostsTermsStore>();
 
 builder.Services.AddTransient<IDirectMessageRepository, DirectMessageRepository>();
 builder.Services.AddTransient<IGroupChatRepository, GroupChatRepository>();

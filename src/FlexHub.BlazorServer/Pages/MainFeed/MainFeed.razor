@@ -41,18 +41,18 @@
                 </div>
 
                 <div class="text-center mt-3 pb-3 px-2 shadow-sm">
-                    <RadzenTextBox type="search" Placeholder="Search..." />
+                    <RadzenTextBox type="search" @bind-Value="SearchPostsTermsStore.SearchText" Placeholder="Search..." />
                 </div>
 
                 <div class="tags-container text-center mt-3">
                     <h2 class="fs-5">Preferred Tags</h2>
                     <RadzenStack Orientation="Orientation.Vertical" Gap="1rem" JustifyContent="JustifyContent.SpaceEvenly" AlignItems="AlignItems.Start">
-                        @if (_userTags.Any())
+                        @if (SearchPostsTermsStore.Tags != null && SearchPostsTermsStore.Tags.Any())
                         {
-                            foreach (var tag in _userTags)
+                            foreach (var tag in SearchPostsTermsStore.Tags)
                             {
                                 <div class="px-3">
-                                    <RadzenCheckBox @bind-Value="@testBool" Name="@($"Tag{tag.Id}")"></RadzenCheckBox>
+                                    <RadzenCheckBox @bind-Value="@tag.IsChecked" Name="@($"Tag{tag.Id}")"></RadzenCheckBox>
                                     <RadzenLabel Text="@tag.Value" Component="@($"Tag{tag.Id}")" Style="margin-left: 0.5rem; vertical-align: middle;"/>
                                 </div>
                             }
@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="text-center mt-4">
-                    <RadzenButton>Search</RadzenButton>
+                    <RadzenButton Click="async () => { await OnSearchButtonClick(); }">Search</RadzenButton>
                 </div>
             </div>
         </div>

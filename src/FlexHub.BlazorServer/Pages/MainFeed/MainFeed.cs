@@ -1,8 +1,9 @@
-﻿using FlexHub.Data.DTOs;
-using System.Security.Claims;
-using FlexHub.Data.Entities;
+﻿using FlexHub.BlazorServer.Models;
+using FlexHub.Data.DTOs;
 using FlexHub.Services.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Components;
+using System.Security.Claims;
+using FlexHub.BlazorServer.Stores.Search;
 
 namespace FlexHub.BlazorServer.Pages.MainFeed;
 
@@ -17,12 +18,12 @@ public partial class MainFeed
     public IUserRepository UserRepository { get; set; }
     [Inject]
     public ITagRepository TagRepository { get; set; }
+    [Inject]
+    public ISearchPostsTermsStore SearchPostsTermsStore { get; set; }
 
-    private bool testBool = true;
     private bool _areRecentContactsEmpty = true;
     private UserDTO? _userDTO;
     private Claim[]? _userClaims;
-    private List<TagDTO> _userTags = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -38,14 +39,10 @@ public partial class MainFeed
 
         _userDTO = CreateUserDtoFromClaims(_userClaims);
 
-        _userTags = await TagRepository.GetUserTags(_userDTO!.ObjectId);
-        MainPostsFeedComponent.PreferredTags = _userTags.Select(ut => new Tag
-        {
-            Id = ut.Id,
-            Value = ut.Value
-        }).ToList();
+        var userTagDTOs = await TagRepository.GetUserTags(_userDTO!.ObjectId);
+        SearchPostsTermsStore.Tags = userTagDTOs.Select(ut => new TagModel { Id = ut.Id, IsChecked = false, Value = ut.Value }).ToList();
 
-        await MainPostsFeedComponent.FetchPostsByPreferredTags(1, 5);
+        await MainPostsFeedComponent.FetchPosts(MainPostsFeedComponent.PageNum, 5);
         MainPostsFeedComponent.Refresh();
         await ContactsHorizontalBarComponent.GetLastContactsOfUser(_userDTO.ObjectId, 6);
 
@@ -94,5 +91,17 @@ public partial class MainFeed
             CreatedAt = createdAt,
             UpdatedAt = createdAt
         };
+    }
+
+    public async Task OnSearchButtonClick()
+    {
+        MainPostsFeedComponent.Posts = new List<PostModel>();
+        MainPostsFeedComponent.PageNum = 1;
+        await MainPostsFeedComponent.FetchPosts(1, 5);
+
+        if (MainPostsFeedComponent.Posts.Any().Equals(false))
+        {
+            MainPostsFeedComponent.Refresh();
+        }
     }
 }

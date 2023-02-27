@@ -90,9 +90,9 @@ public class PostRepositoryTests
             {
                 _logger.LogInformation(tag.Value);
 
-                foreach (var prefferedTag in prefferedTags)
+                foreach (var preferredTag in prefferedTags)
                 {
-                    if (prefferedTag.Value.Equals(tag.Value))
+                    if (preferredTag.Value.Equals(tag.Value))
                         matchedTagsCounter++;
                 }
             }
@@ -108,11 +108,9 @@ public class PostRepositoryTests
     public async Task GetPaginatedPostsFilteredByTags_FetchPaginatedPostsFilteredByTags()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
+        await using var dbContext = _fixture.GetDbContextLocalDb(false);
 
         var postRepository = new PostRepository(_logger, dbContext);
-
-        var user = SampleData.UserObjectIds.First();
 
         // Create Tags
         List<Tag> tags = new List<Tag> {
@@ -122,20 +120,23 @@ public class PostRepositoryTests
 
         // Testing
         var result = await postRepository.GetPaginatedPostsFilteredByTags(tags, 1, 10);
+
         foreach (var post in result)
         {
-            if (post.Tags.Count != tags.Count)
+            int necessaryTagsCount = 0;
+
+            foreach (var tag in post.Tags)
             {
-                _logger.LogInformation("Counts doesn't match");
-                // Verification
-                Assert.True(false);
+                if (tags.Any(t => t.Id.Equals(tag.Id)))
+                {
+                    necessaryTagsCount++;
+                }
             }
 
-            _logger.LogInformation("Found match for post " + post.PostId + ", title: " + post.Title);
+            // Verification
+            Assert.Equal(tags.Count, necessaryTagsCount);
         }
-
-        // Verification
-        Assert.True(true);
+        
     }
 
     [Fact]
