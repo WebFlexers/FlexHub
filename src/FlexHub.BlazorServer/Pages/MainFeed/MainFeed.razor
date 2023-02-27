@@ -51,7 +51,7 @@
                         {
                             foreach (var tag in _userTags)
                             {
-                                <div class="ms-3">
+                                <div class="px-3">
                                     <RadzenCheckBox @bind-Value="@testBool" Name="@($"Tag{tag.Id}")"></RadzenCheckBox>
                                     <RadzenLabel Text="@tag.Value" Component="@($"Tag{tag.Id}")" Style="margin-left: 0.5rem; vertical-align: middle;"/>
                                 </div>
@@ -59,7 +59,7 @@
                         }
                         else
                         {
-                            <div class="ms-3 mt-3">
+                            <div class="px-3 mt-3">
                                 <p>No favorite tags found. Go to your profile to customize your tags</p>
                             </div>
                         }

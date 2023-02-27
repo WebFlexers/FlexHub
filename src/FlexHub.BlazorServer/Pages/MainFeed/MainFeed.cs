@@ -46,6 +46,7 @@ public partial class MainFeed
         }).ToList();
 
         await MainPostsFeedComponent.FetchPostsByPreferredTags(1, 5);
+        MainPostsFeedComponent.Refresh();
         await ContactsHorizontalBarComponent.GetLastContactsOfUser(_userDTO.ObjectId, 6);
 
         _areRecentContactsEmpty = ContactsHorizontalBarComponent.RecentContacts.Any() == false;

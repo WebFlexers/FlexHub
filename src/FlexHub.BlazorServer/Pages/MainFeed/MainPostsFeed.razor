@@ -1,25 +1,33 @@
-﻿<div class="post-container pt-3">
-    @foreach (var post in Posts)
-    {
-        <div class="mb-5">
-            <RadzenCard Style="background-color: var(--rz-background-secondary)">
-                <h2 class="fs-3 mt-2">@post.Title</h2>
-                <p class="mt-4">@post.Content</p>
+﻿@using Microsoft.AspNetCore.Mvc.Controllers
+@using FlexHub.BlazorServer.CustomComponents.InfiniteScrolling
 
-                <p class="text-start fw-bold mt-3">
-                    <span class="fw-normal">Posted by - </span> @post.PublisherDisplayName
-                </p>
-                
-                <div class="d-inline-flex justify-content-start fst-italic mt-2">
-                    @foreach (var tag in post.Tags)
-                    {
-                        <p class="text-end ms-2">
-                           @tag.Value
+<div class="post-container pt-3">
+    @if (Posts != null && Posts.Any())
+    {
+        <InfiniteScroll ObserverTargetId="observerTarget" ObservableTargetReached="(e) => FetchPostsByPreferredTags(_pageNum++, 5)">
+            @foreach (var post in Posts)
+            {
+                <div class="mb-5">
+                    <RadzenCard Style="background-color: var(--rz-background-secondary)">
+                        <h2 class="fs-3 mt-2">@post.Title</h2>
+                        <p class="mt-4">@post.Content</p>
+
+                        <p class="text-start fw-bold mt-3">
+                            <span class="fw-normal">Posted by - </span> @post.PublisherDisplayName
                         </p>
-                    }
+
+                        <div class="d-inline-flex justify-content-start fst-italic mt-2">
+                            @foreach (var tag in post.Tags)
+                            {
+                                <p class="text-end ms-2">
+                                    @tag.Value
+                                </p>
+                            }
+                        </div>
+                    </RadzenCard>
                 </div>
-            </RadzenCard>
-            
-        </div>
+            }
+            <div class="mb-5" id="observerTarget"></div>
+        </InfiniteScroll>
     }
 </div>

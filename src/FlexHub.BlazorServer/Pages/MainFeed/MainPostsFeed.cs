@@ -1,8 +1,5 @@
-﻿using System.Runtime.InteropServices;
-using FlexHub.BlazorServer.Models;
-using FlexHub.Data.DTOs;
+﻿using FlexHub.BlazorServer.Models;
 using FlexHub.Data.Entities;
-using FlexHub.Services.DataAccess;
 using FlexHub.Services.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Components;
 
@@ -15,11 +12,15 @@ public partial class MainPostsFeed
     [Inject]
     public IUserRepository UserRepository { get; set; }
 
-    public List<PostModel> Posts { get; set; } = new();
+    public List<PostModel>? Posts { get; set; } = new();
     public List<Tag> PreferredTags { get; set; }
 
-    [Parameter] 
-    public EventCallback<string> OnClick { get; set; }
+    private int _pageNum = 2;
+
+    public void Refresh()
+    {
+        StateHasChanged();
+    }
 
     public async Task FetchPostsByPreferredTags(int pageNumber, int itemsPerPage)
     {
@@ -43,7 +44,7 @@ public partial class MainPostsFeed
             });
         }
 
-        Posts.AddRange(newPostModels);
+        Posts!.AddRange(newPostModels);
 
         StateHasChanged();
     }
