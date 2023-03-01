@@ -12,7 +12,7 @@ public interface IDirectMessageRepository
     /// <param name="contactUserObjectId">The contact user object id</param>
     /// <param name="pageNumber">The page number</param>
     /// <param name="numberOfMessagesToLoad">The number of messages to load</param>
-    Task<List<DirectMessageDTO>> GetDirectMessagesOf2UsersPaginated(
+    Task<List<DirectMessageDTO>?> GetDirectMessagesOf2UsersPaginated(
         string primaryUserObjectId, string contactUserObjectId, int pageNumber, int numberOfMessagesToLoad);
 
     /// <summary>

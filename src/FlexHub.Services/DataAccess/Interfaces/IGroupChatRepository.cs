@@ -8,7 +8,7 @@ public interface IGroupChatRepository
     /// Gets the group chats of the given user
     /// whose title contains the given title asynchronously
     /// </summary>
-    Task<List<GroupChatDTO>> GetGroupChatsFilteredByName(string userObjectId, string groupChatTitle);
+    Task<List<GroupChatDTO>?> GetGroupChatsFilteredByName(string userObjectId, string groupChatTitle);
 
     /// <summary>
     /// Gets X number of messages that were sent to the given group chat
@@ -17,7 +17,7 @@ public interface IGroupChatRepository
     /// <param name="groupChatId">The group chat id</param>
     /// <param name="pageNumber">The page number of the pagination</param>
     /// <param name="numberOfMessagesToLoad">The number of messages to load</param>
-    Task<List<GroupMessageDTO>> GetSortedGroupMessagesPaginated(
+    Task<List<GroupMessageDTO>?> GetSortedGroupMessagesPaginated(
         int groupChatId, int pageNumber, int numberOfMessagesToLoad);
 
     /// <summary>

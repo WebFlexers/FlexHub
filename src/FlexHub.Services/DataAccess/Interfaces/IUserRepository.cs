@@ -7,20 +7,20 @@ public interface IUserRepository
     /// <summary>
     /// Gets the user display name of the user with the given object id
     /// </summary>
-    Task<UserDTO> GetUser(string userObjectId);
+    Task<UserDTO?> GetUser(string userObjectId);
 
     /// <summary>
     /// Gets the last X number of contacts of the user asynchronously
     /// </summary>
     /// <param name="userObjectId">The object Id of the user</param>
     /// <param name="numberOfContacts">The number of contacts to load</param>
-    Task<List<UserDTO>> GetLastAddedContacts(string userObjectId, int numberOfContacts);
+    Task<List<UserDTO>?> GetLastAddedContacts(string userObjectId, int numberOfContacts);
 
     /// <summary>
     /// Gets the contacts of the given user
     /// that contain the given name asynchronously
     /// </summary>
-    Task<List<UserDTO>> GetUserContactsFilteredByName(string userObjectId, string name);
+    Task<List<UserDTO>?> GetUserContactsFilteredByName(string userObjectId, string name);
 
     /// <summary>
     /// Creates a user from the given UserDTO

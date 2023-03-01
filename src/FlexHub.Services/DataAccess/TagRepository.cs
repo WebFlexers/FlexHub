@@ -18,9 +18,30 @@ public class TagRepository : ITagRepository
     }
 
     /// <summary>
+    /// Gets all the tags
+    /// </summary>
+    public async Task<List<TagDTO>?> GetAllTags()
+    {
+        try
+        {
+            var tags = await _dbContext.Tags
+                .AsNoTracking()
+                .Select(tag => new TagDTO { Id = tag.Id, Value = tag.Value })
+                .ToListAsync();
+
+            return tags;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to fetch user tags");
+            return default;
+        }
+    }
+
+    /// <summary>
     /// Gets all the tags that the user has subscribed to asynchronously
     /// </summary>
-    public async Task<List<TagDTO>> GetUserTags(string userObjectId)
+    public async Task<List<TagDTO>?> GetUserTags(string userObjectId)
     {
         try
         {

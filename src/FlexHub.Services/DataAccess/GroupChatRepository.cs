@@ -23,7 +23,7 @@ public class GroupChatRepository : IGroupChatRepository
     /// Gets the group chats of the given user
     /// whose title contains the given title asynchronously
     /// </summary>
-    public async Task<List<GroupChatDTO>> GetGroupChatsFilteredByName(string userObjectId, string groupChatTitle)
+    public async Task<List<GroupChatDTO>?> GetGroupChatsFilteredByName(string userObjectId, string groupChatTitle)
     {
         try
         {
@@ -53,7 +53,7 @@ public class GroupChatRepository : IGroupChatRepository
     /// <param name="groupChatId">The group chat id</param>
     /// <param name="pageNumber">The page number of the pagination</param>
     /// <param name="numberOfMessagesToLoad">The number of messages to load</param>
-    public async Task<List<GroupMessageDTO>> GetSortedGroupMessagesPaginated(
+    public async Task<List<GroupMessageDTO>?> GetSortedGroupMessagesPaginated(
         int groupChatId, int pageNumber, int numberOfMessagesToLoad)
     {
         try
@@ -95,8 +95,8 @@ public class GroupChatRepository : IGroupChatRepository
                 GroupChatId = groupChatId
             };
 
-            _dbContext.GroupMessages.Add(groupMessage);
-            _dbContext.SaveChanges();
+            await _dbContext.GroupMessages.AddAsync(groupMessage);
+            await _dbContext.SaveChangesAsync();
 
             return true;
         }
@@ -106,7 +106,5 @@ public class GroupChatRepository : IGroupChatRepository
 
             return false;
         }
-
-        throw new NotImplementedException();
     }
 }

@@ -200,6 +200,16 @@ public class PostRepository : IPostRepository
     {
         try
         {
+            var existingPost = await _dbContext.Posts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(post => post.Title.ToLower().Trim().Equals(postDTO.Title.ToLower().Trim()) &&
+                               post.UserObjectId.Equals(postDTO.UserObjectId));
+
+            if (existingPost != null)
+            {
+                return false;
+            }
+
             // Create post
             var post = new Post()
             {

@@ -1,32 +1,50 @@
-﻿@page "/"
+﻿@page "/create-post"
+@using FlexHub.BlazorServer.Pages.MainFeed
+
+<RadzenNotification />
 
 <AuthorizeView>
     <Authorized>
         @{
             _userClaims = context.User.Claims.ToArray();
         }
-        
-        <div class="main-feed-page">
-            <div class="container">
-                <div class="text-center mt-3">
-                    <ContactsHorizontalBar @ref="ContactsHorizontalBarComponent" />
-                </div>
-                
-                @if (_areRecentContactsEmpty == false)
-                {
-                    <div class="screen-divider mt-3"></div>
-                }
 
-                <div class="text-center mt-3">
-                    <MainPostsFeed @ref="MainPostsFeedComponent"/>
-                </div>
+        <div class="page-container">
+            <div class="container">
+                <EditForm Context="editFormContext" Model="@_post" OnValidSubmit="async () => { await Create(); }">
+                    <!-- Validate the model -->
+                    <DataAnnotationsValidator/>
+
+                    <div class="page-title-container text-center py-3 mt-4 shadow-sm">
+                        <h1>Create Post</h1>
+                    </div>
+
+                    <div class="post-container p-4 my-4 shadow-sm">
+                        <div>
+                            <RadzenTextBox @bind-Value="_post.Title" Placeholder="Title"/>
+                        </div>
+
+                        <div class="mt-3">
+                            <RadzenTextArea @bind-Value="_post.Content" Style="width: 100%; min-height: 250px;" Placeholder="Content"/>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <RadzenButton type="submit" Style="width: 100%; max-width: 500px;">Submit</RadzenButton>
+                    </div>
+                    
+                    <div class="text-center mt-5">
+                        <!-- Show the result of whatever is invalid -->
+                        <ValidationSummary/>
+                    </div>
+                </EditForm>
             </div>
 
             <div class="right-side-panel left-side-shadow">
                 <div class="profile-container shadow-sm">
                     <RadzenProfileMenu Style="background-color: var(--rz-background-primary); margin: 0; padding-right: 0;">
                         <Template>
-                            <RadzenImage Path="uploaded-images/user-profiles/generic-user.png" Style="width: 3rem;" />
+                            <RadzenImage Path="uploaded-images/user-profiles/generic-user.png" Style="width: 3rem;"/>
                         </Template>
 
                         <ChildContent>
@@ -40,16 +58,12 @@
                     </div>
                 </div>
 
-                <div class="text-center mt-3 pb-3 px-2 shadow-sm">
-                    <RadzenTextBox type="search" @bind-Value="SearchPostsTermsStore.SearchText" Placeholder="Search..." />
-                </div>
-
                 <div class="tags-container text-center mt-3">
-                    <h2 class="fs-5">Preferred Tags</h2>
+                    <h2 class="fs-5">Select tags</h2>
                     <RadzenStack Orientation="Orientation.Vertical" Gap="1rem" JustifyContent="JustifyContent.SpaceEvenly" AlignItems="AlignItems.Start">
-                        @if (SearchPostsTermsStore.Tags != null && SearchPostsTermsStore.Tags.Any())
+                        @if (_allTags != null && _allTags.Any())
                         {
-                            foreach (var tag in SearchPostsTermsStore.Tags)
+                            foreach (var tag in _allTags)
                             {
                                 <div class="px-3">
                                     <RadzenCheckBox @bind-Value="@tag.IsChecked" Name="@($"Tag{tag.Id}")"></RadzenCheckBox>
@@ -60,19 +74,13 @@
                         else
                         {
                             <div class="px-3 mt-3">
-                                <p>No favorite tags found. Go to your profile to customize your tags</p>
+                                <p>Loading...</p>
                             </div>
                         }
-
                     </RadzenStack>
-                </div>
-
-                <div class="text-center mt-4">
-                    <RadzenButton Click="async () => { await OnSearchButtonClick(); }">Search</RadzenButton>
                 </div>
             </div>
         </div>
-
     </Authorized>
     <NotAuthorized>
         <NotLoggedInPostsSearchSidebar/>
