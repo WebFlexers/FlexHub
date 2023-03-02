@@ -1,7 +1,7 @@
 ﻿:root {
-    --rz-primary: hsl(198, 100%, 75%);
-    --rz-primary-light: hsl(198, 100%, 90%);
-    --rz-secondary: hsl(54, 100%, 75%);
+    --rz-primary: hsl(198, 85%, 65%);
+    --rz-primary-light: hsl(198, 85%, 85%);
+    --rz-secondary: hsl(54, 85%, 65%);
     --rz-background-primary: hsl(0, 100%, 100%);
     --rz-background-secondary: hsl(0, 1%, 95%);
     --rz-primary-text: hsl(0, 0, 0);
