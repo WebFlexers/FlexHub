@@ -1,0 +1,19 @@
+﻿.container {
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    margin-top: 5rem;
+}
+
+.login-container {
+    max-width: 400px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin-top: 2rem;
+    }
+    .login-container {
+        max-width: 768px;
+    }
+}

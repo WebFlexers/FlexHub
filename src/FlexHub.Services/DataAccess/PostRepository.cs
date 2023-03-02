@@ -43,6 +43,7 @@ public class PostRepository : IPostRepository
                     PostId = post.Id,
                     Title = post.Title,
                     Content = post.Content,
+                    CreatedAt = post.CreatedAt,
                     Tags = post.PostsTags.Select(postTag => new TagDTO
                     {
                         Id = postTag.TagId,
@@ -78,6 +79,7 @@ public class PostRepository : IPostRepository
                     PostId = post.Id,
                     Title = post.Title,
                     Content = post.Content,
+                    CreatedAt = post.CreatedAt,
                     Tags = post.PostsTags.Select(postTag => new TagDTO
                     {
                         Id = postTag.TagId,
@@ -125,6 +127,7 @@ public class PostRepository : IPostRepository
                     PostId = post.Id,
                     Title = post.Title,
                     Content = post.Content,
+                    CreatedAt = post.CreatedAt,
                     Tags = post.PostsTags.Select(postTag => new TagDTO
                     {
                         Id = postTag.TagId,
@@ -174,6 +177,7 @@ public class PostRepository : IPostRepository
                     PostId = post.Id,
                     Title = post.Title,
                     Content = post.Content,
+                    CreatedAt = post.CreatedAt,
                     Tags = post.PostsTags.Select(postTag => new TagDTO
                     {
                         Id = postTag.TagId,

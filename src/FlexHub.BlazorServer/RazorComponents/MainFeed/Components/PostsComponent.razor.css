@@ -9,6 +9,13 @@
     color: red;
 }
 
+.tags-container {
+    display: flex;
+    flex-grow: 0;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
 @media (max-width: 950px) {
     .post-container {
         width: 90%;

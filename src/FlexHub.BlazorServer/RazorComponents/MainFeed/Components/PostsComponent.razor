@@ -15,13 +15,17 @@
                         <p class="text-start fw-bold mt-3">
                             <span class="fw-normal">Posted by - </span> @post.PublisherDisplayName
                         </p>
+                        
+                        <p class="text-start fw-bold mt-1">
+                            <span class="fw-normal">At - </span> @post.CreatedAt
+                        </p>
 
-                        <div class="d-inline-flex flex-wrap justify-content-start fst-italic mt-2">
+                        <div class="tags-container fst-italic mt-4">
                             @if (post.Tags != null && post.Tags.Any())
                             {
                                 @foreach (var tag in post.Tags)
                                 {
-                                    <p class="text-end ms-2">
+                                    <p class="ms-2">
                                         @tag.Value
                                     </p>
                                 }

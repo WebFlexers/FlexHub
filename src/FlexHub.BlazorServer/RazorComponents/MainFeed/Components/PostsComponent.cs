@@ -1,4 +1,5 @@
-﻿using FlexHub.BlazorServer.Models;
+﻿using System.Globalization;
+using FlexHub.BlazorServer.Models;
 using FlexHub.BlazorServer.Stores.Search;
 using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
@@ -78,6 +79,7 @@ public partial class PostsComponent
                 Title = newPost.Title,
                 Content = newPost.Content,
                 PublisherDisplayName = authorDisplayName?.DisplayName,
+                CreatedAt = newPost.CreatedAt.ToLocalTime().ToString(CultureInfo.InvariantCulture),
                 Tags = newPost.Tags
             });
         }
