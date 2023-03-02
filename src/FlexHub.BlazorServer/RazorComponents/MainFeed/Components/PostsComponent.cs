@@ -5,16 +5,15 @@ using FlexHub.Data.Entities;
 using FlexHub.Services.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Components;
 
-namespace FlexHub.BlazorServer.Pages.MainFeed;
+namespace FlexHub.BlazorServer.RazorComponents.MainFeed.Components;
 
-public partial class MainPostsFeed
+public partial class PostsComponent
 {
-    [Inject]
-    public IPostRepository PostRepository { get; set; }
-    [Inject]
-    public IUserRepository UserRepository { get; set; }
-    [Inject]
-    public ISearchPostsTermsStore SearchPostsTermsStore { get; set; }
+    [Inject] public IPostRepository PostRepository { get; set; } = null!;
+
+    [Inject] public IUserRepository UserRepository { get; set; } = null!;
+
+    [Inject] public ISearchPostsTermsStore SearchPostsTermsStore { get; set; } = null!;
 
     public List<PostModel>? Posts { get; set; } = new();
 
@@ -27,14 +26,16 @@ public partial class MainPostsFeed
 
     public async Task FetchPosts(int pageNumber, int itemsPerPage)
     {
-        List<PostDTO>? newPosts = new();
-        var newSearchMode = SearchPostsTermsStore.GetSearchMode(); 
+        List<PostDTO>? newPosts;
+        var newSearchMode = SearchPostsTermsStore.GetSearchMode();
 
         switch (newSearchMode)
         {
             case SearchBy.None:
-                var tagEntities = SearchPostsTermsStore.Tags!.Select(tm => new Tag { Id = tm.Id, Value = tm.Value }).ToList();
-                newPosts = await PostRepository.GetPaginatedPostsSortedByPreferredTags(tagEntities, pageNumber, itemsPerPage);
+                var tagEntities = SearchPostsTermsStore.Tags!.Select(tm => new Tag { Id = tm.Id, Value = tm.Value })
+                    .ToList();
+                newPosts = await PostRepository.GetPaginatedPostsSortedByPreferredTags(tagEntities, pageNumber,
+                    itemsPerPage);
                 break;
             case SearchBy.SearchText:
                 newPosts = await PostRepository.GetPaginatedPostsFilteredByTitle(SearchPostsTermsStore.SearchText!,
@@ -57,10 +58,7 @@ public partial class MainPostsFeed
                 throw new ArgumentOutOfRangeException();
         }
 
-        if (newPosts == null || newPosts.Any().Equals(false))
-        {
-            return;
-        }
+        if (newPosts == null || newPosts.Any().Equals(false)) return;
 
         // If the search filters have changed search from the beginning
         if (newSearchMode.Equals(SearchPostsTermsStore.LastSearch) == false)
@@ -71,7 +69,7 @@ public partial class MainPostsFeed
 
         SearchPostsTermsStore.LastSearch = newSearchMode;
 
-        var newPostModels = new List<PostModel>();
+        List<PostModel> newPostModels = new();
         foreach (var newPost in newPosts)
         {
             var authorDisplayName = await UserRepository.GetUser(newPost.UserObjectId);
@@ -79,16 +77,13 @@ public partial class MainPostsFeed
             {
                 Title = newPost.Title,
                 Content = newPost.Content,
-                PublisherDisplayName = authorDisplayName.DisplayName,
-                Tags = newPost.Tags,
+                PublisherDisplayName = authorDisplayName?.DisplayName,
+                Tags = newPost.Tags
             });
         }
 
         var postsCount = Posts!.Count;
-        if (postsCount is > 0 and < 5)
-        {
-            return;
-        }
+        if (postsCount is > 0 and < 5) return;
 
         Posts!.AddRange(newPostModels);
 

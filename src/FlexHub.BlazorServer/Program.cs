@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"));
 
 builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
 
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(opts => opts.RootDirectory = "/RazorComponents");
 builder.Services.AddServerSideBlazor()
     .AddMicrosoftIdentityConsentHandler();
 
@@ -26,7 +26,7 @@ builder.AddRepositoryServices();
 builder.AddRadzen();
 builder.AddStores();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {

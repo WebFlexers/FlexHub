@@ -70,7 +70,7 @@ public class UserRepository : IUserRepository
                     ObjectId = contact.ContactUser.ObjectId,
                     EmailAddress = contact.ContactUser.EmailAddress,
                     GivenName = contact.ContactUser.GivenName,
-                    Surname= contact.ContactUser.Surname,
+                    Surname = contact.ContactUser.Surname,
                     DisplayName = contact.ContactUser.DisplayName,
                     Country = contact.ContactUser.Country,
                     CreatedAt = contact.ContactUser.CreatedAt,
@@ -231,7 +231,7 @@ public class UserRepository : IUserRepository
     /// <param name="senderUserObjectId">The user object id of the user who sent the contact request</param>
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> AcceptContactRequest(string receiverUserObjectId, string senderUserObjectId)
-    {      
+    {
         try
         {
             // Remove contact request

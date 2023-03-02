@@ -1,5 +1,5 @@
-﻿using System.Text;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using System.Text;
 using Xunit.Abstractions;
 
 namespace FlexHub.Services.IntegrationTests.Utilities;

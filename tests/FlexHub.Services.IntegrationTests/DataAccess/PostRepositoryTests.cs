@@ -1,5 +1,4 @@
-﻿using Azure;
-using FlexHub.Data.DTOs;
+﻿using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
 using FlexHub.Data.Seeding;
 using FlexHub.Services.DataAccess;
@@ -33,7 +32,7 @@ public class PostRepositoryTests
         // Testing
         var posts = await postRepository.GetPaginatedPostsFilteredByTitle(postTitle, 1, 10);
 
-        foreach(var post in posts)
+        foreach (var post in posts)
         {
             _logger.LogInformation(post.Title);
         }
@@ -52,7 +51,7 @@ public class PostRepositoryTests
 
         var user = SampleData.UserObjectIds.First();
 
-        List<TagDTO> prefferedTagsDTOs = new List<TagDTO>() 
+        List<TagDTO> prefferedTagsDTOs = new List<TagDTO>()
         {
             new TagDTO(){Id = 3, Value = "History"},
             new TagDTO(){Id = 9, Value = "Religion"},
@@ -136,7 +135,7 @@ public class PostRepositoryTests
             // Verification
             Assert.Equal(tags.Count, necessaryTagsCount);
         }
-        
+
     }
 
     [Fact]

@@ -33,7 +33,7 @@ public class DirectMessageRepository : IDirectMessageRepository
 
         try
         {
-            var msgs = await _dbContext.DirectMessages
+            var messages = await _dbContext.DirectMessages
             .Where(dm => dm.SenderUserObjectId == primaryUserObjectId && dm.ReceiverUserObjectId == contactUserObjectId)
             .Paginate(pageNumber, numberOfMessagesToLoad)
             .Select(dm => new DirectMessageDTO()
@@ -44,7 +44,7 @@ public class DirectMessageRepository : IDirectMessageRepository
                 ReceiverUserObjectId = contactUserObjectId
             }).ToListAsync().ConfigureAwait(false);
 
-            return msgs;
+            return messages;
         }
         catch (Exception ex)
         {

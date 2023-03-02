@@ -110,7 +110,7 @@ public class PostRepository : IPostRepository
                 .GroupBy(pt => pt.PostId)
                 .Where(group => group.Count() == tags.Count)
                 .Paginate(pageNumber, numberOfPostsToLoad)
-                .Select(group =>  group.Key)
+                .Select(group => group.Key)
                 .ToListAsync();
 
             if (postIds.Any() == false)
@@ -154,12 +154,12 @@ public class PostRepository : IPostRepository
         {
             var postIds = await _dbContext.PostsTags
                 .AsNoTracking()
-                .Where(pt => pt.Post.Title.Contains(title) && 
+                .Where(pt => pt.Post.Title.Contains(title) &&
                                     tags.Contains(pt.Tag))
                 .GroupBy(pt => pt.PostId)
                 .Where(group => group.Count() == tags.Count)
                 .Paginate(pageNumber, numberOfPostsToLoad)
-                .Select(group =>  group.Key)
+                .Select(group => group.Key)
                 .ToListAsync();
 
             if (postIds.Any() == false)
@@ -227,8 +227,9 @@ public class PostRepository : IPostRepository
             var postTags = new List<PostTag>();
             foreach (var tag in postDTO.Tags)
             {
-                postTags.Add(new PostTag() { 
-                    PostId = post.Id,                
+                postTags.Add(new PostTag()
+                {
+                    PostId = post.Id,
                     TagId = tag.Id
                 });
             }

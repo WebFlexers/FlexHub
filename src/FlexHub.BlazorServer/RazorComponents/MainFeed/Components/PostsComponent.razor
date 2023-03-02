@@ -17,11 +17,14 @@
                         </p>
 
                         <div class="d-inline-flex flex-wrap justify-content-start fst-italic mt-2">
-                            @foreach (var tag in post.Tags)
+                            @if (post.Tags != null && post.Tags.Any())
                             {
-                                <p class="text-end ms-2">
-                                    @tag.Value
-                                </p>
+                                @foreach (var tag in post.Tags)
+                                {
+                                    <p class="text-end ms-2">
+                                        @tag.Value
+                                    </p>
+                                }
                             }
                         </div>
                     </RadzenCard>

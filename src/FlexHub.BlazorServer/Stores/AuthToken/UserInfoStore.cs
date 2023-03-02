@@ -1,12 +1,10 @@
-﻿using FlexHub.Data.DTOs;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using FlexHub.Data.DTOs;
 
 namespace FlexHub.BlazorServer.Stores.AuthToken;
 
 public class UserInfoStore : IUserInfoStore
 {
-    public UserDTO? UserDTO { get; set; }
-
     private readonly ILogger<UserInfoStore> _logger;
 
     public UserInfoStore(ILogger<UserInfoStore> logger)
@@ -14,8 +12,12 @@ public class UserInfoStore : IUserInfoStore
         _logger = logger;
     }
 
-    public UserDTO? CreateUserDtoFromClaims(Claim[] claims)
+    public UserDTO? UserDTO { get; set; }
+
+    public UserDTO? CreateUserDtoFromClaims(Claim[]? claims)
     {
+        if (claims == null) return default;
+
         var userObjectId = claims.FirstOrDefault(c => c.Type.Contains("nameidentifier"))?.Value;
         var email = claims.FirstOrDefault(c => c.Type.Contains("emails"))?.Value;
         var givenName = claims.FirstOrDefault(c => c.Type.Contains("givenname"))?.Value;
@@ -24,13 +26,15 @@ public class UserInfoStore : IUserInfoStore
         var country = claims.FirstOrDefault(c => c.Type.Contains("country"))?.Value;
         var createdAtUnix = claims.FirstOrDefault(c => c.Type.Contains("auth_time"))?.Value;
 
-        if (string.IsNullOrWhiteSpace(userObjectId) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(givenName) ||
-            string.IsNullOrWhiteSpace(surname) || string.IsNullOrWhiteSpace(displayName) || string.IsNullOrWhiteSpace(country) ||
+        if (string.IsNullOrWhiteSpace(userObjectId) || string.IsNullOrWhiteSpace(email) ||
+            string.IsNullOrWhiteSpace(givenName) ||
+            string.IsNullOrWhiteSpace(surname) || string.IsNullOrWhiteSpace(displayName) ||
+            string.IsNullOrWhiteSpace(country) ||
             string.IsNullOrWhiteSpace(createdAtUnix))
         {
             _logger.LogError("1 or more properties from jwt token where null after registration. The properties are " +
                              "objectId: {userObjectId}, email: {email}, given name: {givenName}, surname: {surname}, displayname: {displayName}" +
-                             "country: {country}, createdAtUnix: {createdAtUnix}", 
+                             "country: {country}, createdAtUnix: {createdAtUnix}",
                 userObjectId, email, givenName, surname, displayName, country, createdAtUnix);
             return default;
         }

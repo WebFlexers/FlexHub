@@ -1,5 +1,4 @@
-﻿using FlexHub.Data.Entities;
-using FlexHub.Data.Seeding;
+﻿using FlexHub.Data.Seeding;
 using FlexHub.Services.DataAccess;
 using FlexHub.Services.IntegrationTests.Fixtures;
 using FlexHub.Services.IntegrationTests.Utilities;
@@ -31,7 +30,7 @@ public class TagRepositoryTests
         // Testing
         var userTags = await tagRepository.GetUserTags(userId);
 
-        foreach (var tag in userTags) 
+        foreach (var tag in userTags)
         {
             _logger.LogInformation(tag.Value);
         }

@@ -1,9 +1,9 @@
-﻿using System.Data;
-using System.Reflection;
-using FlexHub.Data;
+﻿using FlexHub.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
+using System.Reflection;
 
 namespace FlexHub.Services.IntegrationTests.Fixtures;
 

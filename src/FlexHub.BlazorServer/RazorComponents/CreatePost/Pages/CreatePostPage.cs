@@ -1,44 +1,41 @@
-﻿using FlexHub.BlazorServer.Models;
+﻿using System.Security.Claims;
+using FlexHub.BlazorServer.Models;
 using FlexHub.BlazorServer.Stores.AuthToken;
 using FlexHub.Data.DTOs;
 using FlexHub.Services.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Radzen;
-using System.Security.Claims;
 
-namespace FlexHub.BlazorServer.Pages.CreatePost;
+namespace FlexHub.BlazorServer.RazorComponents.CreatePost.Pages;
 
-public partial class CreatePost
+public partial class CreatePostPage
 {
-    [Inject]
-    public ILogger<CreatePost> Logger { get; set; }
-    [Inject]
-    public IUserInfoStore UserInfoStore { get; set; }
-    [Inject]
-    public ITagRepository TagRepository { get; set; }
-    [Inject]
-    public IPostRepository PostRepository { get; set; }
-    [Inject] 
-    public NotificationService NotificationService { get; set; }
-
-    private Claim[]? _userClaims;
+    private readonly CreatePostModel _post = new();
     private List<TagModel>? _allTags;
+    private Claim[]? _userClaims;
 
-    private CreatePostModel _post = new();
+    [Inject] public ILogger<CreatePostPage> Logger { get; set; } = null!;
+
+    [Inject] public IUserInfoStore UserInfoStore { get; set; } = null!;
+
+    [Inject] public ITagRepository TagRepository { get; set; } = null!;
+
+    [Inject] public IPostRepository PostRepository { get; set; } = null!;
+
+    [Inject] public NotificationService NotificationService { get; set; } = null!;
 
     public async Task Create()
     {
-        if (UserInfoStore.UserDTO?.ObjectId == null)
-        {
-            return;
-        }
+        if (UserInfoStore.UserDTO?.ObjectId == null) return;
+
+        if (_allTags == null || _allTags.Any().Equals(false)) return;
 
         var checkedTags = _allTags
             .Where(t => t.IsChecked)
             .Select(t => new TagDTO
             {
                 Id = t.Id,
-                Value = t.Value,
+                Value = t.Value
             }).ToList();
 
         if (checkedTags.Any() == false)
@@ -64,8 +61,8 @@ public partial class CreatePost
                 .Select(t => new TagDTO
                 {
                     Id = t.Id,
-                    Value = t.Value,
-                }).ToList(),
+                    Value = t.Value
+                }).ToList()
         });
 
         if (postCreated)
@@ -96,6 +93,8 @@ public partial class CreatePost
     {
         var tags = await TagRepository.GetAllTags();
 
+        if (tags == null || tags.Any().Equals(false)) return;
+
         _allTags = tags.Select(tag => new TagModel
         {
             Id = tag.Id,
@@ -106,10 +105,7 @@ public partial class CreatePost
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender == false)
-        {
-            return;
-        } 
+        if (firstRender == false) return;
 
         UserInfoStore.UserDTO = UserInfoStore.CreateUserDtoFromClaims(_userClaims!);
 

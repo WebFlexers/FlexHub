@@ -15,23 +15,17 @@ public class SearchPostsTermsStore : ISearchPostsTermsStore
     /// <returns>The search mode</returns>
     public SearchBy GetSearchMode()
     {
-        var areAnyTagsSelected = Tags is not null && Tags.Any(tm => tm.IsChecked);
+        bool areAnyTagsSelected = Tags is not null && Tags.Any(tm => tm.IsChecked);
 
         if (string.IsNullOrWhiteSpace(SearchText) && areAnyTagsSelected.Equals(false))
         {
             return SearchBy.None;
         }
 
-        if (string.IsNullOrWhiteSpace(SearchText) && areAnyTagsSelected)
-        {
-            return SearchBy.Tags;
-        }
-
-        if (string.IsNullOrWhiteSpace(SearchText).Equals(false) && areAnyTagsSelected.Equals(false))
-        {
-            return SearchBy.SearchText;
-        }
-
-        return SearchBy.SearchTextAndTags;
+        return string.IsNullOrWhiteSpace(SearchText) && areAnyTagsSelected
+            ? SearchBy.Tags
+            : string.IsNullOrWhiteSpace(SearchText).Equals(false) && areAnyTagsSelected.Equals(false)
+            ? SearchBy.SearchText
+            : SearchBy.SearchTextAndTags;
     }
 }

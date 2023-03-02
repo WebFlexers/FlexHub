@@ -1,10 +1,9 @@
-﻿using System.Globalization;
-using System;
-using System.Text;
-using Bogus;
+﻿using Bogus;
 using Bogus.DataSets;
 using FlexHub.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Text;
 
 namespace FlexHub.Data.Seeding;
 
@@ -37,7 +36,7 @@ public class SampleData
 
     public static string[] TagsStrings = new[]
     {
-        "Science", "Music", "History", "Mathematics", "Literature", "Geography", 
+        "Science", "Music", "History", "Mathematics", "Literature", "Geography",
         "Philosophy", "Art", "Religion", "Sports", "Technology", "Economics", "Political Science"
     };
 
@@ -411,18 +410,18 @@ public class SampleData
             numberOfMinutesToAdd = numberOfMinutesToAdd.Add(TimeSpan.FromMinutes(5));
 
             for (int i = 0; i < _random.Next(2, 5); i++)
-            {             
+            {
                 User randomUser;
 
                 do
                 {
                     randomUser = _users.ElementAt(_random.Next(0, _users.Count));
-                } while 
-                    (randomUser != user 
-                    && _contacts.Any(contact => 
+                } while
+                    (randomUser != user
+                    && _contacts.Any(contact =>
                         (contact.UserObjectId == user.ObjectId && contact.ContactObjectId == randomUser.ObjectId) ||
                         contact.UserObjectId == randomUser.ObjectId && contact.ContactObjectId == user.ObjectId));
-              
+
                 _contacts.Add(new Contact
                 {
                     UserObjectId = user.ObjectId,

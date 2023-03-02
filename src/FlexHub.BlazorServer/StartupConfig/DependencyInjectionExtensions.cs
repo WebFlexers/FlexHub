@@ -29,5 +29,5 @@ public static class DependencyInjectionExtensions
     {
         builder.Services.AddScoped<ISearchPostsTermsStore, SearchPostsTermsStore>();
         builder.Services.AddScoped<IUserInfoStore, UserInfoStore>();
-    } 
+    }
 }

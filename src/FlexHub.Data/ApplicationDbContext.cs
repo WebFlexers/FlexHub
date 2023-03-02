@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using FlexHub.Data.Entities;
+﻿using FlexHub.Data.Entities;
 using FlexHub.Data.Seeding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
 
 namespace FlexHub.Data;
 

@@ -1,0 +1,14 @@
+﻿@if (RecentContacts != null)
+{
+    <div class="contacts-container">
+
+        @foreach (var contact in RecentContacts)
+        {
+            <div class="mx-2 text-center">
+                <RadzenImage Path="uploaded-images/user-profiles/generic-user.png" Style="width: 3rem;"/>
+                <p class="contact-name">@contact.DisplayName</p>
+            </div>
+        }
+
+    </div>
+}

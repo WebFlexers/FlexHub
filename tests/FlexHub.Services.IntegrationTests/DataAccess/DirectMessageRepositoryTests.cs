@@ -67,7 +67,7 @@ public class DirectMessageRepositoryTests
         var directMessages = await directMessageRepository.GetDirectMessagesOf2UsersPaginated(senderUserId, contactUserId, 1, 10);
 
         _logger.LogInformation("Sender: " + senderUserId + ", Contact: " + contactUserId);
-        foreach ( var directMessage in directMessages )
+        foreach (var directMessage in directMessages)
         {
             _logger.LogInformation("Meesage: " + directMessage);
         }

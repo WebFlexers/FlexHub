@@ -1,5 +1,5 @@
-﻿using System.Security.Claims;
-using FlexHub.Data.DTOs;
+﻿using FlexHub.Data.DTOs;
+using System.Security.Claims;
 
 namespace FlexHub.BlazorServer.Stores.AuthToken;
 

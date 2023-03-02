@@ -50,7 +50,7 @@ public class TagRepository : ITagRepository
                .Select(userTag => new TagDTO { Id = userTag.TagId, Value = userTag.Tag.Value })
                .ToListAsync().ConfigureAwait(false);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to fetch user tags");
             return default;
