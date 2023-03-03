@@ -6,15 +6,13 @@ using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.DataAccess;
 
-public class TagRepository : ITagRepository
+public class TagRepository : EfCoreRepositoryBase, ITagRepository
 {
     private readonly ILogger<TagRepository> _logger;
-    private readonly ApplicationDbContext _dbContext;
 
-    public TagRepository(ILogger<TagRepository> logger, ApplicationDbContext dbContext)
+    public TagRepository(ILogger<TagRepository> logger, IDbContextFactory<ApplicationDbContext> dbContextFactory) : base(dbContextFactory)
     {
         _logger = logger;
-        _dbContext = dbContext;
     }
 
     /// <summary>
@@ -22,9 +20,14 @@ public class TagRepository : ITagRepository
     /// </summary>
     public async Task<List<TagDTO>?> GetAllTags()
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var tags = await _dbContext.Tags
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var tags = await dbContext.Tags
                 .AsNoTracking()
                 .Select(tag => new TagDTO { Id = tag.Id, Value = tag.Value })
                 .ToListAsync();
@@ -36,6 +39,10 @@ public class TagRepository : ITagRepository
             _logger.LogError(ex, "Failed to fetch user tags");
             return default;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -43,9 +50,14 @@ public class TagRepository : ITagRepository
     /// </summary>
     public async Task<List<TagDTO>?> GetUserTags(string userObjectId)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            return await _dbContext.UsersTags
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            return await dbContext.UsersTags
                .Where(userTag => userTag.UserObjectId == userObjectId)
                .Select(userTag => new TagDTO { Id = userTag.TagId, Value = userTag.Tag.Value })
                .ToListAsync().ConfigureAwait(false);
@@ -54,6 +66,10 @@ public class TagRepository : ITagRepository
         {
             _logger.LogError(ex, "Failed to fetch user tags");
             return default;
+        }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
         }
     }
 }

@@ -7,15 +7,13 @@ using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.DataAccess;
 
-public class UserRepository : IUserRepository
+public class UserRepository : EfCoreRepositoryBase, IUserRepository
 {
     private readonly ILogger<UserRepository> _logger;
-    private readonly ApplicationDbContext _dbContext;
 
-    public UserRepository(ILogger<UserRepository> logger, ApplicationDbContext dbContext)
+    public UserRepository(ILogger<UserRepository> logger, IDbContextFactory<ApplicationDbContext> dbContextFactory) : base(dbContextFactory)
     {
         _logger = logger;
-        _dbContext = dbContext;
     }
 
     /// <summary>
@@ -23,9 +21,14 @@ public class UserRepository : IUserRepository
     /// </summary>
     public async Task<UserDTO?> GetUser(string userObjectId)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var user = await _dbContext.Users
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var user = await dbContext.Users
                 .FindAsync(userObjectId);
 
             if (user != null)
@@ -50,6 +53,10 @@ public class UserRepository : IUserRepository
             _logger.LogError(ex, "Failed to get user display name with user object id: {id}", userObjectId);
             return default;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -59,9 +66,14 @@ public class UserRepository : IUserRepository
     /// <param name="numberOfContacts">The number of contacts to load</param>
     public async Task<List<UserDTO>?> GetLastAddedContacts(string userObjectId, int numberOfContacts)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var latestContacts = await _dbContext.Contacts
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var latestContacts = await dbContext.Contacts
                 .Where(contact => contact.UserObjectId == userObjectId && contact.ContactObjectId != userObjectId)
                 .OrderByDescending(contact => contact.CreatedAt)
                 .Take(numberOfContacts)
@@ -85,6 +97,10 @@ public class UserRepository : IUserRepository
             _logger.LogError(ex, "Failed to get latest contacts");
             return default;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -92,9 +108,14 @@ public class UserRepository : IUserRepository
     /// </summary>
     public async Task<List<UserDTO>?> GetUserContacts(string userObjectId)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var contacts = await _dbContext.Contacts
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var contacts = await dbContext.Contacts
                 .AsNoTracking()
                 .Where(contact => contact.UserObjectId.Equals(userObjectId))
                 .OrderByDescending(c => c.CreatedAt)
@@ -118,8 +139,10 @@ public class UserRepository : IUserRepository
             _logger.LogError(ex, "Failed to get user contacts");
             return default;
         }
-
-
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -128,9 +151,14 @@ public class UserRepository : IUserRepository
     /// </summary>
     public async Task<List<UserDTO>?> GetUserContactsFilteredByName(string userObjectId, string name)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var contacts = await _dbContext.Contacts
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var contacts = await dbContext.Contacts
                 .Where(contact => contact.UserObjectId == userObjectId && contact.ContactUser.DisplayName.Contains(name))
                 .Select(contact => new UserDTO()
                 {
@@ -152,6 +180,10 @@ public class UserRepository : IUserRepository
             _logger.LogError(ex, "Failed to get contacts filtered by name");
             return default;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -160,13 +192,18 @@ public class UserRepository : IUserRepository
     /// </summary>
     public async Task<bool> CreateUser(UserDTO userDTO)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var existingUser = await _dbContext.Users.FindAsync(userDTO.ObjectId);
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var existingUser = await dbContext.Users.FindAsync(userDTO.ObjectId);
 
             if (existingUser == null)
             {
-                await _dbContext.AddAsync(new User
+                await dbContext.AddAsync(new User
                 {
                     ObjectId = userDTO.ObjectId,
                     EmailAddress = userDTO.EmailAddress,
@@ -178,7 +215,7 @@ public class UserRepository : IUserRepository
                     UpdatedAt = userDTO.UpdatedAt
                 }).ConfigureAwait(false);
 
-                await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+                await dbContext.SaveChangesAsync().ConfigureAwait(false);
 
                 _logger.LogInformation("Successfully created user with id {objectId}", userDTO.ObjectId);
                 return true;
@@ -192,6 +229,10 @@ public class UserRepository : IUserRepository
             _logger.LogError(ex, "An error occurred while trying to create a user");
             return false;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -200,9 +241,14 @@ public class UserRepository : IUserRepository
     /// </summary>
     public async Task<bool> UpdateUser(UserDTO userDTO)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var existingUser = await _dbContext.Users.FindAsync(userDTO.ObjectId);
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var existingUser = await dbContext.Users.FindAsync(userDTO.ObjectId);
 
             if (existingUser == null)
             {
@@ -217,7 +263,7 @@ public class UserRepository : IUserRepository
             existingUser.Country = userDTO.Country;
             existingUser.UpdatedAt = userDTO.UpdatedAt;
 
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             _logger.LogInformation("Successfully updated user with id {objectId}", existingUser.ObjectId);
 
@@ -228,6 +274,10 @@ public class UserRepository : IUserRepository
             _logger.LogError(ex, "An error occurred while trying to update a user");
             return false;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -237,16 +287,21 @@ public class UserRepository : IUserRepository
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> CreateContactRequest(string senderUserObjectId, string receiverUserObjectId)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
             var contactRequest = new ContactRequest()
             {
                 SenderUserObjectId = senderUserObjectId,
                 ReceiverUserObjectId = receiverUserObjectId,
             };
 
-            await _dbContext.ContactRequests.AddAsync(contactRequest).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+            await dbContext.ContactRequests.AddAsync(contactRequest).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return true;
         }
@@ -255,6 +310,10 @@ public class UserRepository : IUserRepository
             _logger.LogError(ex, "Failed to create contact request");
 
             return false;
+        }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
         }
     }
 
@@ -267,16 +326,21 @@ public class UserRepository : IUserRepository
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> AcceptContactRequest(string receiverUserObjectId, string senderUserObjectId)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
             // Remove contact request
-            var contactRequest = _dbContext.ContactRequests
+            var contactRequest = dbContext.ContactRequests
                 .FirstOrDefault(contactRequest => contactRequest.SenderUserObjectId == senderUserObjectId && contactRequest.ReceiverUserObjectId == receiverUserObjectId);
 
             if (contactRequest != null)
             {
-                _dbContext.ContactRequests.Remove(contactRequest);
-                await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+                dbContext.ContactRequests.Remove(contactRequest);
+                await dbContext.SaveChangesAsync().ConfigureAwait(false);
             }
 
             // Add contact to user's contact list
@@ -286,8 +350,8 @@ public class UserRepository : IUserRepository
                 ContactObjectId = senderUserObjectId,
                 CreatedAt = DateTime.UtcNow
             };
-            await _dbContext.Contacts.AddAsync(contact).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+            await dbContext.Contacts.AddAsync(contact).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return true;
 
@@ -297,6 +361,10 @@ public class UserRepository : IUserRepository
             _logger.LogError(ex, "Failed to accept contact request");
             return false;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -305,16 +373,21 @@ public class UserRepository : IUserRepository
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> DeleteContact(string primaryUserObjectId, string contactToDeleteUserObjectId)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
             // Find contact
-            var contact = _dbContext.Contacts
+            var contact = dbContext.Contacts
                 .FirstOrDefault(contact => contact.UserObjectId == primaryUserObjectId && contact.ContactObjectId == contactToDeleteUserObjectId);
 
             if (contact != null)
             {
-                _dbContext.Contacts.Remove(contact);
-                await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+                dbContext.Contacts.Remove(contact);
+                await dbContext.SaveChangesAsync().ConfigureAwait(false);
             }
 
             return true;
@@ -325,6 +398,10 @@ public class UserRepository : IUserRepository
             _logger.LogError(ex, "Failed to delete contact");
             return false;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -334,16 +411,21 @@ public class UserRepository : IUserRepository
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> RemoveUserFromGroupChat(string userObjectId, int groupChatId)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var user = await _dbContext.UsersGroupChats
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var user = await dbContext.UsersGroupChats
                 .Where(user => user.UserObjectId == userObjectId && user.GroupChatId == groupChatId)
                 .FirstOrDefaultAsync();
 
             if (user == null) return false;
 
-            _dbContext.UsersGroupChats.Remove(user);
-            await _dbContext.SaveChangesAsync();
+            dbContext.UsersGroupChats.Remove(user);
+            await dbContext.SaveChangesAsync();
 
             return true;
 
@@ -352,6 +434,10 @@ public class UserRepository : IUserRepository
         {
             _logger.LogError(ex, "Failed to remove user from group chat");
             return false;
+        }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
         }
     }
 }

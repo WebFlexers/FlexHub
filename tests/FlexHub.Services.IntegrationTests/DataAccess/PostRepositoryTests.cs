@@ -3,6 +3,7 @@ using FlexHub.Data.Entities;
 using FlexHub.Data.Seeding;
 using FlexHub.Services.DataAccess;
 using FlexHub.Services.IntegrationTests.Fixtures;
+using FlexHub.Services.IntegrationTests.Mocks;
 using FlexHub.Services.IntegrationTests.Utilities;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
@@ -25,8 +26,9 @@ public class PostRepositoryTests
     public async Task GetPaginatedPostsFilteredByTitle_FetchPaginatedPostsFilteredByTitle()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
-        var postRepository = new PostRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, false);
+        await using var postRepository = new PostRepository(_logger, dbContextFactory);
+
         var postTitle = "I Love Awesome Steel Car!";
 
         // Testing
@@ -45,9 +47,8 @@ public class PostRepositoryTests
     public async Task GetPaginatedPostsSortedByPreferredTags_FetchPaginatedPostsSortedByPreferredTags()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
-
-        var postRepository = new PostRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, false);
+        await using var postRepository = new PostRepository(_logger, dbContextFactory);
 
         var user = SampleData.UserObjectIds.First();
 
@@ -107,9 +108,8 @@ public class PostRepositoryTests
     public async Task GetPaginatedPostsFilteredByTags_FetchPaginatedPostsFilteredByTags()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(false);
-
-        var postRepository = new PostRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, false);
+        await using var postRepository = new PostRepository(_logger, dbContextFactory);
 
         // Create Tags
         List<Tag> tags = new List<Tag> {
@@ -142,9 +142,8 @@ public class PostRepositoryTests
     public async Task CreatePost_CreatePost()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
-
-        var postRepository = new PostRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, true);
+        await using var postRepository = new PostRepository(_logger, dbContextFactory);
 
         var user = SampleData.UserObjectIds.First();
 

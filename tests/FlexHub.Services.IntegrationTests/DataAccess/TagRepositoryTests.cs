@@ -1,6 +1,7 @@
 ﻿using FlexHub.Data.Seeding;
 using FlexHub.Services.DataAccess;
 using FlexHub.Services.IntegrationTests.Fixtures;
+using FlexHub.Services.IntegrationTests.Mocks;
 using FlexHub.Services.IntegrationTests.Utilities;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
@@ -23,8 +24,8 @@ public class TagRepositoryTests
     public async Task GetUserTags_ShouldFetchUserTags()
     {
         // Preparation
-        using var dbContext = _fixture.GetDbContextLocalDb(true);
-        var tagRepository = new TagRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, false);
+        await using var tagRepository = new TagRepository(_logger, dbContextFactory);
         string userId = SampleData.UserObjectIds.First();
 
         // Testing

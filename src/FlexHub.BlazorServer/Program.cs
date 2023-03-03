@@ -18,7 +18,7 @@ builder.Services.AddRazorPages(opts => opts.RootDirectory = "/RazorComponents");
 builder.Services.AddServerSideBlazor()
     .AddMicrosoftIdentityConsentHandler();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
 {
     options.UseSqlServer("name=Default");
 });

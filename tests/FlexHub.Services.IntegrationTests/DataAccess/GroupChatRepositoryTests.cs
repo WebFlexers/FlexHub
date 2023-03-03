@@ -1,6 +1,7 @@
 ﻿using FlexHub.Data.Seeding;
 using FlexHub.Services.DataAccess;
 using FlexHub.Services.IntegrationTests.Fixtures;
+using FlexHub.Services.IntegrationTests.Mocks;
 using FlexHub.Services.IntegrationTests.Utilities;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
@@ -23,8 +24,8 @@ public class GroupChatRepositoryTests
     public async Task GetGroupChatsFilteredByName_FetchGroupChatsFilteredByName()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
-        var groupChatRepository = new GroupChatRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, false);
+        await using var groupChatRepository = new GroupChatRepository(_logger, dbContextFactory);
 
         var user = SampleData.UserObjectIds.ElementAt(2);
         var groupTitle = "Head";
@@ -40,8 +41,8 @@ public class GroupChatRepositoryTests
     public async Task GetSortedGroupMessagesPaginated_FetchSortedGroupMessagesPaginated()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
-        var groupChatRepository = new GroupChatRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, false);
+        await using var groupChatRepository = new GroupChatRepository(_logger, dbContextFactory);
 
         // Testing
         var groupMessages = await groupChatRepository.GetSortedGroupMessagesPaginated(2, 1, 10);
@@ -61,8 +62,8 @@ public class GroupChatRepositoryTests
     public async Task StoreGroupMessage_StoreGroupMessage()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
-        var groupChatRepository = new GroupChatRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, true);
+        await using var groupChatRepository = new GroupChatRepository(_logger, dbContextFactory);
 
         var userObjectId = SampleData.UserObjectIds.First();
         var groupId = 2;

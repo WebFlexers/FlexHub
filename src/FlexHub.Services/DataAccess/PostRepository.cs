@@ -8,15 +8,13 @@ using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.DataAccess;
 
-public class PostRepository : IPostRepository
+public class PostRepository : EfCoreRepositoryBase, IPostRepository
 {
     private readonly ILogger<PostRepository> _logger;
-    private readonly ApplicationDbContext _dbContext;
 
-    public PostRepository(ILogger<PostRepository> logger, ApplicationDbContext dbContext)
+    public PostRepository(ILogger<PostRepository> logger, IDbContextFactory<ApplicationDbContext> dbContextFactory) : base(dbContextFactory)
     {
         _logger = logger;
-        _dbContext = dbContext;
     }
 
     /// <summary>
@@ -32,9 +30,14 @@ public class PostRepository : IPostRepository
     /// <param name="preferredTags">The list of tags to sort by</param>
     public async Task<List<PostDTO>?> GetPaginatedPostsSortedByPreferredTags(List<Tag> preferredTags, int pageNumber, int numberOfPostsToLoad)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var posts = await _dbContext.Posts
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var posts = await dbContext.Posts
                 .AsNoTracking()
                 .OrderByDescending(post => post.PostsTags.Count(postTag => preferredTags.Contains(postTag.Tag)))
                 .Paginate(pageNumber, numberOfPostsToLoad)
@@ -60,6 +63,10 @@ public class PostRepository : IPostRepository
             _logger.LogInformation(ex, "Failed to get paginated posts sorted by preferred tags");
             return default;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -67,9 +74,13 @@ public class PostRepository : IPostRepository
     /// </summary>
     public async Task<List<PostDTO>?> GetPaginatedPostsFilteredByTitle(string title, int pageNumber, int numberOfPostsToLoad)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var posts = await _dbContext.Posts
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+            var posts = await dbContext.Posts
                 .AsNoTracking()
                 .Where(post => post.Title.Contains(title))
                 .OrderByDescending(post => post.CreatedAt)
@@ -97,6 +108,10 @@ public class PostRepository : IPostRepository
 
             return default;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -104,9 +119,13 @@ public class PostRepository : IPostRepository
     /// </summary>
     public async Task<List<PostDTO>?> GetPaginatedPostsFilteredByTags(List<Tag> tags, int pageNumber, int numberOfPostsToLoad)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var postIds = await _dbContext.PostsTags
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+            var postIds = await dbContext.PostsTags
                 .AsNoTracking()
                 .Where(pt => tags.Contains(pt.Tag))
                 .GroupBy(pt => pt.PostId)
@@ -120,7 +139,7 @@ public class PostRepository : IPostRepository
                 return default;
             }
 
-            var posts = await _dbContext.Posts
+            var posts = await dbContext.Posts
                 .Where(post => postIds.Contains(post.Id))
                 .Select(post => new PostDTO
                 {
@@ -144,6 +163,10 @@ public class PostRepository : IPostRepository
             _logger.LogInformation(ex, "Failed to get paginated posts filtered by tags");
             return default;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
 
     }
 
@@ -153,9 +176,13 @@ public class PostRepository : IPostRepository
     /// </summary>
     public async Task<List<PostDTO>?> GetPaginatedPostsFilteredByTitleAndTags(string title, List<Tag> tags, int pageNumber, int numberOfPostsToLoad)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var postIds = await _dbContext.PostsTags
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+            var postIds = await dbContext.PostsTags
                 .AsNoTracking()
                 .Where(pt => pt.Post.Title.Contains(title) &&
                                     tags.Contains(pt.Tag))
@@ -170,7 +197,7 @@ public class PostRepository : IPostRepository
                 return default;
             }
 
-            var posts = await _dbContext.Posts
+            var posts = await dbContext.Posts
                 .Where(post => postIds.Contains(post.Id))
                 .Select(post => new PostDTO
                 {
@@ -194,6 +221,10 @@ public class PostRepository : IPostRepository
             _logger.LogInformation(ex, "An error occurred while trying to Get Paginated Posts Filtered By Title And Tags");
             return default;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -202,9 +233,13 @@ public class PostRepository : IPostRepository
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> CreatePost(CreatePostDTO postDTO)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var existingPost = await _dbContext.Posts
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+            var existingPost = await dbContext.Posts
                 .AsNoTracking()
                 .FirstOrDefaultAsync(post => post.Title.ToLower().Trim().Equals(postDTO.Title.ToLower().Trim()) &&
                                post.UserObjectId.Equals(postDTO.UserObjectId));
@@ -224,8 +259,8 @@ public class PostRepository : IPostRepository
                 UserObjectId = postDTO.UserObjectId,
             };
 
-            await _dbContext.Posts.AddAsync(post).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+            await dbContext.Posts.AddAsync(post).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             // Create the post tags associated with the above post
             var postTags = new List<PostTag>();
@@ -238,8 +273,8 @@ public class PostRepository : IPostRepository
                 });
             }
 
-            await _dbContext.PostsTags.AddRangeAsync(postTags).ConfigureAwait(false);
-            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
+            await dbContext.PostsTags.AddRangeAsync(postTags).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return true;
         }
@@ -247,6 +282,10 @@ public class PostRepository : IPostRepository
         {
             _logger.LogInformation(ex, "Failed to create post");
             return false;
+        }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
         }
     }
 }

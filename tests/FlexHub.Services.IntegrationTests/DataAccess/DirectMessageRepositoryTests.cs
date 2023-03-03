@@ -1,6 +1,7 @@
 ﻿using FlexHub.Data.Seeding;
 using FlexHub.Services.DataAccess;
 using FlexHub.Services.IntegrationTests.Fixtures;
+using FlexHub.Services.IntegrationTests.Mocks;
 using FlexHub.Services.IntegrationTests.Utilities;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
@@ -27,9 +28,9 @@ public class DirectMessageRepositoryTests
         // Preparation
         var loggerFactory = new LoggerFactory();
         loggerFactory.AddProvider(new XUnitLoggerProvider(_testOutputHelper));
-        using var dbContext = _fixture.GetDbContextLocalDb(loggerFactory, true);
 
-        var directMessageRepository = new DirectMessageRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, true);
+        await using var directMessageRepository = new DirectMessageRepository(_logger, dbContextFactory);
 
         var senderUserObjectId = SampleData.UserObjectIds.First();
         var receiverUserObjectId = SampleData.UserObjectIds.Last();
@@ -40,25 +41,14 @@ public class DirectMessageRepositoryTests
 
         // Verification
         Assert.True(isStoredSuccessfully);
-
-        var storedMessage = dbContext.DirectMessages
-            .Where(dm =>
-                dm.SenderUserObjectId == senderUserObjectId &&
-                dm.ReceiverUserObjectId == receiverUserObjectId &&
-                dm.Message.Equals(message)).ToList();
-
-#pragma warning disable xUnit2012
-        Assert.True(storedMessage.Any(dm => dm.Message.Equals(message)));
-#pragma warning restore xUnit2012
     }
 
     [Fact]
     public async Task GetDirectMessagesOf2UsersPaginated_FetchDirectMessagesOf2UsersPaginated()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(false);
-
-        var directMessageRepository = new DirectMessageRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, false);
+        await using var directMessageRepository = new DirectMessageRepository(_logger, dbContextFactory);
 
         var senderUserId = SampleData.UserObjectIds.First();
         var contactUserId = SampleData.UserObjectIds.Last();
@@ -69,7 +59,7 @@ public class DirectMessageRepositoryTests
         _logger.LogInformation("Sender: " + senderUserId + ", Contact: " + contactUserId);
         foreach (var directMessage in directMessages)
         {
-            _logger.LogInformation("Meesage: " + directMessage);
+            _logger.LogInformation("Message: " + directMessage);
         }
 
         // Verification

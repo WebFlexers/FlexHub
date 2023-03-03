@@ -8,15 +8,13 @@ using Microsoft.Extensions.Logging;
 
 namespace FlexHub.Services.DataAccess;
 
-public class GroupChatRepository : IGroupChatRepository
+public class GroupChatRepository : EfCoreRepositoryBase, IGroupChatRepository
 {
     private readonly ILogger<GroupChatRepository> _logger;
-    private readonly ApplicationDbContext _dbContext;
 
-    public GroupChatRepository(ILogger<GroupChatRepository> logger, ApplicationDbContext dbContext)
+    public GroupChatRepository(ILogger<GroupChatRepository> logger, IDbContextFactory<ApplicationDbContext> dbContextFactory) : base(dbContextFactory)
     {
         _logger = logger;
-        _dbContext = dbContext;
     }
 
     /// <summary>
@@ -24,9 +22,14 @@ public class GroupChatRepository : IGroupChatRepository
     /// </summary>
     public async Task<List<GroupChatDTO>?> GetGroupChats(string userObjectId)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var groupChats = await _dbContext.UsersGroupChats
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var groupChats = await dbContext.UsersGroupChats
                 .Where(userGroupChat => userGroupChat.UserObjectId == userObjectId)
                 .Select(userGroupChat => new GroupChatDTO
                 {
@@ -43,6 +46,10 @@ public class GroupChatRepository : IGroupChatRepository
             _logger.LogError(ex, "Failed to get group chats filtered by name");
             return default;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -51,9 +58,14 @@ public class GroupChatRepository : IGroupChatRepository
     /// </summary>
     public async Task<List<GroupChatDTO>?> GetGroupChatsFilteredByName(string userObjectId, string groupChatTitle)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var groupChats = await _dbContext.UsersGroupChats
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var groupChats = await dbContext.UsersGroupChats
                 .Where(groupChat => groupChat.UserObjectId == userObjectId && groupChat.GroupChat.Title.Contains(groupChatTitle))
                 .Select(groupChat => new GroupChatDTO
                 {
@@ -70,6 +82,10 @@ public class GroupChatRepository : IGroupChatRepository
             _logger.LogError(ex, "Failed to get group chats filtered by name");
             return default;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -82,9 +98,14 @@ public class GroupChatRepository : IGroupChatRepository
     public async Task<List<GroupMessageDTO>?> GetSortedGroupMessagesPaginated(
         int groupChatId, int pageNumber, int numberOfMessagesToLoad)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
-            var groupChatMessages = await _dbContext.GroupMessages
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var groupChatMessages = await dbContext.GroupMessages
                 .Where(groupChatMessage => groupChatMessage.GroupChatId == groupChatId)
                 .Paginate(pageNumber, numberOfMessagesToLoad)
                 .OrderBy(groupChatMessage => groupChatMessage.CreatedAt)
@@ -103,6 +124,10 @@ public class GroupChatRepository : IGroupChatRepository
             _logger.LogError(ex, "Failed to get sorted group messages of group chat: " + groupChatId);
             return default;
         }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
     }
 
     /// <summary>
@@ -111,8 +136,13 @@ public class GroupChatRepository : IGroupChatRepository
     /// <returns>True if the operation is successful and false if it fails</returns>
     public async Task<bool> StoreGroupMessage(string senderUserObjectId, int groupChatId, string message)
     {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
         try
         {
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
             var groupMessage = new GroupMessage()
             {
                 Message = message,
@@ -121,8 +151,8 @@ public class GroupChatRepository : IGroupChatRepository
                 GroupChatId = groupChatId
             };
 
-            await _dbContext.GroupMessages.AddAsync(groupMessage);
-            await _dbContext.SaveChangesAsync();
+            await dbContext.GroupMessages.AddAsync(groupMessage);
+            await dbContext.SaveChangesAsync();
 
             return true;
         }
@@ -131,6 +161,10 @@ public class GroupChatRepository : IGroupChatRepository
             _logger.LogError(ex, "Failed to store message to group chat with id " + groupChatId);
 
             return false;
+        }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
         }
     }
 }

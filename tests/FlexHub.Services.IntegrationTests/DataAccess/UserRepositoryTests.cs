@@ -1,6 +1,7 @@
 ﻿using FlexHub.Data.Seeding;
 using FlexHub.Services.DataAccess;
 using FlexHub.Services.IntegrationTests.Fixtures;
+using FlexHub.Services.IntegrationTests.Mocks;
 using FlexHub.Services.IntegrationTests.Utilities;
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
@@ -23,8 +24,8 @@ public class UserRepositoryTests
     public async Task GetLastAddedContacts_FetchLastAddedContacts()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
-        var userRepository = new UserRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, false);
+        await using var userRepository = new UserRepository(_logger, dbContextFactory);
 
         var userObjectId = SampleData.UserObjectIds.Last();
 
@@ -44,8 +45,8 @@ public class UserRepositoryTests
     public async Task GetUserContactsFilteredByName_FetchUserContactsFilteredByName()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
-        var userRepository = new UserRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, false);
+        await using var userRepository = new UserRepository(_logger, dbContextFactory);
 
         var userObjectId = SampleData.UserObjectIds.Last();
 
@@ -66,8 +67,8 @@ public class UserRepositoryTests
     public async Task CreateContactRequest_AddContactRequest()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
-        var userRepository = new UserRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, false);
+        await using var userRepository = new UserRepository(_logger, dbContextFactory);
 
         var senderUserObjectId = SampleData.UserObjectIds.First();
         var receiverUserObjectId = SampleData.UserObjectIds.ElementAt(6);
@@ -83,8 +84,8 @@ public class UserRepositoryTests
     public async Task AcceptContactRequest_AcceptContactRequest()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
-        var userRepository = new UserRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, true);
+        await using var userRepository = new UserRepository(_logger, dbContextFactory);
 
         var senderUserObjectId = SampleData.UserObjectIds.ElementAt(2);
         var receiverUserObjectId = SampleData.UserObjectIds.ElementAt(4);
@@ -100,8 +101,8 @@ public class UserRepositoryTests
     public async Task DeleteContact_DeleteContact()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
-        var userRepository = new UserRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, true);
+        await using var userRepository = new UserRepository(_logger, dbContextFactory);
 
         var primaryUserObjectId = SampleData.UserObjectIds.First();
         var contactToDeleteUserObjectId = SampleData.UserObjectIds.ElementAt(2);
@@ -117,8 +118,8 @@ public class UserRepositoryTests
     public async Task RemoveUserFromGroupChat_RemoveUserFromGroupChat()
     {
         // Preparation
-        await using var dbContext = _fixture.GetDbContextLocalDb(true);
-        var userRepository = new UserRepository(_logger, dbContext);
+        var dbContextFactory = new DbContextFactoryMock(_fixture, true);
+        await using var userRepository = new UserRepository(_logger, dbContextFactory);
 
         var userObjectId = SampleData.UserObjectIds.First();
         var groupChatId = 1;
