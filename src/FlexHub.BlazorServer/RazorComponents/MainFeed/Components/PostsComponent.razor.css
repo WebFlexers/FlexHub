@@ -5,6 +5,10 @@
     width: 70%;
 }
 
+.inner-post-container {
+    background-color: var(--rz-background-secondary);
+}
+
 .secondary-background-color {
     color: red;
 }

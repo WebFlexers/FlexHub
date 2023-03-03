@@ -63,3 +63,10 @@ h1:focus {
     height: 1px;
     border-radius: 30px;
 }
+
+
+
+/* Animations */
+/*.animate__animated {
+    --animate-duration: 0.5s;
+}*/

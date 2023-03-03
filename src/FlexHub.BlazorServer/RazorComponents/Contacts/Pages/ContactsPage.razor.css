@@ -1,4 +1,17 @@
 ﻿.contacts-page-container {
+    display: grid;
+    grid-template-columns: auto 250px;
+    grid-template-areas: "messages sidebar";
     margin-left: -1.5rem;
     margin-right: -1.5rem;
+}
+
+@media (max-width: 942px) {
+    .contacts-page-container {
+        grid-template-rows: auto auto;
+        grid-template-columns: auto;
+        grid-template-areas:
+            "messages"
+            "sidebar";
+    }
 }

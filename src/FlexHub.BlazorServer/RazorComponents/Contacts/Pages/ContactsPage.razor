@@ -1,6 +1,18 @@
 ﻿@page "/contacts"
 @using FlexHub.BlazorServer.RazorComponents.Contacts.Components
 
-<div class="contacts-page-container">
-    <ChatComponent/>
-</div>
+<AuthorizeView>
+    <Authorized>
+        @{
+            _userClaims = context.User.Claims.ToArray();
+        }
+
+        <div class="contacts-page-container">
+            <ChatComponent @ref="ChatComponent"/>
+            <ContactsSidebarComponent @ref="ContactsSidebarComponent"/>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <LoginPrompt/>
+    </NotAuthorized>
+</AuthorizeView>

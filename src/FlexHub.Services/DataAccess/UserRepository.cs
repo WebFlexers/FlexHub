@@ -21,7 +21,7 @@ public class UserRepository : IUserRepository
     /// <summary>
     /// Gets the user display name of the user with the given object id
     /// </summary>
-    public async Task<UserDTO> GetUser(string userObjectId)
+    public async Task<UserDTO?> GetUser(string userObjectId)
     {
         try
         {
@@ -57,7 +57,7 @@ public class UserRepository : IUserRepository
     /// </summary>
     /// <param name="userObjectId">The object Id of the user</param>
     /// <param name="numberOfContacts">The number of contacts to load</param>
-    public async Task<List<UserDTO>> GetLastAddedContacts(string userObjectId, int numberOfContacts)
+    public async Task<List<UserDTO>?> GetLastAddedContacts(string userObjectId, int numberOfContacts)
     {
         try
         {
@@ -88,10 +88,45 @@ public class UserRepository : IUserRepository
     }
 
     /// <summary>
+    /// Gets all the user contacts asynchronously
+    /// </summary>
+    public async Task<List<UserDTO>?> GetUserContacts(string userObjectId)
+    {
+        try
+        {
+            var contacts = await _dbContext.Contacts
+                .AsNoTracking()
+                .Where(contact => contact.UserObjectId.Equals(userObjectId))
+                .OrderByDescending(c => c.CreatedAt)
+                .Select(contact => new UserDTO
+                {
+                    ObjectId = contact.ContactUser.ObjectId,
+                    EmailAddress = contact.ContactUser.EmailAddress,
+                    GivenName = contact.ContactUser.GivenName,
+                    Surname = contact.ContactUser.Surname,
+                    DisplayName = contact.ContactUser.DisplayName,
+                    Country = contact.ContactUser.Country,
+                    CreatedAt = contact.ContactUser.CreatedAt,
+                    UpdatedAt = contact.ContactUser.UpdatedAt,
+                })
+                .ToListAsync();
+
+            return contacts;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get user contacts");
+            return default;
+        }
+
+
+    }
+
+    /// <summary>
     /// Gets the contacts of the given user
     /// that contain the given name asynchronously
     /// </summary>
-    public async Task<List<UserDTO>> GetUserContactsFilteredByName(string userObjectId, string name)
+    public async Task<List<UserDTO>?> GetUserContactsFilteredByName(string userObjectId, string name)
     {
         try
         {
@@ -301,12 +336,14 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            var user = _dbContext.UsersGroupChats
+            var user = await _dbContext.UsersGroupChats
                 .Where(user => user.UserObjectId == userObjectId && user.GroupChatId == groupChatId)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
+
+            if (user == null) return false;
 
             _dbContext.UsersGroupChats.Remove(user);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             return true;
 

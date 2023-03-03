@@ -45,16 +45,20 @@ public partial class MainFeedPage
                 .Select(ut => new TagModel { Id = ut.Id, IsChecked = false, Value = ut.Value }).ToList();
         }
 
+        StateHasChanged();
+
         await MainPostsFeedComponent.FetchPosts(MainPostsFeedComponent.PageNum, 5);
-        MainPostsFeedComponent.Refresh();
         await ContactsHorizontalBarComponent.GetLastContactsOfUser(UserInfoStore.UserDTO.ObjectId, 6);
 
         _areRecentContactsEmpty = ContactsHorizontalBarComponent.RecentContacts?.Any() == false;
 
-        StateHasChanged();
+        await MainPostsFeedComponent.AnimateStateChange();
 
         var isUserNew = _userClaims.FirstOrDefault(c => c.Type.Contains("newUser"))?.Value;
-        if (isUserNew != null && bool.Parse(isUserNew)) await UserRepository.CreateUser(UserInfoStore.UserDTO);
+        if (isUserNew != null && bool.Parse(isUserNew))
+        {
+            await UserRepository.CreateUser(UserInfoStore.UserDTO);
+        }
     }
 
     public async Task OnSearchButtonClick()
@@ -64,7 +68,11 @@ public partial class MainFeedPage
         MainPostsFeedComponent.Posts = new List<PostModel>();
         MainPostsFeedComponent.PageNum = 1;
         await MainPostsFeedComponent.FetchPosts(1, 5);
+        await MainPostsFeedComponent.AnimateStateChange();
 
-        if (MainPostsFeedComponent.Posts.Any().Equals(false)) MainPostsFeedComponent.Refresh();
+        if (MainPostsFeedComponent.Posts.Any().Equals(false))
+        {
+            MainPostsFeedComponent.Refresh();
+        }
     }
 }

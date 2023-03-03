@@ -1,5 +1,7 @@
-﻿<div class="container">
-    <div class="inbox_msg">
+﻿@inject IJSRuntime JSRuntime;
+
+<div id="messages-inbox" class="inbox_msg">
+    <div class="container">
         <div class="mesgs">
             <div class="msg_history">
                 <div class="incoming_msg">
@@ -97,3 +99,19 @@
         </div>
     </div>
 </div>
+
+@code
+{
+    private async Task ScrollDown()
+    {
+        await JSRuntime.InvokeVoidAsync("scrollDown", "messages-inbox");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ScrollDown();
+        }
+    }
+}

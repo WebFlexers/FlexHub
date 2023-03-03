@@ -1,5 +1,6 @@
 using FlexHub.BlazorServer.StartupConfig;
 using FlexHub.Data;
+using MatBlazor;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer("name=Default");
 });
 
+builder.Services.AddMatBlazor();
 builder.AddRepositoryServices();
 builder.AddRadzen();
 builder.AddStores();

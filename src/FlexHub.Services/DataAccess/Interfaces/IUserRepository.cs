@@ -10,6 +10,11 @@ public interface IUserRepository
     Task<UserDTO?> GetUser(string userObjectId);
 
     /// <summary>
+    /// Gets all the user contacts asynchronously
+    /// </summary>
+    Task<List<UserDTO>?> GetUserContacts(string userObjectId);
+
+    /// <summary>
     /// Gets the last X number of contacts of the user asynchronously
     /// </summary>
     /// <param name="userObjectId">The object Id of the user</param>

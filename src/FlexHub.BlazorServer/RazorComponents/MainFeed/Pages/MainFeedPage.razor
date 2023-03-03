@@ -6,34 +6,32 @@
         @{
             _userClaims = context.User.Claims.ToArray();
         }
-        
+
         <div class="main-feed-page">
             <div class="container">
                 <div class="text-center mt-3">
-                    <ContactsHorizontalBarComponent @ref="ContactsHorizontalBarComponent" />
+                    <ContactsHorizontalBarComponent @ref="ContactsHorizontalBarComponent"/>
                 </div>
-                
+
                 @if (_areRecentContactsEmpty == false)
                 {
                     <div class="screen-divider mt-3"></div>
                 }
 
                 <div class="text-center mt-3">
-                    <PostsComponent @ref="MainPostsFeedComponent" />
+                    <PostsComponent @ref="MainPostsFeedComponent"/>
                 </div>
             </div>
 
             <div class="right-side-panel left-side-shadow">
                 <div class="profile-container shadow-sm">
-                    <RadzenProfileMenu Style="background-color: var(--rz-background-primary); margin: 0; padding-right: 0;">
-                        <Template>
-                            <RadzenImage Path="uploaded-images/user-profiles/generic-user.png" Style="width: 3rem;" />
-                        </Template>
+                    <MatButton Icon="account_box" OnClick="@OpenProfileMenu" RefBack="@_profileMenuForwardRef"/>
 
-                        <ChildContent>
-                            <RadzenProfileMenuItem Path="MicrosoftIdentity/Account/SignOut" Icon="logout" Text="Logout"></RadzenProfileMenuItem>
-                        </ChildContent>
-                    </RadzenProfileMenu>
+                    <MatMenu @ref="_profileMenu" TargetForwardRef="@_profileMenuForwardRef">
+                        <MatList>
+                            <MatListItem Href="MicrosoftIdentity/Account/SignOut">Logout</MatListItem>
+                        </MatList>
+                    </MatMenu>
 
                     <div>
                         <p class="mb-0 mt-0">@UserInfoStore.UserDTO?.GivenName @UserInfoStore.UserDTO?.Surname</p>
@@ -42,34 +40,30 @@
                 </div>
 
                 <div class="text-center mt-3 pb-3 px-2 shadow-sm">
-                    <RadzenTextBox type="search" @bind-Value="SearchPostsTermsStore.SearchText" Placeholder="Search..." />
+                    <MatTextField type="search" @bind-Value="SearchPostsTermsStore.SearchText" 
+                                  Label="Search" Icon="search" Outlined="true" Dense="true" />
                 </div>
 
-                <div class="tags-container text-center mt-3">
-                    <h2 class="fs-5">Preferred Tags</h2>
-                    <RadzenStack Orientation="Orientation.Vertical" Gap="1rem" JustifyContent="JustifyContent.SpaceEvenly" AlignItems="AlignItems.Start">
-                        @if (SearchPostsTermsStore.Tags != null && SearchPostsTermsStore.Tags.Any())
+                <div class="tags-container mt-3">
+                    @if (SearchPostsTermsStore.Tags != null && SearchPostsTermsStore.Tags.Any())
+                    {
+                        foreach (var tag in SearchPostsTermsStore.Tags)
                         {
-                            foreach (var tag in SearchPostsTermsStore.Tags)
-                            {
-                                <div class="px-3">
-                                    <RadzenCheckBox @bind-Value="@tag.IsChecked" Name="@($"Tag{tag.Id}")"></RadzenCheckBox>
-                                    <RadzenLabel Text="@tag.Value" Component="@($"Tag{tag.Id}")" Style="margin-left: 0.5rem; vertical-align: middle;"/>
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <div class="px-3 mt-3">
-                                <p>No favorite tags found. Go to your profile to customize your tags</p>
+                            <div class="px-3">
+                                <MatCheckbox Label="@tag.Value" @bind-Value="@tag.IsChecked" Name="@($"Tag{tag.Id}")"></MatCheckbox>
                             </div>
                         }
-
-                    </RadzenStack>
+                    }
+                    else
+                    {
+                        <div class="px-3 mt-3">
+                            <p>No favorite tags found. Go to your profile to customize your tags</p>
+                        </div>
+                    }
                 </div>
 
                 <div class="text-center mt-4">
-                    <RadzenButton Click="async () => { await OnSearchButtonClick(); }">Search</RadzenButton>
+                    <MatButton Raised="true" OnClick="async () => { await OnSearchButtonClick(); }">Search</MatButton>
                 </div>
             </div>
         </div>
@@ -79,3 +73,14 @@
         <LoginPrompt/>
     </NotAuthorized>
 </AuthorizeView>
+
+@code
+{
+    ForwardRef _profileMenuForwardRef = new();
+    BaseMatMenu? _profileMenu;
+
+    public void OpenProfileMenu(MouseEventArgs e)
+    {
+        _profileMenu?.OpenAsync();
+    }
+}

@@ -1,40 +1,46 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Controllers
 @using FlexHub.BlazorServer.CustomComponents.InfiniteScrolling
 
-<div class="post-container pt-3">
-    @if (Posts != null && Posts.Any())
-    {
-        <InfiniteScroll ObserverTargetId="observerTarget" ObservableTargetReached="(e) => FetchPosts(PageNum++, 5)">
-            @foreach (var post in Posts)
+@if (ShowAnimation)
+{
+    <Animate Animation="Animations.Fade" Auto Duration="TimeSpan.FromMilliseconds(500)">
+        <div class="post-container pt-3">
+    
+            @if (Posts != null && Posts.Any())
             {
-                <div class="mb-5">
-                    <RadzenCard Style="background-color: var(--rz-background-secondary)">
-                        <h2 class="fs-3 mt-2">@post.Title</h2>
-                        <p class="text-start mt-4">@post.Content</p>
+                <InfiniteScroll ObserverTargetId="observerTarget" ObservableTargetReached="(e) => FetchPosts(PageNum++, 5)">
+                    @foreach (var post in Posts)
+                    {
+                        <div class="mb-5">
+                            <MatPaper Class="p-4" Elevation="2" Rounded="true" Style="border-radius: 10px;">
+                                <h2 class="fs-3 mt-2">@post.Title</h2>
+                                <p class="text-start mt-4">@post.Content</p>
 
-                        <p class="text-start fw-bold mt-3">
-                            <span class="fw-normal">Posted by - </span> @post.PublisherDisplayName
-                        </p>
-                        
-                        <p class="text-start fw-bold mt-1">
-                            <span class="fw-normal">At - </span> @post.CreatedAt
-                        </p>
+                                <p class="text-start fw-bold mt-3">
+                                    <span class="fw-normal">Posted by - </span> @post.PublisherDisplayName
+                                </p>
 
-                        <div class="tags-container fst-italic mt-4">
-                            @if (post.Tags != null && post.Tags.Any())
-                            {
-                                @foreach (var tag in post.Tags)
-                                {
-                                    <p class="ms-2">
-                                        @tag.Value
-                                    </p>
-                                }
-                            }
+                                <p class="text-start fw-bold mt-1">
+                                    <span class="fw-normal">At - </span> @post.CreatedAt
+                                </p>
+
+                                <div class="tags-container fst-italic mt-4">
+                                    @if (post.Tags != null && post.Tags.Any())
+                                    {
+                                        <MatChipSet>
+                                            @foreach (var tag in post.Tags)
+                                            {
+                                                <MatChip Label="@tag.Value"></MatChip>
+                                            }
+                                        </MatChipSet>
+                                    }
+                                </div>
+                            </MatPaper>
                         </div>
-                    </RadzenCard>
-                </div>
+                    }
+                    <div class="mb-5" id="observerTarget"></div>
+                </InfiniteScroll>
             }
-            <div class="mb-5" id="observerTarget"></div>
-        </InfiniteScroll>
-    }
-</div>
+        </div>
+    </Animate>
+}

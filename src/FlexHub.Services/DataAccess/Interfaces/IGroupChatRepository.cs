@@ -5,6 +5,11 @@ namespace FlexHub.Services.DataAccess.Interfaces;
 public interface IGroupChatRepository
 {
     /// <summary>
+    /// Gets all the group chats of the user asynchronously
+    /// </summary>
+    public Task<List<GroupChatDTO>?> GetGroupChats(string userObjectId);
+
+    /// <summary>
     /// Gets the group chats of the given user
     /// whose title contains the given title asynchronously
     /// </summary>

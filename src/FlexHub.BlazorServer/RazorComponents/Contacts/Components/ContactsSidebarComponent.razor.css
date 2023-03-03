@@ -1,0 +1,47 @@
+﻿.sidebar-container {
+    grid-area: sidebar;
+    position: sticky;
+    top: 0;
+    right: 0;
+    display: grid;
+    height: 100vh;
+    grid-template-rows: 4.5rem auto auto;
+    overflow: hidden;
+}
+
+.left-side-shadow {
+    box-shadow: 15px 10px 25px rgba(0,0,0,0.75);
+    clip-path: inset(0px 0px 0px -15px);
+}
+
+.profile-container {
+    display: flex;
+    align-items: center;
+    align-content: center;
+}
+
+.negative-margin {
+    margin-top: -13px;
+}
+
+.contacts-container {
+    height: 34vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.groups-container {
+    height: 41vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+@media (max-width: 942px) {
+    .sidebar-container {
+        position: relative;
+    }
+
+    .left-side-shadow {
+        box-shadow: 0 0;
+    }
+}

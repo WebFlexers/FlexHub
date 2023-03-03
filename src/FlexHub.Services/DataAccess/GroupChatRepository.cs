@@ -20,6 +20,32 @@ public class GroupChatRepository : IGroupChatRepository
     }
 
     /// <summary>
+    /// Gets all the group chats of the user asynchronously
+    /// </summary>
+    public async Task<List<GroupChatDTO>?> GetGroupChats(string userObjectId)
+    {
+        try
+        {
+            var groupChats = await _dbContext.UsersGroupChats
+                .Where(userGroupChat => userGroupChat.UserObjectId == userObjectId)
+                .Select(userGroupChat => new GroupChatDTO
+                {
+                    Id = userGroupChat.GroupChat.Id,
+                    Title = userGroupChat.GroupChat.Title,
+                    CreatedAt = userGroupChat.GroupChat.CreatedAt,
+                    UpdatedAt = userGroupChat.GroupChat.UpdatedAt
+                }).ToListAsync().ConfigureAwait(false);
+
+            return groupChats;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get group chats filtered by name");
+            return default;
+        }
+    }
+
+    /// <summary>
     /// Gets the group chats of the given user
     /// whose title contains the given title asynchronously
     /// </summary>

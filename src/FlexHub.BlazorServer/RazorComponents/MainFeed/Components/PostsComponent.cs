@@ -1,15 +1,17 @@
-﻿using System.Globalization;
-using FlexHub.BlazorServer.Models;
+﻿using FlexHub.BlazorServer.Models;
 using FlexHub.BlazorServer.Stores.Search;
 using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
 using FlexHub.Services.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Components;
+using System.Globalization;
 
 namespace FlexHub.BlazorServer.RazorComponents.MainFeed.Components;
 
 public partial class PostsComponent
 {
+    public bool ShowAnimation { get; set; } = false;
+
     [Inject] public IPostRepository PostRepository { get; set; } = null!;
 
     [Inject] public IUserRepository UserRepository { get; set; } = null!;
@@ -88,7 +90,15 @@ public partial class PostsComponent
         if (postsCount is > 0 and < 5) return;
 
         Posts!.AddRange(newPostModels);
+    }
 
-        StateHasChanged();
+    public async Task AnimateStateChange()
+    {
+        ShowAnimation = false;
+        await InvokeAsync( StateHasChanged );
+        await Task.Delay(TimeSpan.FromMilliseconds(1));
+
+        ShowAnimation = true;
+        await InvokeAsync( StateHasChanged );
     }
 }

@@ -1,5 +1,61 @@
-﻿<h3>ContactsSidePanel</h3>
+﻿<div class="sidebar-container left-side-shadow">
+    <div class="profile-container shadow-sm">
+        <RadzenProfileMenu Style="background-color: var(--rz-background-primary); margin: 0; padding-right: 0;">
+            <Template>
+                <RadzenImage Path="uploaded-images/user-profiles/generic-user.png" Style="width: 3rem;" />
+            </Template>
 
-@code {
+            <ChildContent>
+                <RadzenProfileMenuItem Path="MicrosoftIdentity/Account/SignOut" Icon="logout" Text="Logout"></RadzenProfileMenuItem>
+            </ChildContent>
+        </RadzenProfileMenu>
 
-}
+        <div>
+            <p class="mb-0 mt-0">@UserInfoStore.UserDTO?.GivenName @UserInfoStore.UserDTO?.Surname</p>
+            <p class="mb-0 mt-0">@@@UserInfoStore.UserDTO?.DisplayName</p>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <div class="text-center">
+            <RadzenTextBox type="search" Placeholder="Search Contacts..."/>
+        </div>
+
+        <div class="text-center mt-2 shadow-sm">
+            @if (Contacts != null && Contacts.Any())
+            {
+                <div class="contacts-container negative-margin">
+                    <RadzenListBox @bind-Value="SelectedContact" Data="@Contacts" Style="width: 100%; border: 0; overflow: hidden;" />
+                </div>
+            }
+            else
+            {
+                <div class="px-3 mt-3">
+                    <p>No contacts found. Go to your profile to add people to your contacts</p>
+                </div>
+            }
+        </div>
+    </div>
+    
+    <div class="mt-3">
+        <div class="text-center">
+            <RadzenTextBox type="search" Placeholder="Search Groups..."/>
+        </div>
+
+        <div class="text-center shadow-sm">
+            @if (Groups != null && Groups.Any())
+            {
+                <div class="groups-container">
+                    <RadzenListBox @bind-Value="SelectedGroup" Data="@Groups" Style="width: 240px; border: 0; 
+                        overflow-x: hidden; white-space:nowrap; text-overflow: ellipsis;" />
+                </div>
+            }
+            else
+            {
+                <div class="px-3 mt-3">
+                    <p>No groups found. Go to your profile to create groups</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

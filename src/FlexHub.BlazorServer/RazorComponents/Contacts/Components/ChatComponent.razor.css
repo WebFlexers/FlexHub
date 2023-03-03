@@ -1,4 +1,16 @@
-﻿img {
+﻿.container {
+    grid-area: messages;
+    position: relative;
+    scroll-behavior: smooth;
+    overflow: auto;
+}
+
+.msg_history {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+img {
     max-width: 100%;
 }
 
@@ -83,8 +95,5 @@
 }
 
 .msg_history {
-    display: flex;
-    flex-direction: column-reverse;
     padding-right: 0.8rem;
-    overflow-y: auto;
 }
