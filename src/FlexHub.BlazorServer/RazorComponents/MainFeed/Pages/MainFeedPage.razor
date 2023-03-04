@@ -13,11 +13,6 @@
                     <ContactsHorizontalBarComponent @ref="ContactsHorizontalBarComponent"/>
                 </div>
 
-                @if (_areRecentContactsEmpty == false)
-                {
-                    <div class="screen-divider mt-3"></div>
-                }
-
                 <div class="text-center mt-3">
                     <PostsComponent @ref="MainPostsFeedComponent"/>
                 </div>
@@ -25,15 +20,20 @@
 
             <div class="right-side-panel left-side-shadow">
                 <div class="profile-container shadow-sm">
-                    <MatButton Icon="account_box" OnClick="@OpenProfileMenu" RefBack="@_profileMenuForwardRef"/>
-
+                    <MatFAB Class="ms-3" Icon="person" Style="background-color: var(--rz-primary) !important;" Mini="true" 
+                            OnClick="@OpenProfileMenu" RefBack="@_profileMenuForwardRef" />
+                    
+                    @{
+                        // If the compiler is screaming ignore it it's a bug
+                        // of visual studio and the project in running fine
+                    }
                     <MatMenu @ref="_profileMenu" TargetForwardRef="@_profileMenuForwardRef">
                         <MatList>
                             <MatListItem Href="MicrosoftIdentity/Account/SignOut">Logout</MatListItem>
                         </MatList>
                     </MatMenu>
 
-                    <div>
+                    <div class="ms-3">
                         <p class="mb-0 mt-0">@UserInfoStore.UserDTO?.GivenName @UserInfoStore.UserDTO?.Surname</p>
                         <p class="mb-0 mt-0">@@@UserInfoStore.UserDTO?.DisplayName</p>
                     </div>

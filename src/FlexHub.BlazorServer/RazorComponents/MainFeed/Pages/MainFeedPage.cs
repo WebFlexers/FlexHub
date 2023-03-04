@@ -10,7 +10,6 @@ namespace FlexHub.BlazorServer.RazorComponents.MainFeed.Pages;
 
 public partial class MainFeedPage
 {
-    private bool _areRecentContactsEmpty = true;
     private Claim[]? _userClaims;
     public ContactsHorizontalBarComponent? ContactsHorizontalBarComponent { get; set; } 
     public PostsComponent? MainPostsFeedComponent { get; set; }
@@ -49,8 +48,6 @@ public partial class MainFeedPage
 
         await MainPostsFeedComponent.FetchPosts(MainPostsFeedComponent.PageNum, 5);
         await ContactsHorizontalBarComponent.GetLastContactsOfUser(UserInfoStore.UserDTO.ObjectId, 6);
-
-        _areRecentContactsEmpty = ContactsHorizontalBarComponent.RecentContacts?.Any() == false;
 
         await MainPostsFeedComponent.AnimateStateChange();
 

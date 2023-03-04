@@ -36,14 +36,17 @@ public class DirectMessageRepository : EfCoreRepositoryBase, IDirectMessageRepos
             (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
 
             var messages = await dbContext.DirectMessages
-            .Where(dm => dm.SenderUserObjectId == primaryUserObjectId && dm.ReceiverUserObjectId == contactUserObjectId)
+            .Where(dm => 
+                (dm.SenderUserObjectId == primaryUserObjectId && dm.ReceiverUserObjectId == contactUserObjectId) ||
+                (dm.SenderUserObjectId == contactUserObjectId && dm.ReceiverUserObjectId == primaryUserObjectId))
+            .OrderByDescending(dm => dm.CreatedAt)
             .Paginate(pageNumber, numberOfMessagesToLoad)
             .Select(dm => new DirectMessageDTO()
             {
                 Message = dm.Message,
                 CreatedAt = dm.CreatedAt,
-                SenderUserObjectId = primaryUserObjectId,
-                ReceiverUserObjectId = contactUserObjectId
+                SenderUserObjectId = dm.SenderUserObjectId,
+                ReceiverUserObjectId = dm.ReceiverUserObjectId,
             }).ToListAsync().ConfigureAwait(false);
 
             return messages;

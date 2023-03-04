@@ -117,7 +117,7 @@ public class UserRepository : EfCoreRepositoryBase, IUserRepository
 
             var contacts = await dbContext.Contacts
                 .AsNoTracking()
-                .Where(contact => contact.UserObjectId.Equals(userObjectId))
+                .Where(contact => contact.UserObjectId == userObjectId && contact.ContactObjectId != userObjectId)
                 .OrderByDescending(c => c.CreatedAt)
                 .Select(contact => new UserDTO
                 {

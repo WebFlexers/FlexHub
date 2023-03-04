@@ -72,24 +72,37 @@ public partial class PostsComponent
 
         SearchPostsTermsStore.LastSearch = newSearchMode;
 
-        List<PostModel> newPostModels = new();
-        foreach (var newPost in newPosts)
+        var getPostsUsersTasks = new List<Task<UserDTO?>>();
+        foreach (var post in newPosts)
         {
-            var authorDisplayName = await UserRepository.GetUser(newPost.UserObjectId);
+            getPostsUsersTasks.Add(GetPostUser(post.UserObjectId));
+        }
+
+        var newPostsUsers = await Task.WhenAll(getPostsUsersTasks);
+
+        var newPostModels = new List<PostModel>();
+
+        for (var i = 0; i < newPosts.Count; i++)
+        {
             newPostModels.Add(new PostModel
             {
-                Title = newPost.Title,
-                Content = newPost.Content,
-                PublisherDisplayName = authorDisplayName?.DisplayName,
-                CreatedAt = newPost.CreatedAt.ToLocalTime().ToString(CultureInfo.InvariantCulture),
-                Tags = newPost.Tags
-            });
+                Title = newPosts[i].Title,
+                Content = newPosts[i].Content,
+                PublisherDisplayName = newPostsUsers[i]?.DisplayName,
+                CreatedAt = newPosts[i].CreatedAt.ToLocalTime().ToString(CultureInfo.InvariantCulture),
+                Tags = newPosts[i].Tags
+            });   
         }
 
         var postsCount = Posts!.Count;
         if (postsCount is > 0 and < 5) return;
 
         Posts!.AddRange(newPostModels);
+    }
+
+    private async Task<UserDTO?> GetPostUser(string userObjectId)
+    {
+        return await UserRepository.GetUser(userObjectId);
     }
 
     public async Task AnimateStateChange()

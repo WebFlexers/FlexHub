@@ -2,7 +2,7 @@
 using FlexHub.BlazorServer.Stores.Search;
 using FlexHub.Services.DataAccess;
 using FlexHub.Services.DataAccess.Interfaces;
-using Radzen;
+using MatBlazor;
 
 namespace FlexHub.BlazorServer.StartupConfig;
 
@@ -17,12 +17,18 @@ public static class DependencyInjectionExtensions
         builder.Services.AddTransient<IUserRepository, UserRepository>();
     }
 
-    public static void AddRadzen(this WebApplicationBuilder builder)
+    public static void AddMatBlazorServices(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<DialogService>();
-        builder.Services.AddScoped<NotificationService>();
-        builder.Services.AddScoped<TooltipService>();
-        builder.Services.AddScoped<ContextMenuService>();
+        builder.Services.AddMatBlazor();
+        builder.Services.AddMatToaster(config =>
+        {
+            config.Position = MatToastPosition.BottomCenter;
+            config.PreventDuplicates = true;
+            config.NewestOnTop = true;
+            config.ShowCloseButton = true;
+            config.MaximumOpacity = 95;
+            config.VisibleStateDuration = 3000;
+        });
     }
 
     public static void AddStores(this WebApplicationBuilder builder)

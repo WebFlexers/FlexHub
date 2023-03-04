@@ -62,7 +62,7 @@ img {
 .incoming_msg {
     border-radius: 8px;
     font-size: 0.9rem;
-    margin: 0;
+    margin: 1rem 0 1rem 0;
     color: var(--rz-primary-text);
 }
 
@@ -78,7 +78,7 @@ img {
 
 .outgoing_msg {
     overflow-y: auto;
-    margin: 26px 0 26px;
+    margin: 1rem 0 1rem 0;
 }
 
 .sent_msg {

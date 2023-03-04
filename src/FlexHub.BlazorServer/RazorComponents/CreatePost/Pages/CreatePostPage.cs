@@ -3,8 +3,8 @@ using FlexHub.BlazorServer.Models;
 using FlexHub.BlazorServer.Stores.AuthToken;
 using FlexHub.Data.DTOs;
 using FlexHub.Services.DataAccess.Interfaces;
+using MatBlazor;
 using Microsoft.AspNetCore.Components;
-using Radzen;
 
 namespace FlexHub.BlazorServer.RazorComponents.CreatePost.Pages;
 
@@ -22,7 +22,7 @@ public partial class CreatePostPage
 
     [Inject] public IPostRepository PostRepository { get; set; } = null!;
 
-    [Inject] public NotificationService NotificationService { get; set; } = null!;
+    [Inject] public IMatToaster Toaster { get; set; } = null!;
 
     public async Task Create()
     {
@@ -40,14 +40,8 @@ public partial class CreatePostPage
 
         if (checkedTags.Any() == false)
         {
-            NotificationService.Notify(new NotificationMessage
-            {
-                Summary = "Failed",
-                Detail = "Failed To Create Post. You must select at least one tag",
-                Style = "position: fixed; left: 50%; transform: translate(-50%)",
-                Severity = NotificationSeverity.Error,
-                Duration = 5000
-            });
+            ShowToastMessage(MatToastType.Danger,
+                "Failed", "Failed To Create Post. You must select at least one tag");
             return;
         }
 
@@ -67,25 +61,13 @@ public partial class CreatePostPage
 
         if (postCreated)
         {
-            NotificationService.Notify(new NotificationMessage
-            {
-                Summary = "Success",
-                Detail = "Successfully Created Post!",
-                Style = "position: fixed; left: 50%; transform: translate(-50%)",
-                Severity = NotificationSeverity.Success,
-                Duration = 5000
-            });
+            ShowToastMessage(MatToastType.Success,
+                "Success", "Successfully Created Post!");
         }
         else
         {
-            NotificationService.Notify(new NotificationMessage
-            {
-                Summary = "Failed",
-                Detail = "Failed To Create Post! Make sure you haven't already posted something with the same title",
-                Style = "position: fixed; left: 50%; transform: translate(-50%)",
-                Severity = NotificationSeverity.Error,
-                Duration = 5000
-            });
+            ShowToastMessage(MatToastType.Danger,
+                "Failed", "Failed To Create Post! Make sure you haven't already posted something with the same title");
         }
     }
 
@@ -110,5 +92,21 @@ public partial class CreatePostPage
         UserInfoStore.UserDTO = UserInfoStore.CreateUserDtoFromClaims(_userClaims!);
 
         StateHasChanged();
+    }
+
+    public void ShowToastMessage(MatToastType type, string title, string message, string icon = "")
+    {
+        Toaster.Add(message, type, title, icon, config =>
+        {
+            config.ShowCloseButton = true;
+            config.ShowProgressBar = true;
+            config.MaximumOpacity = Convert.ToInt32(95);
+ 
+            config.ShowTransitionDuration = Convert.ToInt32(500);
+            config.VisibleStateDuration = Convert.ToInt32(5000);
+            config.HideTransitionDuration = Convert.ToInt32(500);
+ 
+            config.RequireInteraction = false;
+        });
     }
 }

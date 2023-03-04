@@ -1,53 +1,77 @@
 ﻿<div class="sidebar-container left-side-shadow">
     <div class="profile-container shadow-sm">
-        <RadzenProfileMenu Style="background-color: var(--rz-background-primary); margin: 0; padding-right: 0;">
-            <Template>
-                <RadzenImage Path="uploaded-images/user-profiles/generic-user.png" Style="width: 3rem;" />
-            </Template>
+        <MatFAB Class="ms-3" Icon="person" Style="background-color: var(--rz-primary) !important;" Mini="true" 
+                OnClick="@OpenProfileMenu" RefBack="@_profileMenuForwardRef" />
+                    
+        @{
+            // If the compiler is screaming ignore it it's a bug
+            // of visual studio and the project in running fine
+        }
+        <MatMenu @ref="_profileMenu" TargetForwardRef="@_profileMenuForwardRef">
+            <MatList>
+                <MatListItem Href="MicrosoftIdentity/Account/SignOut">Logout</MatListItem>
+            </MatList>
+        </MatMenu>
 
-            <ChildContent>
-                <RadzenProfileMenuItem Path="MicrosoftIdentity/Account/SignOut" Icon="logout" Text="Logout"></RadzenProfileMenuItem>
-            </ChildContent>
-        </RadzenProfileMenu>
-
-        <div>
+        <div class="ms-3">
             <p class="mb-0 mt-0">@UserInfoStore.UserDTO?.GivenName @UserInfoStore.UserDTO?.Surname</p>
             <p class="mb-0 mt-0">@@@UserInfoStore.UserDTO?.DisplayName</p>
         </div>
     </div>
 
     <div class="mt-3">
-        <div class="text-center">
-            <RadzenTextBox type="search" Placeholder="Search Contacts..."/>
+        <div class="text-center px-2">
+            <MatTextField type="search" @bind-Value="_contactsSearchText" 
+                          Label="Search" Icon="search" Outlined="true" Dense="true" />
         </div>
 
         <div class="text-center mt-2 shadow-sm">
-            @if (Contacts != null && Contacts.Any())
-            {
-                <div class="contacts-container negative-margin">
-                    <RadzenListBox @bind-Value="SelectedContact" Data="@Contacts" Style="width: 100%; border: 0; overflow: hidden;" />
-                </div>
-            }
-            else
-            {
-                <div class="px-3 mt-3">
-                    <p>No contacts found. Go to your profile to add people to your contacts</p>
-                </div>
-            }
+            <MatList @ref="_contactsList" SingleSelection="true">
+                @if (Contacts != null && Contacts.Any())
+                {
+                    <div class="contacts-container">
+                        
+                            <MatListDivider/>
+                            @foreach (var contact in Contacts)
+                            {
+                                <MatListItem OnClick="async () => { await OnContactListItemClick(contact); }">
+                                    @contact.DisplayName
+                                </MatListItem>
+                                <MatListDivider/>
+                            }
+                       
+                    </div>
+                }
+                else
+                {
+                    <div class="px-3 mt-3">
+                        <p>No contacts found. Go to your profile to add people to your contacts</p>
+                    </div>
+                }
+            </MatList >
         </div>
     </div>
     
     <div class="mt-3">
-        <div class="text-center">
-            <RadzenTextBox type="search" Placeholder="Search Groups..."/>
+        <div class="text-center px-2">
+            <MatTextField type="search" @bind-Value="_groupsSearchText"
+                          Label="Search" Icon="search" Outlined="true" Dense="true" />
         </div>
 
         <div class="text-center shadow-sm">
             @if (Groups != null && Groups.Any())
             {
                 <div class="groups-container">
-                    <RadzenListBox @bind-Value="SelectedGroup" Data="@Groups" Style="width: 240px; border: 0; 
-                        overflow-x: hidden; white-space:nowrap; text-overflow: ellipsis;" />
+                    <MatList SingleSelection="true" @ref="_groupsList">
+                        <MatListDivider />
+                        @foreach (var group in Groups)
+                        {
+                            <MatListItem OnClick="async () => { await OnGroupListItemClick(group); }">
+                                @group.Title
+                            </MatListItem>
+                            <MatListDivider />
+                        }
+                    </MatList>
                 </div>
             }
             else
@@ -59,3 +83,14 @@
         </div>
     </div>
 </div>
+
+@code
+{
+    BaseMatMenu? _profileMenu;
+    ForwardRef _profileMenuForwardRef = new();
+
+    public void OpenProfileMenu(MouseEventArgs e)
+    {
+        _profileMenu?.OpenAsync();
+    }
+}

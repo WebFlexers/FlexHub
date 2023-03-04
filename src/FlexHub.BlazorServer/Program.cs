@@ -1,3 +1,4 @@
+using BlazorComponentBus;
 using FlexHub.BlazorServer.StartupConfig;
 using FlexHub.Data;
 using MatBlazor;
@@ -23,9 +24,9 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer("name=Default");
 });
 
-builder.Services.AddMatBlazor();
+builder.Services.AddScoped<IComponentBus, ComponentBus>();
+builder.AddMatBlazorServices();
 builder.AddRepositoryServices();
-builder.AddRadzen();
 builder.AddStores();
 
 WebApplication app = builder.Build();

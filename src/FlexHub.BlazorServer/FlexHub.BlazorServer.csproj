@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BlazorComponentBus" Version="2.2.0" />
     <PackageReference Include="Blazorise.Animate" Version="1.2.1" />
     <PackageReference Include="MatBlazor" Version="2.8.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
@@ -15,7 +16,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Identity.Web" Version="2.5.0" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="2.5.0" />
-    <PackageReference Include="Radzen.Blazor" Version="4.7.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,7 +5,8 @@
         @foreach (var contact in RecentContacts)
         {
             <div class="mx-2 text-center">
-                <RadzenImage Path="uploaded-images/user-profiles/generic-user.png" Style="width: 3rem;"/>
+                <img src="uploaded-images/user-profiles/generic-user.png" alt="generic_user_profile_image" 
+                     Style="width: 3rem;"/>
                 <p class="contact-name">@contact.DisplayName</p>
             </div>
         }

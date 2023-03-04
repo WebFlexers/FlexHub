@@ -1,7 +1,8 @@
 ﻿<MatThemeProvider Theme="@_mainTheme">
-    <MatPortalHost></MatPortalHost>
+    <MatToastContainer />
+    <MatPortalHost/>
     <CascadingAuthenticationState>
-        
+
         <Router AppAssembly="@typeof(App).Assembly">
             <Found Context="routeData">
                 <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
