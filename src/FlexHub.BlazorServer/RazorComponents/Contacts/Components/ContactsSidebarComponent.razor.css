@@ -27,13 +27,13 @@
 .contacts-container {
     height: 34vh;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 .groups-container {
     height: 41vh;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 @media (max-width: 942px) {

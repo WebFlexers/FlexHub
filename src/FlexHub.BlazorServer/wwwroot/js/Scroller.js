@@ -1,3 +1,4 @@
-function scrollDown() {
-    window.scrollTo(0, document.body.scrollHeight);
+function scrollDown(elementId) {
+    let element = document.getElementById(elementId);
+    element.scrollTop = element.scrollHeight;
 }

@@ -26,10 +26,7 @@ public partial class ContactsSidebarComponent
     private string _contactsSearchText = string.Empty;
     private string _groupsSearchText = string.Empty;
 
-    public UserDTO? SelectedContact { get; set; } = new();
     public List<UserDTO>? Contacts { get; set; } = new();
-
-    public GroupChatDTO? SelectedGroup { get; set; } = new();
     public List<GroupChatDTO>? Groups { get; set; } = new();
 
     public async Task LoadData()
@@ -37,14 +34,15 @@ public partial class ContactsSidebarComponent
         if (UserInfoStore.UserDTO == null) return;
 
         Contacts = await UserRepository.GetUserContacts(UserInfoStore.UserDTO.ObjectId);
-        if (Contacts != null && Contacts.Any())
-        {
-            SelectedContact = Contacts.First();
-        }
-
         Groups = await GroupChatRepository.GetGroupChats(UserInfoStore.UserDTO.ObjectId);
 
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
+
+        // Load the messages of the first contact
+        if (Contacts != null && Contacts.Any())
+        {
+            await PublishChatSourceChangedEvent(ChatType.DirectMessages, Contacts.First());
+        }
     }
 
     private async Task OnContactListItemClick(UserDTO contact)
@@ -59,12 +57,7 @@ public partial class ContactsSidebarComponent
         Groups = groupsCopy;
         await InvokeAsync(StateHasChanged);
 
-        await ComponentBus.Publish(new ChatSourceChangedEvent
-        {
-            ChatType = ChatType.DirectMessages,
-            LoggedInUserObjectId = UserInfoStore.UserDTO.ObjectId,
-            ContactObjectId = contact.ObjectId
-        });
+        await PublishChatSourceChangedEvent(ChatType.DirectMessages, contact: contact);
     }
 
     private async Task OnGroupListItemClick(GroupChatDTO group)
@@ -79,12 +72,35 @@ public partial class ContactsSidebarComponent
         Contacts = contactsCopy;
         await InvokeAsync(StateHasChanged);
 
-        await ComponentBus.Publish(new ChatSourceChangedEvent
+        await PublishChatSourceChangedEvent(ChatType.GroupChat, group: group);
+    }
+
+    public async Task PublishChatSourceChangedEvent(ChatType chatType, UserDTO? contact = null, GroupChatDTO? group = null)
+    {
+        if (UserInfoStore.UserDTO == null) return;
+
+        if (chatType == ChatType.DirectMessages)
         {
-            ChatType = ChatType.GroupChat,
-            LoggedInUserObjectId = UserInfoStore.UserDTO.ObjectId,
-            GroupChatId = group.Id
-        });
+            if (contact == null) return;
+
+            await ComponentBus.Publish(new ChatSourceChangedEvent
+            {
+                ChatType = ChatType.DirectMessages,
+                LoggedInUserObjectId = UserInfoStore.UserDTO.ObjectId,
+                ContactObjectId = contact.ObjectId
+            });
+        }
+        else
+        {
+            if (group == null) return;
+
+            await ComponentBus.Publish(new ChatSourceChangedEvent
+            {
+                ChatType = ChatType.GroupChat,
+                LoggedInUserObjectId = UserInfoStore.UserDTO.ObjectId,
+                GroupChatId = group.Id
+            });
+        }
     }
 
     public void Refresh()

@@ -1,126 +1,88 @@
 ﻿@inject IJSRuntime JSRuntime;
+@using FlexHub.BlazorServer.CustomComponents.InfiniteScrolling
 
-<div id="messages-inbox" class="inbox_msg">
+<div id="main-container" class="inbox_msg"> 
     <div class="container">
         <div class="mesgs">
             <div class="msg_history">
-                @if (_chatMessages.Any())
+                @if (_isGroupSelected == false && _directMessages.Any())
                 {
-                    @foreach (var dm in _chatMessages)
-                    {
-                        @if (dm.IsSentByTheLoggedInUser)
+                    <InfiniteScroll ObserverTargetId="dmObserverTarget" ObservableTargetReached="(e) => FetchDirectMessages(_pageNum++, ItemsPerPage)">
+                        @foreach (var dm in _directMessages)
                         {
-                            <div class="outgoing_msg">
-                                <div class="sent_msg">
-                                    <p>
-                                        @dm.Message
-                                    </p>
-                                    <span class="time_date"> @dm.CreatedAt</span>
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="incoming_msg">
-                                <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="sunil"> </div>
-                                <div class="received_msg">
-                                    <div class="received_withd_msg">
+                            @if (dm.IsSentByTheLoggedInUser)
+                            {
+                                <div class="outgoing_msg">
+                                    <div class="sent_msg">
                                         <p>
                                             @dm.Message
                                         </p>
                                         <span class="time_date"> @dm.CreatedAt</span>
                                     </div>
                                 </div>
-                            </div>
+                            }
+                            else
+                            {
+                                <div class="incoming_msg">
+                                    <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="generic-user-image"> </div>
+                                    <div class="received_msg">
+                                        <div class="received_withd_msg">
+                                            <p>
+                                                @dm.Message
+                                            </p>
+                                            <span class="time_date"> @dm.CreatedAt</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         }
-                    }
+                        <div class="mb-5" id="dmObserverTarget"></div>
+                    </InfiniteScroll>
                 }
-                   @* <div class="incoming_msg">
-                        <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="sunil"> </div>
-                        <div class="received_msg">
-                            <div class="received_withd_msg">
-                                <p>
-                                    Test which is a new approach to have all
-                                    solutions
-                                </p>
-                                <span class="time_date"> 11:01 AM | June 9</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="outgoing_msg">
-                        <div class="sent_msg">
-                            <p>
-                                Test which is a new approach to have all
-                                solutions
-                            </p>
-                            <span class="time_date"> 11:01 AM | June 9</span>
-                        </div>
-                    </div>
-                    <div class="incoming_msg">
-                        <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="sunil"> </div>
-                        <div class="received_msg">
-                            <div class="received_withd_msg">
-                                <p>Test, which is a new approach to have</p>
-                                <span class="time_date"> 11:01 AM | Yesterday</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="outgoing_msg">
-                        <div class="sent_msg">
-                            <p>Apollo University, Delhi, India Test</p>
-                            <span class="time_date"> 11:01 AM | Today</span>
-                        </div>
-                    </div>
-                    <div class="incoming_msg">
-                        <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="sunil"> </div>
-                        <div class="received_msg">
-                            <div class="received_withd_msg">
-                                <p>Test, which is a new approach to have</p>
-                                <span class="time_date"> 11:01 AM | Yesterday</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="outgoing_msg">
-                        <div class="sent_msg">
-                            <p>Apollo University, Delhi, India Test</p>
-                            <span class="time_date"> 11:01 AM | Today</span>
-                        </div>
-                    </div>
-                    <div class="incoming_msg">
-                        <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="sunil"> </div>
-                        <div class="received_msg">
-                            <div class="received_withd_msg">
-                                <p>Test, which is a new approach to have</p>
-                                <span class="time_date"> 11:01 AM | Yesterday</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="outgoing_msg">
-                        <div class="sent_msg">
-                            <p>Apollo University, Delhi, India Test</p>
-                            <span class="time_date"> 11:01 AM | Today</span>
-                        </div>
-                    </div>
-                    <div class="incoming_msg">
-                        <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="sunil"> </div>
-                        <div class="received_msg">
-                            <div class="received_withd_msg">
-                                <p>
-                                    We work directly with our designers and suppliers,
-                                    and sell direct to you, which means quality, exclusive
-                                    products, at a price anyone can afford.
-                                </p>
-                                <span class="time_date"> 11:01 AM | Today</span>
-                            </div>
-                        </div>
-                    </div>*@
+                else if (_isGroupSelected && _groupMessages.Any())
+                {
+                    <InfiniteScroll ObserverTargetId="gcObserverTarget" ObservableTargetReached="(e) => FetchGroupMessages(_pageNum++, ItemsPerPage)">
+                        @foreach (var gm in _groupMessages)
+                        {
+                            @if (gm.IsSentByTheLoggedInUser)
+                            {
+                                <div class="outgoing_msg">
+                                    <div class="sent_msg">
+                                        <p>
+                                            @gm.Message
+                                        </p>
+                                        <span class="time_date"> @gm.CreatedAt</span>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="incoming_msg mt-1">
+                                    <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="generic-user-image"> </div>
+                                    <div class="received_msg">
+                                        <div class="received_withd_msg">
+                                            <p>
+                                                @gm.Message
+                                            </p>
+                                            <span class="time_date"> @gm.CreatedAt</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="sender-username">
+                                    @gm.SenderDisplayName
+                                </div>
+                            }
+                        }
+                        <div class="mb-5" id="gcObserverTarget"></div>
+                    </InfiniteScroll>
+                }
             </div>
             <div class="type_msg mt-3">
-                <EditForm Model="_sendDirectMessageModel" OnValidSubmit="async () => { await SendMessage(); }">
+                <EditForm Model="_sendMessageModel" OnSubmit="async () => { await SendMessage(); }">
                     <div class="d-flex flex-grow-1">
                         <div class="me-2 w-100">
-                            <MatTextField Outlined="true" @bind-Value="_sendDirectMessageModel.Message"
-                                          Style="width: 100%; height: 45px;" Label="Type a message" />
+                            <MatTextField autocomplete="off" placeholder="Type a message" Outlined="true" @bind-Value="_sendMessageModel.Message"
+                                          Style="width: 100%; height: 45px;" HelperTextPersistent="true" @ref="_messageTextField"/>
                         </div>
                         <div class="text-center">
                             <MatButton Raised="true" type="submit"
@@ -137,16 +99,21 @@
 
 @code
 {
-    private async Task ScrollDown()
+    private MatTextField<string> _messageTextField;
+
+    private Task ScrollDown()
     {
-        await JSRuntime.InvokeVoidAsync("scrollDown", "messages-inbox");
+        return Task.FromResult(JSRuntime.InvokeAsync<dynamic>("scrollDown", "main-container"));
+    }
+
+    public ValueTask FocusMessageTextField()
+    {
+        Task.Delay(100);
+        return _messageTextField.Ref.FocusAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            await ScrollDown();
-        }
+        await FocusMessageTextField();
     }
 }

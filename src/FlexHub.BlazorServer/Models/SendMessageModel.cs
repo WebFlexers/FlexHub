@@ -1,6 +1,6 @@
 ﻿namespace FlexHub.BlazorServer.Models;
 
-public class SendDirectMessageModel
+public class SendMessageModel
 {
     public string Message { get; set; }
 }

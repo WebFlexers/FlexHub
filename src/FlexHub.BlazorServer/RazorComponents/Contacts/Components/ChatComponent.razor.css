@@ -1,8 +1,6 @@
 ﻿.container {
     grid-area: messages;
     position: relative;
-    scroll-behavior: smooth;
-    overflow: auto;
 }
 
 .msg_history {
@@ -16,7 +14,10 @@ img {
 
 .inbox_msg {
     clear: both;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column-reverse;
+    overflow-y: scroll;
+    height: 100vh;
 }
 
 .incoming_msg_img {
@@ -77,7 +78,6 @@ img {
 }
 
 .outgoing_msg {
-    overflow-y: auto;
     margin: 1rem 0 1rem 0;
 }
 

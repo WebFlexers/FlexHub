@@ -107,12 +107,13 @@ public class GroupChatRepository : EfCoreRepositoryBase, IGroupChatRepository
 
             var groupChatMessages = await dbContext.GroupMessages
                 .Where(groupChatMessage => groupChatMessage.GroupChatId == groupChatId)
+                .OrderByDescending(groupChatMessage => groupChatMessage.CreatedAt)
                 .Paginate(pageNumber, numberOfMessagesToLoad)
-                .OrderBy(groupChatMessage => groupChatMessage.CreatedAt)
                 .Select(groupChatMessage => new GroupMessageDTO()
                 {
                     Message = groupChatMessage.Message,
                     CreatedAt = groupChatMessage.CreatedAt,
+                    SenderUserDisplayName = groupChatMessage.SenderUser.DisplayName,
                     SenderUserObjectId = groupChatMessage.SenderUserObjectId,
                     GroupChatId = groupChatMessage.GroupChatId
                 }).ToListAsync().ConfigureAwait(false);
