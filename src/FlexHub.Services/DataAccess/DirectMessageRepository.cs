@@ -67,7 +67,8 @@ public class DirectMessageRepository : EfCoreRepositoryBase, IDirectMessageRepos
     /// Stores a message sent from the sender user to the receiver user asynchronously
     /// </summary>
     /// <returns>True if the operation is successful and false if it fails</returns>
-    public async Task<bool> StoreMessage(string senderUserObjectId, string receiverUserObjectId, string message)
+    public async Task<(bool storedSuccessfully, DirectMessage? directMessage)> StoreMessage(
+        string senderUserObjectId, string receiverUserObjectId, string message)
     {
         ApplicationDbContext? dbContext = null; 
         var createdNewDbContext = false;
@@ -93,13 +94,13 @@ public class DirectMessageRepository : EfCoreRepositoryBase, IDirectMessageRepos
             _logger.LogInformation("Successfully stored direct message from {id1} to {id2}", senderUserObjectId,
                 receiverUserObjectId);
 
-            return true;
+            return (true, directMessage);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while trying to store a direct message from {id1} to {id2}",
                 senderUserObjectId, receiverUserObjectId);
-            return false;
+            return (false, null);
         }
         finally
         {

@@ -115,9 +115,10 @@ public class UserRepository : EfCoreRepositoryBase, IUserRepository
         {
             (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
 
-            var contacts = await dbContext.Contacts
+            var userContacts = await dbContext.Contacts
                 .AsNoTracking()
-                .Where(contact => contact.UserObjectId == userObjectId && contact.ContactObjectId != userObjectId)
+                .Where(contact => contact.UserObjectId == userObjectId &&
+                                  contact.ContactObjectId != userObjectId)
                 .OrderByDescending(c => c.CreatedAt)
                 .Select(contact => new UserDTO
                 {
@@ -131,6 +132,26 @@ public class UserRepository : EfCoreRepositoryBase, IUserRepository
                     UpdatedAt = contact.ContactUser.UpdatedAt,
                 })
                 .ToListAsync();
+
+            var contactUsers = await dbContext.Contacts
+                .AsNoTracking()
+                .Where(contact => contact.ContactObjectId == userObjectId &&
+                                  contact.UserObjectId != userObjectId)
+                .OrderByDescending(c => c.CreatedAt)
+                .Select(contact => new UserDTO
+                {
+                    ObjectId = contact.User.ObjectId,
+                    EmailAddress = contact.User.EmailAddress,
+                    GivenName = contact.User.GivenName,
+                    Surname = contact.User.Surname,
+                    DisplayName = contact.User.DisplayName,
+                    Country = contact.User.Country,
+                    CreatedAt = contact.User.CreatedAt,
+                    UpdatedAt = contact.User.UpdatedAt,
+                })
+                .ToListAsync();
+
+            var contacts = userContacts.Union(contactUsers).ToList();
 
             return contacts;
         }

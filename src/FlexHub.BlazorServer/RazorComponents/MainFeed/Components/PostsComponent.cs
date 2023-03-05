@@ -36,7 +36,7 @@ public partial class PostsComponent
         switch (newSearchMode)
         {
             case SearchBy.None:
-                var tagEntities = SearchPostsTermsStore.Tags!.Select(tm => new Tag { Id = tm.Id, Value = tm.Value })
+                var tagEntities = SearchPostsTermsStore.Tags?.Select(tm => new Tag { Id = tm.Id, Value = tm.Value })
                     .ToList();
                 newPosts = await PostRepository.GetPaginatedPostsSortedByPreferredTags(tagEntities, pageNumber,
                     itemsPerPage);

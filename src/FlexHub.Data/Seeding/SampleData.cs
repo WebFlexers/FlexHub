@@ -23,8 +23,8 @@ public class SampleData
     public static readonly string[] UserObjectIds = new[]
     {
         "88906cdb-ff0d-4031-9276-aaab0f9b5d8c",
-        "ea664eff-c559-4f93-a794-ae26e5824ed3",
-        "a26d0ee1-33b5-44da-9cbd-c472aeeb0c75",
+        "b233ac29-adce-43d6-8ba1-c4862e9cf87a",
+        "0073bcdb-3aa2-47ee-a224-abf589b53db0",
         "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5",
         "0b57deac-0d84-49bf-a0ba-a28138fade8d",
         "da8dfa3d-24a7-4198-b28a-36a716616107",
@@ -199,9 +199,31 @@ public class SampleData
         users.ElementAt(0).CreatedAt = dateTimeMichalis.ToUniversalTime();
         users.ElementAt(0).UpdatedAt = dateTimeMichalis.ToUniversalTime();
 
-        // Lefteris
+        // Nikos Ntakoulinos
+        DateTime.TryParseExact("2023-03-05 18:38:06.0000000", "yyyy-MM-dd HH:mm:ss.fffffff",
+            CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var dateTimeNick);
 
-        // Kostas
+        users.ElementAt(1).ObjectId = "b233ac29-adce-43d6-8ba1-c4862e9cf87a";
+        users.ElementAt(1).EmailAddress = "20onlyforgames20@gmail.com";
+        users.ElementAt(1).GivenName = "Nikos";
+        users.ElementAt(1).Surname = "Ntakoulinos";
+        users.ElementAt(1).DisplayName = "nickduck";
+        users.ElementAt(1).Country = "Greece";
+        users.ElementAt(1).CreatedAt = dateTimeNick.ToUniversalTime();
+        users.ElementAt(1).UpdatedAt = dateTimeNick.ToUniversalTime();
+
+        // Lektoras
+        DateTime.TryParseExact("2023-03-05 18:46:12.0000000", "yyyy-MM-dd HH:mm:ss.fffffff",
+            CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var dateTimeLektoras);
+
+        users.ElementAt(2).ObjectId = "0073bcdb-3aa2-47ee-a224-abf589b53db0";
+        users.ElementAt(2).EmailAddress = "autolecturerecorder@gmail.com";
+        users.ElementAt(2).GivenName = "Autos";
+        users.ElementAt(2).Surname = "Lecturerecorderas";
+        users.ElementAt(2).DisplayName = "Lektoras";
+        users.ElementAt(2).Country = "Greece";
+        users.ElementAt(2).CreatedAt = dateTimeLektoras.ToUniversalTime();
+        users.ElementAt(2).UpdatedAt = dateTimeLektoras.ToUniversalTime();
 
         return users;
     }

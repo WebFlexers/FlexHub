@@ -13,7 +13,7 @@
                 {
                     @if (dm.IsSentByTheLoggedInUser)
                     {
-                        <div @key="dm.Id" class="outgoing_msg">
+                        <div @key="dm" class="outgoing_msg">
                             <div class="sent_msg">
                                 <p>
                                     @dm.Message
@@ -24,7 +24,7 @@
                     }
                     else
                     {
-                        <div @key="dm.Id" class="incoming_msg" style="order: @counter--">
+                        <div @key="dm" class="incoming_msg" style="order: @counter--">
                             <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="generic-user-image"> </div>
                             <div class="received_msg">
                                 <div class="received_withd_msg">
@@ -50,7 +50,7 @@
                 {
                     @if (gm.IsSentByTheLoggedInUser)
                     {
-                        <div @key=gm.Id class="outgoing_msg" style="order: @counter--">
+                        <div @key=gm class="outgoing_msg" style="order: @counter--">
                             <div class="sent_msg">
                                 <p>
                                     @gm.Message
@@ -61,7 +61,7 @@
                     }
                     else
                     {
-                        <div @key=gm.Id style="order: @counter--">
+                        <div @key=gm style="order: @counter--">
                             <div class="sender-username">
                                 @gm.SenderDisplayName
                             </div>

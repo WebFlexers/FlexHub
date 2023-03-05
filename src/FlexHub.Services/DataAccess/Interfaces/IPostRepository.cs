@@ -16,7 +16,7 @@ public interface IPostRepository
     /// <param name="pageNumber">The page number</param>
     /// <param name="numberOfPostsToLoad">The number of posts to load in a single request</param>
     /// <param name="preferredTags">The list of tags to sort by</param>
-    Task<List<PostDTO>?> GetPaginatedPostsSortedByPreferredTags(List<Tag> preferredTags, int pageNumber, int numberOfPostsToLoad);
+    Task<List<PostDTO>?> GetPaginatedPostsSortedByPreferredTags(List<Tag>? preferredTags, int pageNumber, int numberOfPostsToLoad);
 
     /// <summary>
     /// Gets the posts that contain the given title paginated and asynchronously

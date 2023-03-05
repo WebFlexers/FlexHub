@@ -1,5 +1,5 @@
 using BlazorComponentBus;
-using FlexHub.BlazorServer.Hubs;
+using FlexHub.BlazorServer.SignalR.Hubs;
 using FlexHub.BlazorServer.StartupConfig;
 using FlexHub.Data;
 using MatBlazor;

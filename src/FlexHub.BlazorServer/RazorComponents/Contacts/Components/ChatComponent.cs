@@ -1,10 +1,14 @@
 ﻿using BlazorComponentBus;
 using FlexHub.BlazorServer.Models;
 using FlexHub.BlazorServer.RazorComponents.Contacts.MessageBusEvents;
+using FlexHub.BlazorServer.SignalR;
+using FlexHub.BlazorServer.SignalR.Models;
 using FlexHub.BlazorServer.Utilities;
+using FlexHub.Data.Entities;
 using FlexHub.Services.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace FlexHub.BlazorServer.RazorComponents.Contacts.Components;
 
@@ -20,9 +24,12 @@ public partial class ChatComponent
 
     [Inject] public IGroupChatRepository GroupChatRepository { get; set; } = null!;
 
+    [Inject] public NavigationManager NavManager { get; set; } = null!;
+
     [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 
     private ChatSourceChangedEvent? _chatSource;
+    private HubConnection? _hubConnection;
 
     private SendMessageModel _sendMessageModel = new();
 
@@ -32,9 +39,58 @@ public partial class ChatComponent
     private int _pageNum;
     private bool _isGroupSelected = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         ComponentBus.Subscribe<ChatSourceChangedEvent>(OnChatSourceChanged);
+
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavManager.ToAbsoluteUri("/chathub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        _hubConnection.On<string, SignalRDirectMessageModel>(SignalRMessages.ReceiveDirectMessage, async (senderUserObjectId, dmModel) =>
+        {
+            if (_chatSource == null) return;
+
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+            if (userDTO == null) return;
+
+            if (userDTO.ObjectId.Equals(dmModel.ReceiverObjectId) && _chatSource.ContactObjectId.Equals(senderUserObjectId))
+            {
+                _directMessages.Insert(0, new DirectMessageModel
+                {
+                    Id = dmModel.DirectMessageId,
+                    CreatedAt = dmModel.CreatedAt.ToLocalTime().ToString("h:mm tt | MMMM d"),
+                    IsSentByTheLoggedInUser = false,
+                    Message = dmModel.Message,
+                });
+
+                await InvokeAsync(StateHasChanged);
+            }
+        });
+
+        _hubConnection.On<string, SignalRGroupMessageModel>(SignalRMessages.ReceiveGroupMessage, async (senderUserObjectId, groupModel) =>
+        {
+            if (_chatSource == null) return;
+
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+            if (userDTO == null) return;
+
+
+        });
+
+        try
+        {
+            await _hubConnection.StartAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "An error occurred while trying to open SignalR connection");
+        }
     }
 
     private async Task OnChatSourceChanged(MessageArgs args, CancellationToken ct)
@@ -84,7 +140,7 @@ public partial class ChatComponent
             Id = dm.Id,
             IsSentByTheLoggedInUser = userDTO.ObjectId.Equals(dm.SenderUserObjectId),
             Message = dm.Message,
-            CreatedAt = dm.CreatedAt.ToString("h:mm tt | MMMM d")
+            CreatedAt = dm.CreatedAt.ToLocalTime().ToString("h:mm tt | MMMM d")
         });
 
         _directMessages.AddRange(directMessagesModels);
@@ -113,7 +169,7 @@ public partial class ChatComponent
             Id = gm.Id,
             IsSentByTheLoggedInUser = userDTO.ObjectId.Equals(gm.SenderUserObjectId),
             Message = gm.Message,
-            CreatedAt = gm.CreatedAt.ToString("h:mm tt | MMMM d"),
+            CreatedAt = gm.CreatedAt.ToLocalTime().ToString("h:mm tt | MMMM d"),
             SenderDisplayName = gm.SenderUserDisplayName
         });
 
@@ -139,21 +195,45 @@ public partial class ChatComponent
             return;
         }
 
-        var messageStoredSuccessfully = false;
         if (_isGroupSelected == false)
         {
-            messageStoredSuccessfully = await DirectMessageRepository.StoreMessage(userDTO.ObjectId, 
+            (bool isStoredSuccessfully, DirectMessage? directMessage) = await DirectMessageRepository.StoreMessage(userDTO.ObjectId, 
                 _chatSource.ContactObjectId, _sendMessageModel.Message);
+
+            if (isStoredSuccessfully == false || directMessage == null) return;
+
+            if (_hubConnection == null) return;
+
+            try
+            {
+                await _hubConnection.SendAsync(SignalRMessages.SendDirectMessage, userDTO.ObjectId,
+                    new SignalRDirectMessageModel
+                    {
+                        ReceiverObjectId = _chatSource.ContactObjectId,
+                        CreatedAt = directMessage.CreatedAt,
+                        DirectMessageId = directMessage.Id,
+                        Message = directMessage.Message
+                    });
+
+                _directMessages.Insert(0, new DirectMessageModel
+                {
+                    Id = directMessage.Id,
+                    CreatedAt = directMessage.CreatedAt.ToLocalTime().ToString("h:mm tt | MMMM d"),
+                    IsSentByTheLoggedInUser = true,
+                    Message = directMessage.Message
+                });
+
+                _sendMessageModel.Message = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "An error occurred while trying to send message through SignalR");
+            }
         }
         else
         {
-            messageStoredSuccessfully = await GroupChatRepository.StoreGroupMessage(userDTO.ObjectId,
+            await GroupChatRepository.StoreGroupMessage(userDTO.ObjectId, 
                 _chatSource.GroupChatId, _sendMessageModel.Message);
         }
-
-        if (messageStoredSuccessfully == false) return;
-
-        _sendMessageModel.Message = string.Empty;
-
     }
 }

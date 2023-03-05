@@ -28,7 +28,7 @@ public class PostRepository : EfCoreRepositoryBase, IPostRepository
     /// <param name="pageNumber">The page number</param>
     /// <param name="numberOfPostsToLoad">The number of posts to load in a single request</param>
     /// <param name="preferredTags">The list of tags to sort by</param>
-    public async Task<List<PostDTO>?> GetPaginatedPostsSortedByPreferredTags(List<Tag> preferredTags, int pageNumber, int numberOfPostsToLoad)
+    public async Task<List<PostDTO>?> GetPaginatedPostsSortedByPreferredTags(List<Tag>? preferredTags, int pageNumber, int numberOfPostsToLoad)
     {
         ApplicationDbContext? dbContext = null; 
         var createdNewDbContext = false;
@@ -37,7 +37,34 @@ public class PostRepository : EfCoreRepositoryBase, IPostRepository
         {
             (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
 
-            var posts = await dbContext.Posts
+            List<PostDTO> postDTOs;
+
+            // If no tags are provided just return paginated posts sorted by time descending
+            if (preferredTags == null)
+            {
+                postDTOs = await dbContext.Posts
+                    .AsNoTracking()
+                    .OrderByDescending(post => post.CreatedAt)
+                    .Paginate(pageNumber, numberOfPostsToLoad)
+                    .Select(post => new PostDTO
+                    {
+                        PostId = post.Id,
+                        Title = post.Title,
+                        Content = post.Content,
+                        CreatedAt = post.CreatedAt,
+                        Tags = post.PostsTags.Select(postTag => new TagDTO
+                        {
+                            Id = postTag.TagId,
+                            Value = postTag.Tag.Value
+                        }).ToList(),
+                        UserObjectId = post.UserObjectId
+                    })
+                    .ToListAsync().ConfigureAwait(false);
+
+                return postDTOs;
+            }
+
+            postDTOs = await dbContext.Posts
                 .AsNoTracking()
                 .OrderByDescending(post => post.PostsTags.Count(postTag => preferredTags.Contains(postTag.Tag)))
                 .Paginate(pageNumber, numberOfPostsToLoad)
@@ -56,7 +83,7 @@ public class PostRepository : EfCoreRepositoryBase, IPostRepository
                 })
                 .ToListAsync().ConfigureAwait(false);
 
-            return posts;
+            return postDTOs;
         }
         catch (Exception ex)
         {

@@ -1,4 +1,5 @@
 ﻿using FlexHub.Data.DTOs;
+using FlexHub.Data.Entities;
 
 namespace FlexHub.Services.DataAccess.Interfaces;
 
@@ -19,5 +20,5 @@ public interface IDirectMessageRepository
     /// Stores a message sent from the sender user to the receiver user asynchronously
     /// </summary>
     /// <returns>True if the operation is successful and false if it fails</returns>
-    Task<bool> StoreMessage(string senderUserObjectId, string receiverUserObjectId, string message);
+    Task<(bool storedSuccessfully, DirectMessage? directMessage)> StoreMessage(string senderUserObjectId, string receiverUserObjectId, string message);
 }
