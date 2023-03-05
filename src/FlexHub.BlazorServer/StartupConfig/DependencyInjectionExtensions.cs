@@ -1,5 +1,4 @@
-﻿using FlexHub.BlazorServer.Stores.AuthToken;
-using FlexHub.BlazorServer.Stores.Search;
+﻿using FlexHub.BlazorServer.Stores.Search;
 using FlexHub.Services.DataAccess;
 using FlexHub.Services.DataAccess.Interfaces;
 using MatBlazor;
@@ -34,6 +33,5 @@ public static class DependencyInjectionExtensions
     public static void AddStores(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<ISearchPostsTermsStore, SearchPostsTermsStore>();
-        builder.Services.AddScoped<IUserInfoStore, UserInfoStore>();
     }
 }

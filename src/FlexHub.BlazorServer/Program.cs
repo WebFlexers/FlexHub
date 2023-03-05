@@ -1,8 +1,10 @@
 using BlazorComponentBus;
+using FlexHub.BlazorServer.Hubs;
 using FlexHub.BlazorServer.StartupConfig;
 using FlexHub.Data;
 using MatBlazor;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
@@ -28,8 +30,17 @@ builder.Services.AddScoped<IComponentBus, ComponentBus>();
 builder.AddMatBlazorServices();
 builder.AddRepositoryServices();
 builder.AddStores();
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" }
+    );
+});
+
 
 WebApplication app = builder.Build();
+
+app.UseResponseCompression();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -60,6 +71,7 @@ app.UseRewriter(
 
 app.MapControllers();
 app.MapBlazorHub();
+app.MapHub<ChatHub>("/chathub");
 app.MapFallbackToPage("/_Host");
 
 app.Run();

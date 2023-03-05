@@ -1,30 +1,22 @@
-﻿using System.Security.Claims;
-using FlexHub.Data.DTOs;
+﻿using FlexHub.Data.DTOs;
+using System.Security.Claims;
 
-namespace FlexHub.BlazorServer.Stores.AuthToken;
+namespace FlexHub.BlazorServer.Utilities;
 
-public class UserInfoStore : IUserInfoStore
+public static class AuthUtilities
 {
-    private readonly ILogger<UserInfoStore> _logger;
-
-    public UserInfoStore(ILogger<UserInfoStore> logger)
-    {
-        _logger = logger;
-    }
-
-    public UserDTO? UserDTO { get; set; }
-
-    public UserDTO? CreateUserDtoFromClaims(Claim[]? claims)
+        public static UserDTO? CreateUserDtoFromClaims(IEnumerable<Claim>? claims, ILogger logger)
     {
         if (claims == null) return default;
 
-        var userObjectId = claims.FirstOrDefault(c => c.Type.Contains("nameidentifier"))?.Value;
-        var email = claims.FirstOrDefault(c => c.Type.Contains("emails"))?.Value;
-        var givenName = claims.FirstOrDefault(c => c.Type.Contains("givenname"))?.Value;
-        var surname = claims.FirstOrDefault(c => c.Type.Contains("surname"))?.Value;
-        var displayName = claims.FirstOrDefault(c => c.Type.Equals("name"))?.Value;
-        var country = claims.FirstOrDefault(c => c.Type.Contains("country"))?.Value;
-        var createdAtUnix = claims.FirstOrDefault(c => c.Type.Contains("auth_time"))?.Value;
+        var claimsArray = claims as Claim[] ?? claims.ToArray();
+        var userObjectId = claimsArray.FirstOrDefault(c => c.Type.Contains("nameidentifier"))?.Value;
+        var email = claimsArray.FirstOrDefault(c => c.Type.Contains("emails"))?.Value;
+        var givenName = claimsArray.FirstOrDefault(c => c.Type.Contains("givenname"))?.Value;
+        var surname = claimsArray.FirstOrDefault(c => c.Type.Contains("surname"))?.Value;
+        var displayName = claimsArray.FirstOrDefault(c => c.Type.Equals("name"))?.Value;
+        var country = claimsArray.FirstOrDefault(c => c.Type.Contains("country"))?.Value;
+        var createdAtUnix = claimsArray.FirstOrDefault(c => c.Type.Contains("auth_time"))?.Value;
 
         if (string.IsNullOrWhiteSpace(userObjectId) || string.IsNullOrWhiteSpace(email) ||
             string.IsNullOrWhiteSpace(givenName) ||
@@ -32,7 +24,7 @@ public class UserInfoStore : IUserInfoStore
             string.IsNullOrWhiteSpace(country) ||
             string.IsNullOrWhiteSpace(createdAtUnix))
         {
-            _logger.LogError("1 or more properties from jwt token where null after registration. The properties are " +
+            logger.LogError("1 or more properties from jwt token where null after registration. The properties are " +
                              "objectId: {userObjectId}, email: {email}, given name: {givenName}, surname: {surname}, displayname: {displayName}" +
                              "country: {country}, createdAtUnix: {createdAtUnix}",
                 userObjectId, email, givenName, surname, displayName, country, createdAtUnix);

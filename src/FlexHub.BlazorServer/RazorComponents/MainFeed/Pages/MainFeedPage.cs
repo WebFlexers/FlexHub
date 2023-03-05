@@ -1,16 +1,16 @@
 ﻿using System.Security.Claims;
 using FlexHub.BlazorServer.Models;
 using FlexHub.BlazorServer.RazorComponents.MainFeed.Components;
-using FlexHub.BlazorServer.Stores.AuthToken;
 using FlexHub.BlazorServer.Stores.Search;
+using FlexHub.BlazorServer.Utilities;
 using FlexHub.Services.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace FlexHub.BlazorServer.RazorComponents.MainFeed.Pages;
 
 public partial class MainFeedPage
 {
-    private Claim[]? _userClaims;
     public ContactsHorizontalBarComponent? ContactsHorizontalBarComponent { get; set; } 
     public PostsComponent? MainPostsFeedComponent { get; set; }
 
@@ -22,7 +22,7 @@ public partial class MainFeedPage
 
     [Inject] public ISearchPostsTermsStore SearchPostsTermsStore { get; set; } = null!;
 
-    [Inject] public IUserInfoStore UserInfoStore { get; set; } = null!;
+    [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -30,13 +30,12 @@ public partial class MainFeedPage
 
         if (MainPostsFeedComponent == null || ContactsHorizontalBarComponent == null) return;
 
-        if (_userClaims == null) return;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
 
-        UserInfoStore.UserDTO = UserInfoStore.CreateUserDtoFromClaims(_userClaims);
+        if (userDTO == null) return;
 
-        if (UserInfoStore.UserDTO == null) return;
-
-        var userTagDTOs = await TagRepository.GetUserTags(UserInfoStore.UserDTO.ObjectId);
+        var userTagDTOs = await TagRepository.GetUserTags(userDTO.ObjectId);
 
         if (userTagDTOs != null && userTagDTOs.Any())
         {
@@ -47,14 +46,14 @@ public partial class MainFeedPage
         StateHasChanged();
 
         await MainPostsFeedComponent.FetchPosts(MainPostsFeedComponent.PageNum++, 5);
-        await ContactsHorizontalBarComponent.GetLastContactsOfUser(UserInfoStore.UserDTO.ObjectId, 6);
+        await ContactsHorizontalBarComponent.GetLastContactsOfUser(userDTO.ObjectId, 6);
 
         await MainPostsFeedComponent.AnimateStateChange();
 
-        var isUserNew = _userClaims.FirstOrDefault(c => c.Type.Contains("newUser"))?.Value;
+        var isUserNew = authState.User.Claims.FirstOrDefault(c => c.Type.Contains("newUser"))?.Value;
         if (isUserNew != null && bool.Parse(isUserNew))
         {
-            await UserRepository.CreateUser(UserInfoStore.UserDTO);
+            await UserRepository.CreateUser(userDTO);
         }
     }
 

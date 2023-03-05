@@ -1,27 +1,21 @@
 ﻿using FlexHub.BlazorServer.RazorComponents.Contacts.Components;
-using FlexHub.BlazorServer.Stores.AuthToken;
 using Microsoft.AspNetCore.Components;
-using System.Security.Claims;
 
 namespace FlexHub.BlazorServer.RazorComponents.Contacts.Pages;
 
 public partial class ContactsPage
 {
-    private Claim[]? _userClaims;
-
-    [Inject] private IUserInfoStore UserInfoStore { get; set; } = null!;
+    [Inject] public ILogger<ContactsPage> Logger { get; set; } = null!;
 
     public ChatComponent? ChatComponent { get; set; }
     public ContactsSidebarComponent? ContactsSidebarComponent { get; set; }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender == false) return;
 
-        if (_userClaims == null) return;
+        if (ContactsSidebarComponent == null) return;
 
-        UserInfoStore.UserDTO ??= UserInfoStore.CreateUserDtoFromClaims(_userClaims);
-
-        ContactsSidebarComponent?.LoadData();
+        await ContactsSidebarComponent.LoadData();
     }
 }

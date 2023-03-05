@@ -1,4 +1,5 @@
-﻿<div class="sidebar-container left-side-shadow">
+﻿@using FlexHub.BlazorServer.Utilities
+<div class="sidebar-container left-side-shadow">
     <div class="profile-container shadow-sm">
         <MatFAB Class="ms-3" Icon="person" Style="background-color: var(--rz-primary) !important;" Mini="true" 
                 OnClick="@OpenProfileMenu" RefBack="@_profileMenuForwardRef" />
@@ -14,8 +15,12 @@
         </MatMenu>
 
         <div class="ms-3">
-            <p class="mb-0 mt-0">@UserInfoStore.UserDTO?.GivenName @UserInfoStore.UserDTO?.Surname</p>
-            <p class="mb-0 mt-0">@@@UserInfoStore.UserDTO?.DisplayName</p>
+            <p class="mb-0 mt-0">
+                @_userGivenName @_userSurname
+            </p>
+            <p class="mb-0 mt-0">
+                @@@_userDisplayName
+            </p>
         </div>
     </div>
 
@@ -86,6 +91,22 @@
 
 @code
 {
+    private string? _userDisplayName;
+    private string? _userGivenName;
+    private string? _userSurname;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+        if (userDTO == null) return;
+
+        _userDisplayName = userDTO.DisplayName;
+        _userGivenName = userDTO.GivenName;
+        _userSurname = userDTO.Surname;
+    }
+
     BaseMatMenu? _profileMenu;
     ForwardRef _profileMenuForwardRef = new();
 

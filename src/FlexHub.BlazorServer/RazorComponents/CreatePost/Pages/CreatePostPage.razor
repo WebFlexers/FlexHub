@@ -2,10 +2,6 @@
 
 <AuthorizeView>
     <Authorized>
-        @{
-            _userClaims = context.User.Claims.ToArray();
-        }
-
         <div class="page-container">
             <div class="container">
                 <EditForm Context="editFormContext" Model="@_post" OnValidSubmit="async () => { await Create(); }">
@@ -57,8 +53,13 @@
                     </MatMenu>
 
                     <div class="ms-3">
-                        <p class="mb-0 mt-0">@UserInfoStore.UserDTO?.GivenName @UserInfoStore.UserDTO?.Surname</p>
-                        <p class="mb-0 mt-0">@@@UserInfoStore.UserDTO?.DisplayName</p>
+                        <p class="mb-0 mt-0">
+                            @context.User.Claims.FirstOrDefault(c => c.Type.Contains("givenname"))?.Value
+                            @context.User.Claims.FirstOrDefault(c => c.Type.Contains("surname"))?.Value
+                        </p>
+                        <p class="mb-0 mt-0">
+                            @@@context.User.Claims.FirstOrDefault(c => c.Type.Equals("name"))?.Value
+                        </p>
                     </div>
                 </div>
 

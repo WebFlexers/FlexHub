@@ -1,10 +1,11 @@
 ﻿using BlazorComponentBus;
 using FlexHub.BlazorServer.RazorComponents.Contacts.MessageBusEvents;
-using FlexHub.BlazorServer.Stores.AuthToken;
+using FlexHub.BlazorServer.Utilities;
 using FlexHub.Data.DTOs;
 using FlexHub.Services.DataAccess.Interfaces;
 using MatBlazor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace FlexHub.BlazorServer.RazorComponents.Contacts.Components;
 
@@ -14,11 +15,11 @@ public partial class ContactsSidebarComponent
 
     [Inject] public IComponentBus ComponentBus { get; set; } = null!;
 
-    [Inject] public IUserInfoStore UserInfoStore { get; set; } = null!;
-
     [Inject] public IUserRepository UserRepository { get; set; } = null!;
 
     [Inject] public IGroupChatRepository GroupChatRepository { get; set; } = null!;
+
+    [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 
     private MatList _contactsList;
     private MatList _groupsList;
@@ -31,10 +32,13 @@ public partial class ContactsSidebarComponent
 
     public async Task LoadData()
     {
-        if (UserInfoStore.UserDTO == null) return;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
 
-        Contacts = await UserRepository.GetUserContacts(UserInfoStore.UserDTO.ObjectId);
-        Groups = await GroupChatRepository.GetGroupChats(UserInfoStore.UserDTO.ObjectId);
+        if (userDTO == null) return;
+
+        Contacts = await UserRepository.GetUserContacts(userDTO.ObjectId);
+        Groups = await GroupChatRepository.GetGroupChats(userDTO.ObjectId);
 
         await InvokeAsync(StateHasChanged);
 
@@ -47,7 +51,10 @@ public partial class ContactsSidebarComponent
 
     private async Task OnContactListItemClick(UserDTO contact)
     {
-        if (UserInfoStore.UserDTO == null) return;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+        if (userDTO == null) return;
 
         // Reset groups selection with hacks, 
         // since there isn't a method to do it for us...
@@ -62,7 +69,10 @@ public partial class ContactsSidebarComponent
 
     private async Task OnGroupListItemClick(GroupChatDTO group)
     {
-        if (UserInfoStore.UserDTO == null) return;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+        if (userDTO == null) return;
 
         // Reset contacts selection with hacks, 
         // since there isn't a method to do it for us...
@@ -77,7 +87,10 @@ public partial class ContactsSidebarComponent
 
     public async Task PublishChatSourceChangedEvent(ChatType chatType, UserDTO? contact = null, GroupChatDTO? group = null)
     {
-        if (UserInfoStore.UserDTO == null) return;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+        if (userDTO == null) return;
 
         if (chatType == ChatType.DirectMessages)
         {
@@ -86,7 +99,7 @@ public partial class ContactsSidebarComponent
             await ComponentBus.Publish(new ChatSourceChangedEvent
             {
                 ChatType = ChatType.DirectMessages,
-                LoggedInUserObjectId = UserInfoStore.UserDTO.ObjectId,
+                LoggedInUserObjectId = userDTO.ObjectId,
                 ContactObjectId = contact.ObjectId
             });
         }
@@ -97,7 +110,7 @@ public partial class ContactsSidebarComponent
             await ComponentBus.Publish(new ChatSourceChangedEvent
             {
                 ChatType = ChatType.GroupChat,
-                LoggedInUserObjectId = UserInfoStore.UserDTO.ObjectId,
+                LoggedInUserObjectId = userDTO.ObjectId,
                 GroupChatId = group.Id
             });
         }

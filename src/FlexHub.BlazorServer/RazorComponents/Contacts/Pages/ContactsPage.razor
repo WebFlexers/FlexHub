@@ -3,10 +3,6 @@
 
 <AuthorizeView>
     <Authorized>
-        @{
-            _userClaims = context.User.Claims.ToArray();
-        }
-
         <div class="contacts-page-container">
             <ChatComponent @ref="ChatComponent"/>
             <ContactsSidebarComponent @ref="ContactsSidebarComponent"/>

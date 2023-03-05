@@ -1,9 +1,10 @@
 ﻿using BlazorComponentBus;
 using FlexHub.BlazorServer.Models;
 using FlexHub.BlazorServer.RazorComponents.Contacts.MessageBusEvents;
-using FlexHub.BlazorServer.Stores.AuthToken;
+using FlexHub.BlazorServer.Utilities;
 using FlexHub.Services.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace FlexHub.BlazorServer.RazorComponents.Contacts.Components;
 
@@ -11,13 +12,15 @@ public partial class ChatComponent
 {
     public int ItemsPerPage { get; set; } = 10;
 
+    [Inject] public ILogger<ChatComponent> Logger { get; set; } = null!;
+
     [Inject] public IComponentBus ComponentBus { get; set; } = null!;
 
     [Inject] public IDirectMessageRepository DirectMessageRepository { get; set; } = null!;
 
     [Inject] public IGroupChatRepository GroupChatRepository { get; set; } = null!;
 
-    [Inject] public IUserInfoStore UserInfoStore { get; set; } = null!;
+    [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 
     private ChatSourceChangedEvent? _chatSource;
 
@@ -36,10 +39,12 @@ public partial class ChatComponent
 
     private async Task OnChatSourceChanged(MessageArgs args, CancellationToken ct)
     {
-        if (UserInfoStore.UserDTO == null) return;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+        if (userDTO == null) return;
 
         _chatSource = args.GetMessage<ChatSourceChangedEvent>();
-        _pageNum = 2;
 
         if (_chatSource.ChatType.Equals(ChatType.DirectMessages))
         {
@@ -54,19 +59,22 @@ public partial class ChatComponent
             await FetchGroupMessages(1, ItemsPerPage);
         }
 
-        await Task.Delay(100, ct);
+        _pageNum = 2;
 
         await ScrollDown();
     }
 
     private async Task FetchDirectMessages(int pageNumber, int itemsPerPage)
     {
-        if (UserInfoStore.UserDTO == null) return;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+        if (userDTO== null) return;
 
         if (_chatSource == null) return;
 
         var newDirectMessages = await DirectMessageRepository
-            .GetDirectMessagesOf2UsersPaginated(UserInfoStore.UserDTO.ObjectId, 
+            .GetDirectMessagesOf2UsersPaginated(userDTO.ObjectId, 
                 _chatSource.ContactObjectId, pageNumber, itemsPerPage);
 
         if (newDirectMessages == null) return;
@@ -74,7 +82,7 @@ public partial class ChatComponent
         var directMessagesModels = newDirectMessages.Select(dm => new DirectMessageModel
         {
             Id = dm.Id,
-            IsSentByTheLoggedInUser = UserInfoStore.UserDTO.ObjectId.Equals(dm.SenderUserObjectId),
+            IsSentByTheLoggedInUser = userDTO.ObjectId.Equals(dm.SenderUserObjectId),
             Message = dm.Message,
             CreatedAt = dm.CreatedAt.ToString("h:mm tt | MMMM d")
         });
@@ -88,7 +96,10 @@ public partial class ChatComponent
 
     private async Task FetchGroupMessages(int pageNumber, int itemsPerPage)
     {
-        if (UserInfoStore.UserDTO == null) return;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+        if (userDTO == null) return;
 
         if (_chatSource == null) return;
 
@@ -100,7 +111,7 @@ public partial class ChatComponent
         var groupMessagesModels = newGroupMessages.Select(gm => new GroupMessageModel
         {
             Id = gm.Id,
-            IsSentByTheLoggedInUser = UserInfoStore.UserDTO.ObjectId.Equals(gm.SenderUserObjectId),
+            IsSentByTheLoggedInUser = userDTO.ObjectId.Equals(gm.SenderUserObjectId),
             Message = gm.Message,
             CreatedAt = gm.CreatedAt.ToString("h:mm tt | MMMM d"),
             SenderDisplayName = gm.SenderUserDisplayName
@@ -115,7 +126,10 @@ public partial class ChatComponent
 
     public async Task SendMessage()
     {
-        if (UserInfoStore.UserDTO == null) return;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+        if (userDTO == null) return;
 
         if (_chatSource == null) return;
 
@@ -128,12 +142,12 @@ public partial class ChatComponent
         var messageStoredSuccessfully = false;
         if (_isGroupSelected == false)
         {
-            messageStoredSuccessfully = await DirectMessageRepository.StoreMessage(UserInfoStore.UserDTO.ObjectId, 
+            messageStoredSuccessfully = await DirectMessageRepository.StoreMessage(userDTO.ObjectId, 
                 _chatSource.ContactObjectId, _sendMessageModel.Message);
         }
         else
         {
-            messageStoredSuccessfully = await GroupChatRepository.StoreGroupMessage(UserInfoStore.UserDTO.ObjectId,
+            messageStoredSuccessfully = await GroupChatRepository.StoreGroupMessage(userDTO.ObjectId,
                 _chatSource.GroupChatId, _sendMessageModel.Message);
         }
 

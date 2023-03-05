@@ -3,10 +3,6 @@
 
 <AuthorizeView>
     <Authorized>
-        @{
-            _userClaims = context.User.Claims.ToArray();
-        }
-
         <div class="main-feed-page">
             <div class="container">
                 <div class="text-center mt-3">
@@ -34,8 +30,13 @@
                     </MatMenu>
 
                     <div class="ms-3">
-                        <p class="mb-0 mt-0">@UserInfoStore.UserDTO?.GivenName @UserInfoStore.UserDTO?.Surname</p>
-                        <p class="mb-0 mt-0">@@@UserInfoStore.UserDTO?.DisplayName</p>
+                        <p class="mb-0 mt-0">
+                            @context.User.Claims.FirstOrDefault(c => c.Type.Contains("givenname"))?.Value
+                            @context.User.Claims.FirstOrDefault(c => c.Type.Contains("surname"))?.Value
+                        </p>
+                        <p class="mb-0 mt-0">
+                            @@@context.User.Claims.FirstOrDefault(c => c.Type.Equals("name"))?.Value
+                        </p>
                     </div>
                 </div>
 

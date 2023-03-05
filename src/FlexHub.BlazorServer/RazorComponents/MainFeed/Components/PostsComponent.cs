@@ -5,6 +5,7 @@ using FlexHub.Data.Entities;
 using FlexHub.Services.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace FlexHub.BlazorServer.RazorComponents.MainFeed.Components;
 
