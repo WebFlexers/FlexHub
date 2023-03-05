@@ -43,6 +43,7 @@ public class DirectMessageRepository : EfCoreRepositoryBase, IDirectMessageRepos
             .Paginate(pageNumber, numberOfMessagesToLoad)
             .Select(dm => new DirectMessageDTO()
             {
+                Id = dm.Id,
                 Message = dm.Message,
                 CreatedAt = dm.CreatedAt,
                 SenderUserObjectId = dm.SenderUserObjectId,

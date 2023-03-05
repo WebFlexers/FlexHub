@@ -6,19 +6,23 @@
 .msg_history {
     display: flex;
     flex-direction: column-reverse;
+    overflow-y: scroll;
+    padding: 30px 15px 0 25px;
+    width: 100%;
+    height: calc(100vh - 95px);
 }
 
 img {
     max-width: 100%;
 }
 
-.inbox_msg {
+/*.inbox_msg {
     clear: both;
     display: flex;
-    flex-direction: column-reverse;
     overflow-y: scroll;
+    scroll-behavior: auto;
     height: 100vh;
-}
+}*/
 
 .incoming_msg_img {
     display: inline-block;
@@ -53,12 +57,12 @@ img {
 .received_withd_msg {
     width: 57%;
 }
-
+/*
 .mesgs {
     float: left;
     padding: 30px 15px 0 25px;
     width: 100%;
-}
+}*/
 
 .incoming_msg {
     border-radius: 8px;

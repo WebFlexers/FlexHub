@@ -46,7 +46,7 @@ public partial class MainFeedPage
 
         StateHasChanged();
 
-        await MainPostsFeedComponent.FetchPosts(MainPostsFeedComponent.PageNum, 5);
+        await MainPostsFeedComponent.FetchPosts(MainPostsFeedComponent.PageNum++, 5);
         await ContactsHorizontalBarComponent.GetLastContactsOfUser(UserInfoStore.UserDTO.ObjectId, 6);
 
         await MainPostsFeedComponent.AnimateStateChange();

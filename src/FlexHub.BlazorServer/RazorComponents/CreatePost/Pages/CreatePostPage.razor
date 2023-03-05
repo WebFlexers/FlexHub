@@ -67,7 +67,7 @@
                     {
                         foreach (var tag in _allTags)
                         {
-                            <div class="px-3">
+                            <div @key="tag.Id" class="px-3">
                                 <MatCheckbox Label="@tag.Value" @bind-Value="@tag.IsChecked" Name="@($"Tag{tag.Id}")"></MatCheckbox>
                             </div>
                         }

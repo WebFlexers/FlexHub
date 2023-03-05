@@ -8,8 +8,13 @@
     [Parameter]
     public string ObserverTargetId { get; set; }
     [Parameter]
+    public TimeSpan Delay { get; set; } = TimeSpan.FromMilliseconds(100);
+    [Parameter]
+
     public EventCallback<bool> ObservableTargetReached { get; set; }
+
     private DotNetObjectReference<InfiniteScroll> _objectRef;
+    private bool _canExecute = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -23,6 +28,13 @@
     [JSInvokable]
     public async Task OnIntersection()
     {
+        if (_canExecute == false) return;
+
+        _canExecute = false;
+
         await ObservableTargetReached.InvokeAsync(true);
+
+        await Task.Delay(Delay);
+        _canExecute = true;
     }
 }

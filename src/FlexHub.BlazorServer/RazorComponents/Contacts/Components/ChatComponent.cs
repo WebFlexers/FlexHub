@@ -38,8 +38,6 @@ public partial class ChatComponent
     {
         if (UserInfoStore.UserDTO == null) return;
 
-        await ScrollDown();
-
         _chatSource = args.GetMessage<ChatSourceChangedEvent>();
         _pageNum = 2;
 
@@ -55,6 +53,10 @@ public partial class ChatComponent
             _groupMessages = new List<GroupMessageModel>();
             await FetchGroupMessages(1, ItemsPerPage);
         }
+
+        await Task.Delay(100, ct);
+
+        await ScrollDown();
     }
 
     private async Task FetchDirectMessages(int pageNumber, int itemsPerPage)
@@ -71,12 +73,15 @@ public partial class ChatComponent
 
         var directMessagesModels = newDirectMessages.Select(dm => new DirectMessageModel
         {
+            Id = dm.Id,
             IsSentByTheLoggedInUser = UserInfoStore.UserDTO.ObjectId.Equals(dm.SenderUserObjectId),
             Message = dm.Message,
             CreatedAt = dm.CreatedAt.ToString("h:mm tt | MMMM d")
         });
 
         _directMessages.AddRange(directMessagesModels);
+
+        await Task.Delay(100);
 
         await InvokeAsync(StateHasChanged);
     }
@@ -94,6 +99,7 @@ public partial class ChatComponent
 
         var groupMessagesModels = newGroupMessages.Select(gm => new GroupMessageModel
         {
+            Id = gm.Id,
             IsSentByTheLoggedInUser = UserInfoStore.UserDTO.ObjectId.Equals(gm.SenderUserObjectId),
             Message = gm.Message,
             CreatedAt = gm.CreatedAt.ToString("h:mm tt | MMMM d"),
@@ -101,6 +107,8 @@ public partial class ChatComponent
         });
 
         _groupMessages.AddRange(groupMessagesModels);
+
+        await Task.Delay(100);
 
         await InvokeAsync(StateHasChanged);
     }
@@ -132,5 +140,6 @@ public partial class ChatComponent
         if (messageStoredSuccessfully == false) return;
 
         _sendMessageModel.Message = string.Empty;
+
     }
 }

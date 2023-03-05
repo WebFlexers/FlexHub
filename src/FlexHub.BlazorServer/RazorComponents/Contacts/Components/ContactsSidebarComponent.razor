@@ -34,7 +34,7 @@
                             <MatListDivider/>
                             @foreach (var contact in Contacts)
                             {
-                                <MatListItem OnClick="async () => { await OnContactListItemClick(contact); }">
+                                <MatListItem @key="contact.ObjectId" OnClick="async () => { await OnContactListItemClick(contact); }">
                                     @contact.DisplayName
                                 </MatListItem>
                                 <MatListDivider/>
@@ -66,7 +66,7 @@
                         <MatListDivider />
                         @foreach (var group in Groups)
                         {
-                            <MatListItem OnClick="async () => { await OnGroupListItemClick(group); }">
+                            <MatListItem @key="group.Id" OnClick="async () => { await OnGroupListItemClick(group); }">
                                 @group.Title
                             </MatListItem>
                             <MatListDivider />

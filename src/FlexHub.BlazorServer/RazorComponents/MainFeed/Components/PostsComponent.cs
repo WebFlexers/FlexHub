@@ -86,6 +86,7 @@ public partial class PostsComponent
         {
             newPostModels.Add(new PostModel
             {
+                Id = newPosts[i].PostId,
                 Title = newPosts[i].Title,
                 Content = newPosts[i].Content,
                 PublisherDisplayName = newPostsUsers[i]?.DisplayName,

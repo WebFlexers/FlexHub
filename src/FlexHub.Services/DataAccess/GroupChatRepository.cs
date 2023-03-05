@@ -111,6 +111,7 @@ public class GroupChatRepository : EfCoreRepositoryBase, IGroupChatRepository
                 .Paginate(pageNumber, numberOfMessagesToLoad)
                 .Select(groupChatMessage => new GroupMessageDTO()
                 {
+                    Id = groupChatMessage.Id,
                     Message = groupChatMessage.Message,
                     CreatedAt = groupChatMessage.CreatedAt,
                     SenderUserDisplayName = groupChatMessage.SenderUser.DisplayName,
