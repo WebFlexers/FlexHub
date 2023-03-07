@@ -1,108 +1,132 @@
 ﻿@inject IJSRuntime JSRuntime;
 @using FlexHub.BlazorServer.CustomComponents.InfiniteScrolling
 
+
 <div class="container">
-    <div id="main-container" class="msg_history">
-        @if (_isGroupSelected == false && _directMessages.Any())
-        {
-            <InfiniteScroll ObserverTargetId="dmObserverTarget" ObservableTargetReached="(e) => FetchDirectMessages(_pageNum++, ItemsPerPage)">
-                @{
-                    var counter = -1;
-                }
-                @foreach (var dm in _directMessages)
+    
+    @if (_directMessages.Any() || _groupMessages.Any())
+    {
+        <Animate Animation="Animations.Fade" Auto Duration="TimeSpan.FromMilliseconds(500)">
+        <div id="main-container" class="msg_history">
+            @if (_isGroupSelected == false && _directMessages.Any())
                 {
-                    @if (dm.IsSentByTheLoggedInUser)
-                    {
-                        <div @key="dm" class="outgoing_msg">
-                            <div class="sent_msg">
-                                <p>
-                                    @dm.Message
-                                </p>
-                                <span class="time_date"> @dm.CreatedAt</span>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div @key="dm" class="incoming_msg" style="order: @counter--">
-                            <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="generic-user-image"> </div>
-                            <div class="received_msg">
-                                <div class="received_withd_msg">
-                                    <p>
-                                        @dm.Message
-                                    </p>
-                                    <span class="time_date"> @dm.CreatedAt</span>
+                    <InfiniteScroll ObserverTargetId="dmObserverTarget" ObservableTargetReached="(e) => FetchDirectMessages(_pageNum++, ItemsPerPage)">
+                        @{
+                            var counter = -1;
+                        }
+
+                        @foreach (var dm in _directMessages)
+                        {
+                            @if (dm.IsSentByTheLoggedInUser)
+                            {
+
+                                <div @key="dm" class="outgoing_msg">
+                                    <div class="sent_msg">
+                                        <p>
+                                            @dm.Message
+                                        </p>
+                                        <span class="time_date"> @dm.CreatedAt</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    }
+
+                            }
+                            else
+                            {
+
+                                <div @key="dm" class="incoming_msg" style="order: @counter--">
+                                    <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="generic-user-image"> </div>
+                                    <div class="received_msg">
+                                        <div class="received_withd_msg">
+                                            <p>
+                                                @dm.Message
+                                            </p>
+                                            <span class="time_date"> @dm.CreatedAt</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                        }
+                        <div class="mt-5" id="dmObserverTarget"></div>
+                    </InfiniteScroll>
                 }
-                <div class="mt-5" id="dmObserverTarget"></div>
-            </InfiniteScroll>
-        }
-        else if (_isGroupSelected && _groupMessages.Any())
-        {
-            <InfiniteScroll ObserverTargetId="gcObserverTarget" ObservableTargetReached="(e) => FetchGroupMessages(_pageNum++, ItemsPerPage)">
-                @{
-                    var counter = -1;
-                }
-                @foreach (var gm in _groupMessages)
+                else if (_isGroupSelected && _groupMessages.Any())
                 {
-                    @if (gm.IsSentByTheLoggedInUser)
-                    {
-                        <div @key=gm class="outgoing_msg" style="order: @counter--">
-                            <div class="sent_msg">
-                                <p>
-                                    @gm.Message
-                                </p>
-                                <span class="time_date"> @gm.CreatedAt</span>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div @key=gm style="order: @counter--">
-                            <div class="sender-username">
-                                @gm.SenderDisplayName
-                            </div>
-                            <div class="incoming_msg mt-1">
-                                <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="generic-user-image"> </div>
-                                <div class="received_msg">
-                                    <div class="received_withd_msg">
+                    <InfiniteScroll ObserverTargetId="gcObserverTarget" ObservableTargetReached="(e) => FetchGroupMessages(_pageNum++, ItemsPerPage)">
+                        @{
+                            var counter = -1;
+                        }
+
+                        @foreach (var gm in _groupMessages)
+                        {
+                            @if (gm.IsSentByTheLoggedInUser)
+                            {
+                                <div @key=gm class="outgoing_msg" style="order: @counter--">
+                                    <div class="sent_msg">
                                         <p>
                                             @gm.Message
                                         </p>
                                         <span class="time_date"> @gm.CreatedAt</span>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    }
+                            }
+                            else
+                            {
+                                <div @key=gm style="order: @counter--">
+                                    <div class="sender-username">
+                                        @gm.SenderDisplayName
+                                    </div>
+                                    <div class="incoming_msg mt-1">
+                                        <div class="incoming_msg_img"> <img src="uploaded-images/user-profiles/generic-user.png" alt="generic-user-image"> </div>
+                                        <div class="received_msg">
+                                            <div class="received_withd_msg">
+                                                <p>
+                                                    @gm.Message
+                                                </p>
+                                                <span class="time_date"> @gm.CreatedAt</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        <div class="mb-5" id="gcObserverTarget"></div>
+
+                    </InfiniteScroll>
                 }
-                <div class="mb-5" id="gcObserverTarget"></div>
-            </InfiniteScroll>
-        }
-        </div>
-    <div class="type_msg mt-3 px-3">
-        <EditForm Model="_sendMessageModel" OnSubmit="async () => { await SendMessage(); }">
-            <div class="d-flex flex-grow-1">
-                <div class="me-2 w-100">
-                    <MatTextField autocomplete="off" placeholder="Type a message" Outlined="true" @bind-Value="_sendMessageModel.Message"
-                                  Style="width: 100%; height: 45px;" HelperTextPersistent="true" @ref="_messageTextField" />
-                </div>
-                <div class="text-center">
-                    <MatButton Raised="true" type="submit"
-                               Style="text-align: center; height: 43px">
-                        <MatIcon Icon="send" />
-                    </MatButton>
-                </div>
             </div>
-        </EditForm>
-    </div>
+        </Animate>
+    }
+    else
+    {
+        <div id="main-container" class="msg_history">
+
+        </div>
+    }
+
+    <Animate Animation="Animations.Fade" Auto Duration="TimeSpan.FromMilliseconds(500)">
+        <div class="type_msg mt-3 px-3">
+            <EditForm Model="_sendMessageModel" OnSubmit="async () => { await SendMessage(); }">
+                <div class="d-flex flex-grow-1">
+                    <div class="me-2 w-100">
+                        <MatTextField autocomplete="off" placeholder="Type a message" Outlined="true" @bind-Value="_sendMessageModel.Message"
+                                      Style="width: 100%; height: 45px;" HelperTextPersistent="true" @ref="_messageTextField"/>
+                    </div>
+                    <div class="text-center">
+                        <MatButton Raised="true" type="submit"
+                                   Style="text-align: center; height: 43px">
+                            <MatIcon Icon="send"/>
+                        </MatButton>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </Animate>
 </div>
 
 @code
 {
+    private Animate _fadeInAnimation;
     private MatTextField<string> _messageTextField;
 
     private Task ScrollDown()

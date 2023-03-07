@@ -95,6 +95,12 @@
     private string? _userGivenName;
     private string? _userSurname;
 
+    private MatList _contactsList;
+    private MatList _groupsList;
+
+    BaseMatMenu? _profileMenu;
+    ForwardRef _profileMenuForwardRef = new();
+
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -106,9 +112,6 @@
         _userGivenName = userDTO.GivenName;
         _userSurname = userDTO.Surname;
     }
-
-    BaseMatMenu? _profileMenu;
-    ForwardRef _profileMenuForwardRef = new();
 
     public void OpenProfileMenu(MouseEventArgs e)
     {

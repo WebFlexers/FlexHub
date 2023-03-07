@@ -1,4 +1,5 @@
 ﻿using FlexHub.Data.DTOs;
+using FlexHub.Data.Entities;
 
 namespace FlexHub.Services.DataAccess.Interfaces;
 
@@ -29,5 +30,5 @@ public interface IGroupChatRepository
     /// Stores a message sent by the sender user to the group chat asynchronously
     /// </summary>
     /// <returns>True if the operation is successful and false if it fails</returns>
-    Task<bool> StoreGroupMessage(string senderUserObjectId, int groupChatId, string message);
+    Task<(bool isStoredSuccessfully, GroupMessage? groupMessage)> StoreGroupMessage(string senderUserObjectId, int groupChatId, string message);
 }

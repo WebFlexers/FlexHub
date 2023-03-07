@@ -21,9 +21,6 @@ public partial class ContactsSidebarComponent
 
     [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 
-    private MatList _contactsList;
-    private MatList _groupsList;
-
     private string _contactsSearchText = string.Empty;
     private string _groupsSearchText = string.Empty;
 
@@ -46,6 +43,7 @@ public partial class ContactsSidebarComponent
         if (Contacts != null && Contacts.Any())
         {
             await PublishChatSourceChangedEvent(ChatType.DirectMessages, Contacts.First());
+            await _contactsList.SetSelectedIndex(0);
         }
     }
 

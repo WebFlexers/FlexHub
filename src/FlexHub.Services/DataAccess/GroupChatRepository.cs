@@ -136,7 +136,7 @@ public class GroupChatRepository : EfCoreRepositoryBase, IGroupChatRepository
     /// Stores a message sent by the sender user to the group chat asynchronously
     /// </summary>
     /// <returns>True if the operation is successful and false if it fails</returns>
-    public async Task<bool> StoreGroupMessage(string senderUserObjectId, int groupChatId, string message)
+    public async Task<(bool isStoredSuccessfully, GroupMessage? groupMessage)> StoreGroupMessage(string senderUserObjectId, int groupChatId, string message)
     {
         ApplicationDbContext? dbContext = null; 
         var createdNewDbContext = false;
@@ -156,13 +156,13 @@ public class GroupChatRepository : EfCoreRepositoryBase, IGroupChatRepository
             await dbContext.GroupMessages.AddAsync(groupMessage);
             await dbContext.SaveChangesAsync();
 
-            return true;
+            return (true, groupMessage);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to store message to group chat with id " + groupChatId);
 
-            return false;
+            return (false, default);
         }
         finally
         {

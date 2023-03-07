@@ -2,6 +2,8 @@
 
 public class SignalRGroupMessageModel
 {
-    public string GroupId { get; set; }
+    public int GroupId { get; set; }
+    public DateTime CreatedAt { get; set; }
     public string Message { get; set; }
+    public string SenderDisplayName { get; set; }
 }

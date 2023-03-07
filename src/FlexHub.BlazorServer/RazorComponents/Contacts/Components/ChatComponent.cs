@@ -4,6 +4,7 @@ using FlexHub.BlazorServer.RazorComponents.Contacts.MessageBusEvents;
 using FlexHub.BlazorServer.SignalR;
 using FlexHub.BlazorServer.SignalR.Models;
 using FlexHub.BlazorServer.Utilities;
+using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
 using FlexHub.Services.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Components;
@@ -79,8 +80,20 @@ public partial class ChatComponent
             var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
 
             if (userDTO == null) return;
+            
+            if (groupModel.GroupId.Equals(_chatSource.GroupChatId) && userDTO.ObjectId.Equals(senderUserObjectId) == false)
+            {
+                _groupMessages.Insert(0, new GroupMessageModel
+                {
+                    Id = groupModel.GroupId,
+                    CreatedAt = groupModel.CreatedAt.ToLocalTime().ToString("h:mm tt | MMMM d"),
+                    IsSentByTheLoggedInUser = false,
+                    Message = groupModel.Message,
+                    SenderDisplayName = groupModel.SenderDisplayName
+                });
 
-
+                await InvokeAsync(StateHasChanged);
+            }
         });
 
         try
@@ -200,9 +213,9 @@ public partial class ChatComponent
             (bool isStoredSuccessfully, DirectMessage? directMessage) = await DirectMessageRepository.StoreMessage(userDTO.ObjectId, 
                 _chatSource.ContactObjectId, _sendMessageModel.Message);
 
-            if (isStoredSuccessfully == false || directMessage == null) return;
-
             if (_hubConnection == null) return;
+
+            if (isStoredSuccessfully == false || directMessage == null) return;
 
             try
             {
@@ -227,13 +240,44 @@ public partial class ChatComponent
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "An error occurred while trying to send message through SignalR");
+                Logger.LogError(ex, "An error occurred while trying to send direct message through SignalR");
             }
         }
         else
         {
-            await GroupChatRepository.StoreGroupMessage(userDTO.ObjectId, 
+            (bool isStoredSuccessfully, GroupMessage? groupMessage) = await GroupChatRepository.StoreGroupMessage(userDTO.ObjectId, 
                 _chatSource.GroupChatId, _sendMessageModel.Message);
+
+            if (_hubConnection == null) return;
+
+            if (isStoredSuccessfully == false || groupMessage == null) return;
+
+            try
+            {
+                await _hubConnection.SendAsync(SignalRMessages.SendGroupMessage, userDTO.ObjectId,
+                    new SignalRGroupMessageModel
+                    {
+                        GroupId = groupMessage.GroupChatId,
+                        CreatedAt = groupMessage.CreatedAt,
+                        Message = groupMessage.Message,
+                        SenderDisplayName = userDTO.DisplayName
+                    });
+
+                _groupMessages.Insert(0, new GroupMessageModel
+                {
+                    Id = groupMessage.Id,
+                    CreatedAt = groupMessage.CreatedAt.ToLocalTime().ToString("h:mm tt | MMMM d"),
+                    IsSentByTheLoggedInUser = true,
+                    Message = groupMessage.Message,
+                    SenderDisplayName = userDTO.DisplayName
+                });
+
+                _sendMessageModel.Message = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "An error occurred while trying to send group message through SignalR");
+            }
         }
     }
 }
