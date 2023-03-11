@@ -1,0 +1,39 @@
+﻿.container {
+    grid-area: profile;
+    overflow: hidden;
+}
+
+.page-title-container {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    background-color: var(--rz-primary);
+    color: var(--rz-secondary-text);
+    border-radius: 20px;
+    max-width: 1000px;
+}
+
+.profile-info-container {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    background-color: var(--rz-background-primary);
+    border-radius: 15px;
+    max-width: 1000px;
+}
+
+.actions-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(246px, 1fr));
+    grid-gap: 1rem;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    background-color: var(--rz-background-primary);
+    border-radius: 15px;
+    max-width: 1000px;
+}
+
+.fw-semibold {
+    font-weight: 600;
+}

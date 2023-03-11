@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using FlexHub.BlazorServer.Models;
+﻿using FlexHub.BlazorServer.Models;
 using FlexHub.BlazorServer.RazorComponents.MainFeed.Components;
 using FlexHub.BlazorServer.Stores.Search;
 using FlexHub.BlazorServer.Utilities;
@@ -55,8 +54,15 @@ public partial class MainFeedPage
         {
             await UserRepository.CreateUser(userDTO);
         }
+        else
+        {
+            await UserRepository.UpdateUser(userDTO);
+        }
     }
 
+    /// <summary>
+    /// Fetches the posts according to the selected filters if any
+    /// </summary>
     public async Task OnSearchButtonClick()
     {
         if (MainPostsFeedComponent == null) return;

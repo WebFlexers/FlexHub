@@ -21,28 +21,7 @@
     align-content: center;
 }
 
-.contacts-container {
-    height: calc(50vh - 72px);
-    overflow-x: hidden;
+.tags-container {
+    height: calc(100vh - 72px);
     overflow-y: auto;
-}
-
-.groups-container {
-    height: calc(50vh - 72px);
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-.create-post-container {
-    height: 72px;
-}
-
-@media (max-width: 942px) {
-    .sidebar-container {
-        position: relative;
-    }
-
-    .left-side-shadow {
-        box-shadow: 0 0;
-    }
 }

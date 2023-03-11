@@ -107,6 +107,7 @@ public class PostRepository : EfCoreRepositoryBase, IPostRepository
         try
         {
             (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
             var posts = await dbContext.Posts
                 .AsNoTracking()
                 .Where(post => post.Title.Contains(title))

@@ -9,6 +9,9 @@ public class GroupChatConfig : IEntityTypeConfiguration<GroupChat>
     {
         builder.HasKey(x => x.Id);
 
+        builder.Property(gc => gc.Id)
+            .ValueGeneratedOnAdd();
+
         builder.Property(gc => gc.Title)
             .IsRequired()
             .HasMaxLength(60);

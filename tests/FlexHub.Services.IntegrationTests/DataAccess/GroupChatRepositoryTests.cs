@@ -70,9 +70,26 @@ public class GroupChatRepositoryTests
         var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
         // Testing
-        var storeMessage = await groupChatRepository.StoreGroupMessage(userObjectId, groupId, message);
+        var (isStoredSuccessfully, groupMessage) = await groupChatRepository.StoreGroupMessage(userObjectId, groupId, message);
 
         // Verification
-        Assert.True(storeMessage);
+        Assert.True(isStoredSuccessfully);
+    }
+
+    [Fact]
+    public async Task RemoveUserFromGroupChat_RemoveUserFromGroupChat()
+    {
+        // Preparation
+        var dbContextFactory = new DbContextFactoryMock(_fixture, true);
+        await using var groupChatRepository = new GroupChatRepository(_logger, dbContextFactory);
+
+        var userObjectId = SampleData.UserObjectIds.First();
+        var groupChatId = 1;
+
+        // Testing
+        var result = await groupChatRepository.RemoveUserFromGroupChat(userObjectId, groupChatId);
+
+        // Verification
+        Assert.True(result);
     }
 }

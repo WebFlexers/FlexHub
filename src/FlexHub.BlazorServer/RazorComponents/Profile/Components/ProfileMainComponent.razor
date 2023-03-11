@@ -1,0 +1,41 @@
+﻿@using FlexHub.Data.DTOs
+
+<Animate Animation="Animations.Fade" Auto Duration="TimeSpan.FromMilliseconds(500)">
+    <div class="container">
+        <div class="page-title-container text-center py-3 mt-4 shadow-sm">
+            <h1>Profile</h1>
+        </div>
+
+        <div class="profile-info-container py-4 px-4 mt-4 shadow-sm">
+            <p> Full Name: <span class="fw-semibold">@_userDTO.GivenName @_userDTO.Surname</span></p>
+            <p> Display Name: <span class="fw-semibold">@_userDTO.DisplayName</span></p>
+            <p> Country: <span class="fw-semibold">@_userDTO.Country</span></p>
+            <p> Email Address: <span class="fw-semibold">@_userDTO.EmailAddress</span></p>
+            <div class="text-center">
+                <a href="MicrosoftIdentity/Account/EditProfile" style="text-decoration: none;">
+                    <MatButton Raised="true">Edit My Profile</MatButton>
+                </a>
+            </div>
+        </div>
+    
+        <div class="actions-container py-4 mt-4 shadow-sm">
+            <div class="text-center px-3">
+                <h2 class="fs-4">Send a contact request</h2>
+                <EditForm Model="_sendContactRequestModel" OnSubmit="async () => await OnContactRequestSubmit()">
+                    <MatTextField type="search" @bind-Value="_sendContactRequestModel.ContactDisplayName"
+                                  Label="Search" Icon="search" Outlined="true" Dense="true"/>
+                    <div class="mt-3">
+                        <MatButton Type="submit" Style="width: 100%; max-width: 246px" Raised="true">Send</MatButton>
+                    </div>
+                </EditForm>
+            </div>
+            <div class="text-center px-3">
+                <h2 class="fs-4">Pending contact requests</h2>
+            </div>
+        </div>
+    </div>
+</Animate>
+
+@code {
+    private string _tempSearch;
+}

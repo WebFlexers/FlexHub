@@ -2,42 +2,43 @@
 
 <AuthorizeView>
     <Authorized>
+        
         <div class="page-container">
-            <Animate Animation="Animations.Fade" Auto Duration="TimeSpan.FromMilliseconds(500)">
-                <div class="container">
-                    <EditForm Context="editFormContext" Model="@_post" OnValidSubmit="async () => { await Create(); }">
-                        <!-- Validate the model -->
-                        <DataAnnotationsValidator/>
+            <div class="container">
+                <Animate Animation="Animations.Fade" Auto Duration="TimeSpan.FromMilliseconds(500)">
+                <EditForm Context="editFormContext" Model="@_post" OnValidSubmit="async () => { await Create(); }">
+                    <!-- Validate the model -->
+                    <DataAnnotationsValidator/>
 
-                        <div class="page-title-container text-center py-3 mt-4 shadow-sm">
-                            <h1>Create Post</h1>
+                    <div class="page-title-container text-center py-3 mt-4 shadow-sm">
+                        <h1>Create Post</h1>
+                    </div>
+
+                    <div class="post-container p-4 my-4 shadow-lg">
+                        <div>
+                            <MatTextField @bind-Value="_post.Title" Label="Title"/>
                         </div>
 
-                        <div class="post-container p-4 my-4 shadow-lg">
-                            <div>
-                                <MatTextField @bind-Value="_post.Title" Label="Title"/>
-                            </div>
-
-                            <div class="mt-3">
-                                <MatTextField @bind-Value="_post.Content" Label="Message" TextArea="true"
-                                              Style="width: 100%; min-height: 250px;"/>
-                            </div>
+                        <div class="mt-3">
+                            <MatTextField @bind-Value="_post.Content" Label="Message" TextArea="true"
+                                          Style="width: 100%; min-height: 250px;"/>
                         </div>
+                    </div>
 
-                        <div class="text-center">
-                            <MatButton type="submit" Raised="true"
-                                       Style="width: 100%; max-width: 500px;">
-                                Submit
-                            </MatButton>
-                        </div>
+                    <div class="text-center mt-5">
+                        <MatButton type="submit" Raised="true"
+                                   Style="width: 100%; max-width: 1000px;">
+                            Submit
+                        </MatButton>
+                    </div>
 
-                        <div class="text-center mt-5">
-                            <!-- ShowToastMessage the result of whatever is invalid -->
-                            <ValidationSummary/>
-                        </div>
-                    </EditForm>
-                </div>
-            </Animate>
+                    <div class="text-center mt-5">
+                        <!-- ShowToastMessage the result of whatever is invalid -->
+                        <ValidationSummary/>
+                    </div>
+                </EditForm>
+                </Animate>
+            </div>
 
             <div class="right-side-panel left-side-shadow">
                 <div class="profile-container shadow-sm">

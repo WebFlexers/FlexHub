@@ -37,7 +37,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasIndex("ContactObjectId");
 
-                    b.ToTable("Contacts");
+                    b.ToTable("Contacts", (string)null);
 
                     b.HasData(
                         new
@@ -270,7 +270,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasIndex("ReceiverUserObjectId");
 
-                    b.ToTable("ContactRequests");
+                    b.ToTable("ContactRequests", (string)null);
 
                     b.HasData(
                         new
@@ -381,7 +381,7 @@ namespace FlexHub.Data.Migrations
                     b.HasIndex("SenderUserObjectId", "ReceiverUserObjectId", "CreatedAt")
                         .IsUnique();
 
-                    b.ToTable("DirectMessages");
+                    b.ToTable("DirectMessages", (string)null);
 
                     b.HasData(
                         new
@@ -3207,7 +3207,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GroupChats");
+                    b.ToTable("GroupChats", (string)null);
 
                     b.HasData(
                         new
@@ -3263,7 +3263,7 @@ namespace FlexHub.Data.Migrations
                     b.HasIndex("GroupChatId", "CreatedAt")
                         .IsUnique();
 
-                    b.ToTable("GroupMessages");
+                    b.ToTable("GroupMessages", (string)null);
 
                     b.HasData(
                         new
@@ -4899,7 +4899,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasIndex("UserObjectId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
 
                     b.HasData(
                         new
@@ -5663,7 +5663,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("PostsTags");
+                    b.ToTable("PostsTags", (string)null);
 
                     b.HasData(
                         new
@@ -6988,7 +6988,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
 
                     b.HasData(
                         new
@@ -7097,7 +7097,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasKey("ObjectId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
@@ -7224,7 +7224,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasIndex("GroupChatId");
 
-                    b.ToTable("UsersGroupChats");
+                    b.ToTable("UsersGroupChats", (string)null);
 
                     b.HasData(
                         new
@@ -7291,7 +7291,7 @@ namespace FlexHub.Data.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("UsersTags");
+                    b.ToTable("UsersTags", (string)null);
 
                     b.HasData(
                         new

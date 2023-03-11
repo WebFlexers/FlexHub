@@ -5,7 +5,6 @@ using FlexHub.Data.Entities;
 using FlexHub.Services.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
-using Microsoft.AspNetCore.Components.Authorization;
 
 namespace FlexHub.BlazorServer.RazorComponents.MainFeed.Components;
 
@@ -28,6 +27,11 @@ public partial class PostsComponent
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Fetches the posts paginated according to search mode by applying filters.
+    /// If no filter is selected the posts are fetched in descending order according
+    /// to the number of user subscribed tags the posts include.
+    /// </summary>
     public async Task FetchPosts(int pageNumber, int itemsPerPage)
     {
         List<PostDTO>? newPosts;
@@ -104,16 +108,19 @@ public partial class PostsComponent
 
     private async Task<UserDTO?> GetPostUser(string userObjectId)
     {
-        return await UserRepository.GetUser(userObjectId);
+        return await UserRepository.GetUserById(userObjectId);
     }
 
+    /// <summary>
+    /// Triggers an animation each time new posts are loaded
+    /// </summary>
     public async Task AnimateStateChange()
     {
         ShowAnimation = false;
-        await InvokeAsync( StateHasChanged );
+        await InvokeAsync(StateHasChanged);
         await Task.Delay(TimeSpan.FromMilliseconds(1));
 
         ShowAnimation = true;
-        await InvokeAsync( StateHasChanged );
+        await InvokeAsync(StateHasChanged);
     }
 }

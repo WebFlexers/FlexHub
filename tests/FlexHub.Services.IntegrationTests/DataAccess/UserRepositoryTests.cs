@@ -74,10 +74,11 @@ public class UserRepositoryTests
         var receiverUserObjectId = SampleData.UserObjectIds.ElementAt(6);
 
         // Testing
-        var result = await userRepository.CreateContactRequest(senderUserObjectId, receiverUserObjectId);
+        var (isSuccessfull, errorMessage) = await userRepository.CreateContactRequest(senderUserObjectId, receiverUserObjectId);
 
         // Verification
-        Assert.True(result);
+        Assert.True(isSuccessfull);
+        Assert.True(string.IsNullOrEmpty(errorMessage));
     }
 
     [Fact]
@@ -112,22 +113,5 @@ public class UserRepositoryTests
 
         // Verification
         Assert.True(resultAccept);
-    }
-
-    [Fact]
-    public async Task RemoveUserFromGroupChat_RemoveUserFromGroupChat()
-    {
-        // Preparation
-        var dbContextFactory = new DbContextFactoryMock(_fixture, true);
-        await using var userRepository = new UserRepository(_logger, dbContextFactory);
-
-        var userObjectId = SampleData.UserObjectIds.First();
-        var groupChatId = 1;
-
-        // Testing
-        var result = await userRepository.RemoveUserFromGroupChat(userObjectId, groupChatId);
-
-        // Verification
-        Assert.True(result);
     }
 }

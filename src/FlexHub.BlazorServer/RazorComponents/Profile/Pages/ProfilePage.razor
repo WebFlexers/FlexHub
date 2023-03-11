@@ -1,7 +1,14 @@
 ﻿@page "/profile"
+@using FlexHub.BlazorServer.RazorComponents.Profile.Components
 
-<h3>ProfilePage</h3>
-
-@code {
-
-}
+<AuthorizeView>
+    <Authorized>
+        <div class="profile-page-container">
+            <ProfileMainComponent />
+            <TagsSidebarComponent />
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <LoginPrompt />
+    </NotAuthorized>
+</AuthorizeView>

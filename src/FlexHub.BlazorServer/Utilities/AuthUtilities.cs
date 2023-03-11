@@ -24,7 +24,7 @@ public static class AuthUtilities
             string.IsNullOrWhiteSpace(country) ||
             string.IsNullOrWhiteSpace(createdAtUnix))
         {
-            logger.LogError("1 or more properties from jwt token where null after registration. The properties are " +
+            logger.LogWarning("1 or more properties from jwt token where null after registration. The properties are " +
                              "objectId: {userObjectId}, email: {email}, given name: {givenName}, surname: {surname}, displayname: {displayName}" +
                              "country: {country}, createdAtUnix: {createdAtUnix}",
                 userObjectId, email, givenName, surname, displayName, country, createdAtUnix);

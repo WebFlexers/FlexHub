@@ -23,6 +23,10 @@ public partial class CreatePostPage
 
     [Inject] public IMatToaster Toaster { get; set; } = null!;
 
+    /// <summary>
+    /// Tries to store a new post in the database and notifies the user if it was stored successfully or not
+    /// </summary>
+    /// <returns></returns>
     public async Task Create()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();

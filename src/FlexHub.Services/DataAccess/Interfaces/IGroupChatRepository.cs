@@ -8,7 +8,7 @@ public interface IGroupChatRepository
     /// <summary>
     /// Gets all the group chats of the user asynchronously
     /// </summary>
-    public Task<List<GroupChatDTO>?> GetGroupChats(string userObjectId);
+    Task<List<GroupChatDTO>?> GetGroupChats(string userObjectId);
 
     /// <summary>
     /// Gets the group chats of the given user
@@ -31,4 +31,22 @@ public interface IGroupChatRepository
     /// </summary>
     /// <returns>True if the operation is successful and false if it fails</returns>
     Task<(bool isStoredSuccessfully, GroupMessage? groupMessage)> StoreGroupMessage(string senderUserObjectId, int groupChatId, string message);
+
+    /// <summary>
+    /// Creates a new group and returns a dto from it
+    /// </summary>
+    Task<(bool success, GroupChatDTO? newGroupChat)> CreateGroup(CreateGroupChatDTO createGroupDTO);
+
+    /// <summary>
+    /// Adds the user with the given object id to the groupChat with the given id
+    /// </summary>
+    /// <returns>Whether the operation was successful and an error message in case it wasn't</returns>
+    Task<(bool success, string errorMessage)> AddUserToGroupChat(string userObjectId, int groupChatId);
+
+    /// <summary>
+    /// Removes the user with the given user object id
+    /// from the group chat with the given id asynchronously
+    /// </summary>
+    /// <returns>True if the operation is successful and false if it fails</returns>
+    Task<bool> RemoveUserFromGroupChat(string userObjectId, int groupChatId);
 }

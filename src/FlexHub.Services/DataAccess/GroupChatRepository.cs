@@ -1,4 +1,5 @@
-﻿using FlexHub.Data;
+﻿using System.Net.Http.Headers;
+using FlexHub.Data;
 using FlexHub.Data.DTOs;
 using FlexHub.Data.Entities;
 using FlexHub.Services.DataAccess.Interfaces;
@@ -163,6 +164,130 @@ public class GroupChatRepository : EfCoreRepositoryBase, IGroupChatRepository
             _logger.LogError(ex, "Failed to store message to group chat with id " + groupChatId);
 
             return (false, default);
+        }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
+    }
+
+    /// <summary>
+    /// Creates a new group and returns a dto from it
+    /// </summary>
+    public async Task<(bool success, GroupChatDTO? newGroupChat)> CreateGroup(CreateGroupChatDTO createGroupDTO)
+    {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
+        try
+        {
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var utcNow = DateTime.UtcNow;
+
+            var newGroupChat = new GroupChat
+            {
+                Title = createGroupDTO.Title,
+                CreatedAt = utcNow,
+                UpdatedAt = utcNow
+            };
+
+            await dbContext.GroupChats.AddAsync(newGroupChat);
+            await dbContext.SaveChangesAsync();
+
+            var groupChatDTO = new GroupChatDTO
+            {
+                Id = newGroupChat.Id,
+                Title = newGroupChat.Title,
+                CreatedAt = newGroupChat.CreatedAt,
+                UpdatedAt = newGroupChat.UpdatedAt
+            };
+
+            return (true, groupChatDTO);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create group chat with title: " + createGroupDTO.Title);
+            return (false, default);
+        }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
+    }
+
+    /// <summary>
+    /// Adds the user with the given object id to the groupChat with the given id
+    /// </summary>
+    /// <returns>Whether the operation was successful and an error message in case it wasn't</returns>
+    public async Task<(bool success, string errorMessage)> AddUserToGroupChat(string userObjectId, int groupChatId)
+    {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
+        try
+        {
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var existingUserGroupRelationship = await dbContext.UsersGroupChats.FindAsync(userObjectId, groupChatId);
+
+            if (existingUserGroupRelationship != null)
+            {
+                return (false, "The given user is already in the group");
+            }
+
+            await dbContext.UsersGroupChats.AddAsync(new UserGroupChat
+            {
+                UserObjectId = userObjectId,
+                GroupChatId = groupChatId
+            });
+
+            await dbContext.SaveChangesAsync();
+
+            return (true, string.Empty);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to add user with id {userId} to group chat with id {chatId}", 
+                userObjectId, groupChatId);
+            return (false, "An unexpected error occurred while trying to add a user to the group chat");
+        }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
+    }
+
+    /// <summary>
+    /// Removes the user with the given user object id
+    /// from the group chat with the given id asynchronously
+    /// </summary>
+    /// <returns>True if the operation is successful and false if it fails</returns>
+    public async Task<bool> RemoveUserFromGroupChat(string userObjectId, int groupChatId)
+    {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
+        try
+        {
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var user = await dbContext.UsersGroupChats
+                .Where(user => user.UserObjectId == userObjectId && user.GroupChatId == groupChatId)
+                .FirstOrDefaultAsync();
+
+            if (user == null) return false;
+
+            dbContext.UsersGroupChats.Remove(user);
+            await dbContext.SaveChangesAsync();
+
+            return true;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to remove user from group chat");
+            return false;
         }
         finally
         {

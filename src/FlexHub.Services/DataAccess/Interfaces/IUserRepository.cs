@@ -5,14 +5,14 @@ namespace FlexHub.Services.DataAccess.Interfaces;
 public interface IUserRepository
 {
     /// <summary>
-    /// Gets the user display name of the user with the given object id
+    /// Gets the user with the given display name
     /// </summary>
-    Task<UserDTO?> GetUser(string userObjectId);
+    Task<UserDTO?> GetUserByDisplayName(string displayName);
 
     /// <summary>
-    /// Gets all the user contacts asynchronously
+    /// Gets the user display name of the user with the given object id
     /// </summary>
-    Task<List<UserDTO>?> GetUserContacts(string userObjectId);
+    Task<UserDTO?> GetUserById(string userObjectId);
 
     /// <summary>
     /// Gets the last X number of contacts of the user asynchronously
@@ -22,10 +22,20 @@ public interface IUserRepository
     Task<List<UserDTO>?> GetLastAddedContacts(string userObjectId, int numberOfContacts);
 
     /// <summary>
+    /// Gets all the user contacts asynchronously
+    /// </summary>
+    Task<List<UserDTO>?> GetUserContacts(string userObjectId);
+
+    /// <summary>
     /// Gets the contacts of the given user
     /// that contain the given name asynchronously
     /// </summary>
     Task<List<UserDTO>?> GetUserContactsFilteredByName(string userObjectId, string name);
+
+    /// <summary>
+    /// Checks if two users are contacts
+    /// </summary>
+    Task<bool> AreUsersContacts(string userObjectId, string contactObjectId);
 
     /// <summary>
     /// Creates a user from the given UserDTO
@@ -44,7 +54,7 @@ public interface IUserRepository
     /// to the receiver user
     /// </summary>
     /// <returns>True if the operation is successful and false if it fails</returns>
-    Task<bool> CreateContactRequest(string senderUserObjectId, string receiverUserObjectId);
+    Task<(bool isSuccessfull, string errorMessage)> CreateContactRequest(string senderUserObjectId, string receiverUserObjectId);
 
     /// <summary>
     /// Accepts the user request from the sender user to the primary user and
@@ -56,15 +66,8 @@ public interface IUserRepository
     Task<bool> AcceptContactRequest(string receiverUserObjectId, string senderUserObjectId);
 
     /// <summary>
-    /// Deletes the contact between the primary user and the contact to delete user asynchronously
+    /// Deletes the contact between the primary user and the contact asynchronously
     /// </summary>
     /// <returns>True if the operation is successful and false if it fails</returns>
     Task<bool> DeleteContact(string primaryUserObjectId, string contactToDeleteUserObjectId);
-
-    /// <summary>
-    /// Removes the user with the given user object id
-    /// from the group chat with the given id asynchronously
-    /// </summary>
-    /// <returns>True if the operation is successful and false if it fails</returns>
-    Task<bool> RemoveUserFromGroupChat(string userObjectId, int groupChatId);
 }

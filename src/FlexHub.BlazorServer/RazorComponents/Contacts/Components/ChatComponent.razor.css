@@ -12,6 +12,13 @@
     height: calc(100vh - 95px);
 }
 
+.more_options_container {
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    border-radius: 30px;
+}
+
 img {
     max-width: 100%;
 }

@@ -1,9 +1,9 @@
 ﻿@using FlexHub.BlazorServer.Utilities
 <div class="sidebar-container left-side-shadow">
     <div class="profile-container shadow-sm">
-        <MatFAB Class="ms-3" Icon="person" Style="background-color: var(--rz-primary) !important;" Mini="true" 
-                OnClick="@OpenProfileMenu" RefBack="@_profileMenuForwardRef" />
-                    
+        <MatFAB Class="ms-3" Icon="person" Style="background-color: var(--rz-primary) !important;" Mini="true"
+                OnClick="@OpenProfileMenu" RefBack="@_profileMenuForwardRef"/>
+
         @{
             // If the compiler is screaming ignore it it's a bug
             // of visual studio and the project in running fine
@@ -24,28 +24,26 @@
         </div>
     </div>
 
-    <div class="mt-3">
+    <div class="pt-3 contacts-container">
         <div class="text-center px-2">
-            <MatTextField type="search" @bind-Value="_contactsSearchText" 
-                          Label="Search" Icon="search" Outlined="true" Dense="true" />
+            <EditForm Model="ContactsSearchModel" OnSubmit="async () => await SearchContactsByName()">
+                <MatTextField type="search" @bind-Value="ContactsSearchModel.Name"
+                              Label="Search" Icon="search" Outlined="true" Dense="true"/>
+            </EditForm>
         </div>
 
-        <div class="text-center mt-2 shadow-sm">
+        <div class="pt-2 text-center shadow-sm">
             <MatList @ref="_contactsList" SingleSelection="true">
                 @if (Contacts != null && Contacts.Any())
                 {
-                    <div class="contacts-container">
-                        
-                            <MatListDivider/>
-                            @foreach (var contact in Contacts)
-                            {
-                                <MatListItem @key="contact.ObjectId" OnClick="async () => { await OnContactListItemClick(contact); }">
-                                    @contact.DisplayName
-                                </MatListItem>
-                                <MatListDivider/>
-                            }
-                       
-                    </div>
+                    <MatListDivider/>
+                    @foreach (var contact in Contacts)
+                    {
+                        <MatListItem @key="contact.ObjectId" OnClick="async () => await OnContactListItemClick(contact)">
+                            @contact.DisplayName
+                        </MatListItem>
+                        <MatListDivider/>
+                    }
                 }
                 else
                 {
@@ -57,27 +55,28 @@
         </div>
     </div>
     
-    <div class="mt-3">
+    <div class="pt-3 groups-container">
         <div class="text-center px-2">
-            <MatTextField type="search" @bind-Value="_groupsSearchText"
-                          Label="Search" Icon="search" Outlined="true" Dense="true" />
+            <EditForm Model="GroupChatsSearchModel" OnSubmit="async () => await SearchGroupChatsByName()">
+                <MatTextField type="search" @bind-Value="GroupChatsSearchModel.Name"
+                              Label="Search" Icon="search" Outlined="true" Dense="true"/>
+            </EditForm>
         </div>
 
-        <div class="text-center shadow-sm">
+        <div class="pt-2 text-center shadow-sm">
             @if (Groups != null && Groups.Any())
             {
-                <div class="groups-container">
-                    <MatList SingleSelection="true" @ref="_groupsList">
+                <MatList SingleSelection="true" @ref="_groupsList">
+                    <MatListDivider />
+                    @foreach (var group in Groups)
+                    {
+                        <MatListItem @key="group" OnClick="async () => { await OnGroupListItemClick(group); }">
+                            @group.Title
+                        </MatListItem>
                         <MatListDivider />
-                        @foreach (var group in Groups)
-                        {
-                            <MatListItem @key="group.Id" OnClick="async () => { await OnGroupListItemClick(group); }">
-                                @group.Title
-                            </MatListItem>
-                            <MatListDivider />
-                        }
-                    </MatList>
-                </div>
+                    }
+                </MatList>
+
             }
             else
             {
@@ -86,6 +85,10 @@
                 </div>
             }
         </div>
+    </div>
+    
+    <div class="create-post-container text-center pt-3">
+        <MatButton Raised="true" OnClick="async () => await OpenCreateGroupDialog()">Create Group</MatButton>
     </div>
 </div>
 
@@ -111,6 +114,19 @@
         _userDisplayName = userDTO.DisplayName;
         _userGivenName = userDTO.GivenName;
         _userSurname = userDTO.Surname;
+    }
+
+    public async Task OpenCreateGroupDialog()
+    {
+        await MatDialogService.OpenAsync(typeof(CreateGroupChatDialog), 
+            new MatDialogOptions
+            {
+                Attributes = new Dictionary<string, object>()
+                {
+                    { nameof(CreateGroupChatDialog.CreateGroupChatDTO), _createGroupChatDTO },
+                    { nameof(CreateGroupChatDialog.CreateGroupChatFunc), new Func<Task>(CreateGroup) }
+                },
+            });
     }
 
     public void OpenProfileMenu(MouseEventArgs e)

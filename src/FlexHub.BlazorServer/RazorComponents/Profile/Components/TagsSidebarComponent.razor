@@ -1,0 +1,73 @@
+﻿@using FlexHub.BlazorServer.Utilities
+<div class="sidebar-container left-side-shadow">
+    <div class="profile-container shadow-sm">
+        <MatFAB Class="ms-3" Icon="person" Style="background-color: var(--rz-primary) !important;" Mini="true"
+                OnClick="@OpenProfileMenu" RefBack="@_profileMenuForwardRef" />
+
+        @{
+            // If the compiler is screaming ignore it it's a bug
+            // of visual studio and the project in running fine
+        }
+        <MatMenu @ref="_profileMenu" TargetForwardRef="@_profileMenuForwardRef">
+            <MatList>
+                <MatListItem Href="MicrosoftIdentity/Account/SignOut">Logout</MatListItem>
+            </MatList>
+        </MatMenu>
+
+        <div class="ms-3">
+            <p class="mb-0 mt-0">
+                @_userGivenName @_userSurname
+            </p>
+            <p class="mb-0 mt-0">
+                @@@_userDisplayName
+            </p>
+        </div>
+    </div>
+    
+    <div class="tags-container mt-3">
+        @if (_allTags.Any())
+        {
+            foreach (var tag in _allTags)
+            {
+                <div @key="tag" class="px-3">
+                    <MatCheckbox @oninput="async eventArgs => await OnTagCheckboxValueChanged(eventArgs, tag.Id)" Label="@tag.Value"
+                                 @bind-Value="@tag.IsChecked" Name="@($"Tag{tag.Id}")"/>
+                    
+                </div>
+            }
+        }
+        else
+        {
+            <div class="px-3 mt-3 text-center">
+                <p>Loading...</p>
+            </div>
+        }
+    </div>
+</div>
+
+@code
+{
+    private string? _userDisplayName;
+    private string? _userGivenName;
+    private string? _userSurname;
+
+    BaseMatMenu? _profileMenu;
+    ForwardRef _profileMenuForwardRef = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+        if (userDTO == null) return;
+
+        _userDisplayName = userDTO.DisplayName;
+        _userGivenName = userDTO.GivenName;
+        _userSurname = userDTO.Surname;
+    }
+
+    public void OpenProfileMenu(MouseEventArgs e)
+    {
+        _profileMenu?.OpenAsync();
+    }
+}

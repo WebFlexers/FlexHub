@@ -1,0 +1,29 @@
+﻿@using FlexHub.Data.DTOs
+
+<MatDialogTitle>Create new group chat</MatDialogTitle>
+<MatDialogContent>
+    <p>Pick a title for the new group chat</p>
+    <MatTextField @bind-Value="@CreateGroupChatDTO.Title" />
+</MatDialogContent>
+<MatDialogActions>
+    <MatButton OnClick="@(_ => CloseDialog())">Close</MatButton>
+    <MatButton OnClick="async () => await CreateGroupChatFunc.Invoke()">Create</MatButton>
+</MatDialogActions>
+
+
+@code
+{
+    [Parameter]
+    public CreateGroupChatDTO? CreateGroupChatDTO { get; set; }
+
+    [Parameter]
+    public Func<Task> CreateGroupChatFunc { get; set; }
+
+    [CascadingParameter]
+    public MatDialogReference DialogReference { get; set; }
+
+    private async Task CloseDialog()
+    {
+        DialogReference.Close("closed");
+    }
+}

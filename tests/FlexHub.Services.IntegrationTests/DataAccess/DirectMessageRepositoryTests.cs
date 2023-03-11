@@ -37,7 +37,7 @@ public class DirectMessageRepositoryTests
         var message = "This is a test message!";
 
         // Testing
-        var isStoredSuccessfully = await directMessageRepository.StoreMessage(senderUserObjectId, receiverUserObjectId, message);
+        var (isStoredSuccessfully, directMessage) = await directMessageRepository.StoreMessage(senderUserObjectId, receiverUserObjectId, message);
 
         // Verification
         Assert.True(isStoredSuccessfully);

@@ -1,0 +1,29 @@
+﻿@using Microsoft.AspNetCore.Components
+@using FlexHub.BlazorServer.Models
+<MatDialogTitle>Add user to group</MatDialogTitle>
+<MatDialogContent>
+    <p>Enter user display name</p>
+    <MatTextField @bind-Value="@AddUserToGroupModel.UserDisplayName" />
+</MatDialogContent>
+<MatDialogActions>
+    <MatButton OnClick="@(_ => CloseDialog())">Close</MatButton>
+    <MatButton OnClick="async () => await AddUserToGroupFunc.Invoke()">Add</MatButton>
+</MatDialogActions>
+
+
+@code
+{
+    [Parameter]
+    public AddUserToGroupModel? AddUserToGroupModel { get; set; }
+
+    [Parameter]
+    public Func<Task> AddUserToGroupFunc { get; set; }
+
+    [CascadingParameter]
+    public MatDialogReference DialogReference { get; set; }
+
+    private async Task CloseDialog()
+    {
+        DialogReference.Close("closed");
+    }
+}
