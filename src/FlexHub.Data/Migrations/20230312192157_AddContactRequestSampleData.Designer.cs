@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlexHub.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230305191302_Seeding")]
-    partial class Seeding
+    [Migration("20230312192157_AddContactRequestSampleData")]
+    partial class AddContactRequestSampleData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -279,77 +279,102 @@ namespace FlexHub.Data.Migrations
                         new
                         {
                             SenderUserObjectId = "88906cdb-ff0d-4031-9276-aaab0f9b5d8c",
-                            ReceiverUserObjectId = "b233ac29-adce-43d6-8ba1-c4862e9cf87a"
-                        },
-                        new
-                        {
-                            SenderUserObjectId = "88906cdb-ff0d-4031-9276-aaab0f9b5d8c",
-                            ReceiverUserObjectId = "0073bcdb-3aa2-47ee-a224-abf589b53db0"
-                        },
-                        new
-                        {
-                            SenderUserObjectId = "88906cdb-ff0d-4031-9276-aaab0f9b5d8c",
-                            ReceiverUserObjectId = "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5"
-                        },
-                        new
-                        {
-                            SenderUserObjectId = "88906cdb-ff0d-4031-9276-aaab0f9b5d8c",
-                            ReceiverUserObjectId = "fd77f7d0-b55f-4485-bef4-c4d14cb47fe7"
-                        },
-                        new
-                        {
-                            SenderUserObjectId = "b233ac29-adce-43d6-8ba1-c4862e9cf87a",
-                            ReceiverUserObjectId = "88906cdb-ff0d-4031-9276-aaab0f9b5d8c"
-                        },
-                        new
-                        {
-                            SenderUserObjectId = "b233ac29-adce-43d6-8ba1-c4862e9cf87a",
-                            ReceiverUserObjectId = "0073bcdb-3aa2-47ee-a224-abf589b53db0"
-                        },
-                        new
-                        {
-                            SenderUserObjectId = "b233ac29-adce-43d6-8ba1-c4862e9cf87a",
-                            ReceiverUserObjectId = "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5"
-                        },
-                        new
-                        {
-                            SenderUserObjectId = "b233ac29-adce-43d6-8ba1-c4862e9cf87a",
-                            ReceiverUserObjectId = "9ce0c17e-47ba-4c14-a23a-7cc5de96d64a"
-                        },
-                        new
-                        {
-                            SenderUserObjectId = "0073bcdb-3aa2-47ee-a224-abf589b53db0",
-                            ReceiverUserObjectId = "0b57deac-0d84-49bf-a0ba-a28138fade8d"
-                        },
-                        new
-                        {
-                            SenderUserObjectId = "0073bcdb-3aa2-47ee-a224-abf589b53db0",
-                            ReceiverUserObjectId = "b233ac29-adce-43d6-8ba1-c4862e9cf87a"
-                        },
-                        new
-                        {
-                            SenderUserObjectId = "0b57deac-0d84-49bf-a0ba-a28138fade8d",
-                            ReceiverUserObjectId = "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5"
-                        },
-                        new
-                        {
-                            SenderUserObjectId = "0b57deac-0d84-49bf-a0ba-a28138fade8d",
                             ReceiverUserObjectId = "da8dfa3d-24a7-4198-b28a-36a716616107"
                         },
                         new
                         {
+                            SenderUserObjectId = "88906cdb-ff0d-4031-9276-aaab0f9b5d8c",
+                            ReceiverUserObjectId = "9ce0c17e-47ba-4c14-a23a-7cc5de96d64a"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "b233ac29-adce-43d6-8ba1-c4862e9cf87a",
+                            ReceiverUserObjectId = "0b57deac-0d84-49bf-a0ba-a28138fade8d"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "b233ac29-adce-43d6-8ba1-c4862e9cf87a",
+                            ReceiverUserObjectId = "9ce0c17e-47ba-4c14-a23a-7cc5de96d64a"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "0073bcdb-3aa2-47ee-a224-abf589b53db0",
+                            ReceiverUserObjectId = "269cf1a3-b20e-405d-863b-f8a427615294"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "0073bcdb-3aa2-47ee-a224-abf589b53db0",
+                            ReceiverUserObjectId = "be9b6864-5ad9-412b-8ba5-2fb9fd79e522"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5",
+                            ReceiverUserObjectId = "0b57deac-0d84-49bf-a0ba-a28138fade8d"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5",
+                            ReceiverUserObjectId = "9ce0c17e-47ba-4c14-a23a-7cc5de96d64a"
+                        },
+                        new
+                        {
                             SenderUserObjectId = "0b57deac-0d84-49bf-a0ba-a28138fade8d",
                             ReceiverUserObjectId = "b233ac29-adce-43d6-8ba1-c4862e9cf87a"
                         },
                         new
                         {
-                            SenderUserObjectId = "fd77f7d0-b55f-4485-bef4-c4d14cb47fe7",
-                            ReceiverUserObjectId = "9ce0c17e-47ba-4c14-a23a-7cc5de96d64a"
+                            SenderUserObjectId = "0b57deac-0d84-49bf-a0ba-a28138fade8d",
+                            ReceiverUserObjectId = "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "da8dfa3d-24a7-4198-b28a-36a716616107",
+                            ReceiverUserObjectId = "88906cdb-ff0d-4031-9276-aaab0f9b5d8c"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "da8dfa3d-24a7-4198-b28a-36a716616107",
+                            ReceiverUserObjectId = "0b57deac-0d84-49bf-a0ba-a28138fade8d"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "9ce0c17e-47ba-4c14-a23a-7cc5de96d64a",
+                            ReceiverUserObjectId = "88906cdb-ff0d-4031-9276-aaab0f9b5d8c"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "9ce0c17e-47ba-4c14-a23a-7cc5de96d64a",
+                            ReceiverUserObjectId = "b233ac29-adce-43d6-8ba1-c4862e9cf87a"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "269cf1a3-b20e-405d-863b-f8a427615294",
+                            ReceiverUserObjectId = "88906cdb-ff0d-4031-9276-aaab0f9b5d8c"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "269cf1a3-b20e-405d-863b-f8a427615294",
+                            ReceiverUserObjectId = "0073bcdb-3aa2-47ee-a224-abf589b53db0"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "be9b6864-5ad9-412b-8ba5-2fb9fd79e522",
+                            ReceiverUserObjectId = "0073bcdb-3aa2-47ee-a224-abf589b53db0"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "be9b6864-5ad9-412b-8ba5-2fb9fd79e522",
+                            ReceiverUserObjectId = "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5"
                         },
                         new
                         {
                             SenderUserObjectId = "fd77f7d0-b55f-4485-bef4-c4d14cb47fe7",
-                            ReceiverUserObjectId = "0073bcdb-3aa2-47ee-a224-abf589b53db0"
+                            ReceiverUserObjectId = "da8dfa3d-24a7-4198-b28a-36a716616107"
+                        },
+                        new
+                        {
+                            SenderUserObjectId = "fd77f7d0-b55f-4485-bef4-c4d14cb47fe7",
+                            ReceiverUserObjectId = "9ce0c17e-47ba-4c14-a23a-7cc5de96d64a"
                         });
                 });
 

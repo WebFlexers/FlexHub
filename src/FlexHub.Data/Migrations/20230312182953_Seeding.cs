@@ -61,28 +61,6 @@ namespace FlexHub.Data.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "ContactRequests",
-                columns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                values: new object[,]
-                {
-                    { "0b57deac-0d84-49bf-a0ba-a28138fade8d", "0073bcdb-3aa2-47ee-a224-abf589b53db0" },
-                    { "b233ac29-adce-43d6-8ba1-c4862e9cf87a", "0073bcdb-3aa2-47ee-a224-abf589b53db0" },
-                    { "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5", "0b57deac-0d84-49bf-a0ba-a28138fade8d" },
-                    { "b233ac29-adce-43d6-8ba1-c4862e9cf87a", "0b57deac-0d84-49bf-a0ba-a28138fade8d" },
-                    { "da8dfa3d-24a7-4198-b28a-36a716616107", "0b57deac-0d84-49bf-a0ba-a28138fade8d" },
-                    { "0073bcdb-3aa2-47ee-a224-abf589b53db0", "88906cdb-ff0d-4031-9276-aaab0f9b5d8c" },
-                    { "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5", "88906cdb-ff0d-4031-9276-aaab0f9b5d8c" },
-                    { "b233ac29-adce-43d6-8ba1-c4862e9cf87a", "88906cdb-ff0d-4031-9276-aaab0f9b5d8c" },
-                    { "fd77f7d0-b55f-4485-bef4-c4d14cb47fe7", "88906cdb-ff0d-4031-9276-aaab0f9b5d8c" },
-                    { "0073bcdb-3aa2-47ee-a224-abf589b53db0", "b233ac29-adce-43d6-8ba1-c4862e9cf87a" },
-                    { "88906cdb-ff0d-4031-9276-aaab0f9b5d8c", "b233ac29-adce-43d6-8ba1-c4862e9cf87a" },
-                    { "9ce0c17e-47ba-4c14-a23a-7cc5de96d64a", "b233ac29-adce-43d6-8ba1-c4862e9cf87a" },
-                    { "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5", "b233ac29-adce-43d6-8ba1-c4862e9cf87a" },
-                    { "0073bcdb-3aa2-47ee-a224-abf589b53db0", "fd77f7d0-b55f-4485-bef4-c4d14cb47fe7" },
-                    { "9ce0c17e-47ba-4c14-a23a-7cc5de96d64a", "fd77f7d0-b55f-4485-bef4-c4d14cb47fe7" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Contacts",
                 columns: new[] { "ContactObjectId", "UserObjectId", "CreatedAt" },
                 values: new object[,]
@@ -1106,81 +1084,6 @@ namespace FlexHub.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "0b57deac-0d84-49bf-a0ba-a28138fade8d", "0073bcdb-3aa2-47ee-a224-abf589b53db0" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "b233ac29-adce-43d6-8ba1-c4862e9cf87a", "0073bcdb-3aa2-47ee-a224-abf589b53db0" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5", "0b57deac-0d84-49bf-a0ba-a28138fade8d" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "b233ac29-adce-43d6-8ba1-c4862e9cf87a", "0b57deac-0d84-49bf-a0ba-a28138fade8d" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "da8dfa3d-24a7-4198-b28a-36a716616107", "0b57deac-0d84-49bf-a0ba-a28138fade8d" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "0073bcdb-3aa2-47ee-a224-abf589b53db0", "88906cdb-ff0d-4031-9276-aaab0f9b5d8c" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5", "88906cdb-ff0d-4031-9276-aaab0f9b5d8c" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "b233ac29-adce-43d6-8ba1-c4862e9cf87a", "88906cdb-ff0d-4031-9276-aaab0f9b5d8c" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "fd77f7d0-b55f-4485-bef4-c4d14cb47fe7", "88906cdb-ff0d-4031-9276-aaab0f9b5d8c" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "0073bcdb-3aa2-47ee-a224-abf589b53db0", "b233ac29-adce-43d6-8ba1-c4862e9cf87a" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "88906cdb-ff0d-4031-9276-aaab0f9b5d8c", "b233ac29-adce-43d6-8ba1-c4862e9cf87a" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "9ce0c17e-47ba-4c14-a23a-7cc5de96d64a", "b233ac29-adce-43d6-8ba1-c4862e9cf87a" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "a57f05c2-5bb5-4d58-bf10-077f7cb57ca5", "b233ac29-adce-43d6-8ba1-c4862e9cf87a" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "0073bcdb-3aa2-47ee-a224-abf589b53db0", "fd77f7d0-b55f-4485-bef4-c4d14cb47fe7" });
-
-            migrationBuilder.DeleteData(
-                table: "ContactRequests",
-                keyColumns: new[] { "ReceiverUserObjectId", "SenderUserObjectId" },
-                keyValues: new object[] { "9ce0c17e-47ba-4c14-a23a-7cc5de96d64a", "fd77f7d0-b55f-4485-bef4-c4d14cb47fe7" });
-
             migrationBuilder.DeleteData(
                 table: "Contacts",
                 keyColumns: new[] { "ContactObjectId", "UserObjectId" },

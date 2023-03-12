@@ -11,15 +11,15 @@
             <p> Display Name: <span class="fw-semibold">@_userDTO.DisplayName</span></p>
             <p> Country: <span class="fw-semibold">@_userDTO.Country</span></p>
             <p> Email Address: <span class="fw-semibold">@_userDTO.EmailAddress</span></p>
-            <div class="text-center">
+            <div class="text-center mt-3">
                 <a href="MicrosoftIdentity/Account/EditProfile" style="text-decoration: none;">
                     <MatButton Raised="true">Edit My Profile</MatButton>
                 </a>
             </div>
         </div>
     
-        <div class="actions-container py-4 mt-4 shadow-sm">
-            <div class="text-center px-3">
+        <div class="actions-container py-4 px-4 mt-4 mb-1 shadow-sm">
+            <div class="actions-title-container text-center px-3">
                 <h2 class="fs-4">Send a contact request</h2>
                 <EditForm Model="_sendContactRequestModel" OnSubmit="async () => await OnContactRequestSubmit()">
                     <MatTextField type="search" @bind-Value="_sendContactRequestModel.ContactDisplayName"
@@ -29,13 +29,36 @@
                     </div>
                 </EditForm>
             </div>
-            <div class="text-center px-3">
+            <div class="all-requests-container text-center px-3">
                 <h2 class="fs-4">Pending contact requests</h2>
+                <div class="text-center">
+                    @if (_userContactRequests != null && _userContactRequests.Any())
+                    {
+                        @foreach (var contactRequest in _userContactRequests)
+                        {
+                            <div @key="contactRequest" class="shadow py-3 px-4 mb-3 contact-requests-container">
+                                <p class="accept-contact-name fs-5 pe-2">@contactRequest.SenderUserDisplayName</p>
+                                <div class="request-action-buttons-container">
+                                    <MatRipple Class="me-2" Style="border-radius: 30px;">
+                                        <MatFAB Style="width: 2.5rem; height: 2.5rem; box-shadow: none; border: none; background-color: var(--rz-success)"
+                                        Icon="@MatIconNames.Done" OnClick="async () => await AcceptContactRequest(contactRequest.SenderUserObjectId)" />
+                                    </MatRipple>
+                                    <MatRipple Style="border-radius: 30px;">
+                                        <MatFAB Style="width: 2.5rem; height: 2.5rem; box-shadow: none; border: none; background-color: var(--rz-danger)"
+                                        Icon="@MatIconNames.Close" OnClick="async () => await RejectContactRequest(contactRequest.SenderUserObjectId)" />
+                                    </MatRipple>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="shadow py-3 px-4 contact-requests-container justify-content-center">
+                            <p class="fs-5">All clear. You have no pending requests</p>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
 </Animate>
-
-@code {
-    private string _tempSearch;
-}

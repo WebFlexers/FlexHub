@@ -39,7 +39,7 @@
                     <MatListDivider/>
                     @foreach (var contact in Contacts)
                     {
-                        <MatListItem @key="contact.ObjectId" OnClick="async () => await OnContactListItemClick(contact)">
+                        <MatListItem @key="contact" OnClick="async () => await OnContactListItemClick(contact)">
                             @contact.DisplayName
                         </MatListItem>
                         <MatListDivider/>

@@ -133,24 +133,30 @@ public class SampleData
 
     private void CreateContactRequests()
     {
-        _contactRequests = new List<ContactRequest>()
+        foreach (var user in _users)
         {
-            new ContactRequest() {SenderUserObjectId = _users[0].ObjectId, ReceiverUserObjectId = _users[1].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users[0].ObjectId, ReceiverUserObjectId = _users[2].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users[0].ObjectId, ReceiverUserObjectId = _users[3].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users[0].ObjectId, ReceiverUserObjectId = _users.Last().ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users[1].ObjectId, ReceiverUserObjectId = _users[0].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users[1].ObjectId, ReceiverUserObjectId = _users[2].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users[1].ObjectId, ReceiverUserObjectId = _users[3].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users[1].ObjectId, ReceiverUserObjectId = _users[6].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users[2].ObjectId, ReceiverUserObjectId = _users[4].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users[2].ObjectId, ReceiverUserObjectId = _users[1].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users[4].ObjectId, ReceiverUserObjectId = _users[3].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users[4].ObjectId, ReceiverUserObjectId = _users[5].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users[4].ObjectId, ReceiverUserObjectId = _users[1].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users.Last().ObjectId, ReceiverUserObjectId = _users[6].ObjectId},
-            new ContactRequest() {SenderUserObjectId = _users.Last().ObjectId, ReceiverUserObjectId = _users[2].ObjectId},
-        };
+            var nonContactsOfUser = _users
+                .Where(otherUser =>
+                    _contacts.Any(
+                        contact => (contact.UserObjectId == user.ObjectId &&
+                                    contact.ContactObjectId == otherUser.ObjectId) ||
+                                   (contact.UserObjectId == otherUser.ObjectId &&
+                                    contact.ContactObjectId == user.ObjectId)) == false);
+            int counter = 0;
+            foreach (var nonContactUser in nonContactsOfUser)
+            {
+                if (nonContactUser.ObjectId == user.ObjectId) continue;
+
+                if (counter >= 2) break;
+
+                _contactRequests.Add(new ContactRequest
+                {
+                    SenderUserObjectId = user.ObjectId,
+                    ReceiverUserObjectId = nonContactUser.ObjectId
+                });
+                counter++;
+            }
+        }
     }
 
     public void CreateUsers()

@@ -12,7 +12,7 @@ public partial class ProfileMainComponent
 {
     [Inject] public ILogger<ProfileMainComponent> Logger { get; set; } = null!;
 
-    [Inject] public IUserRepository UserRepository { get; set; }
+    [Inject] public IUserRepository UserRepository { get; set; } = null!;
 
     [Inject] public AuthenticationStateProvider AuthenticationStateProvider { get; set; } = null!;
 
@@ -21,10 +21,18 @@ public partial class ProfileMainComponent
     private UserDTO _userDTO = new();
     private SendContactRequestModel _sendContactRequestModel = new();
 
+    private List<ContactRequestDTO>? _userContactRequests;
+
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        _userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger) ?? new UserDTO();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+        if (userDTO == null) return;
+
+        _userDTO = userDTO;
+
+        _userContactRequests = await UserRepository.GetUserContactRequests(userDTO.ObjectId);
     }
 
     private async Task OnContactRequestSubmit()
@@ -95,6 +103,76 @@ public partial class ProfileMainComponent
                 "Success!", 
                 $"Successfully sent contact request to user: {_sendContactRequestModel.ContactDisplayName}"
             );
+        }
+    }
+
+    public async Task AcceptContactRequest(string senderUserObjectId)
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+        if (userDTO == null) return;
+
+        var acceptedSuccessfully = await UserRepository.AcceptContactRequest(userDTO.ObjectId, senderUserObjectId);
+
+        if (acceptedSuccessfully == false)
+        {
+            ShowToastMessage(
+                MatToastType.Danger, 
+                "Failed", 
+                "Failed to accept contact request. Try again later."
+            );
+        }
+        else
+        {
+            ShowToastMessage(
+                MatToastType.Success, 
+                "Success!", 
+                "Successfully accepted contact request"
+            );
+
+            var contactRequest = _userContactRequests!.FirstOrDefault(cr =>
+                cr.SenderUserObjectId == senderUserObjectId &&
+                cr.ReceiverUserObjectId == userDTO.ObjectId);
+
+            _userContactRequests!.Remove(contactRequest!);
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public async Task RejectContactRequest(string senderUserObjectId)
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userDTO = AuthUtilities.CreateUserDtoFromClaims(authState.User.Claims, Logger);
+
+        if (userDTO == null) return;
+
+        var rejectedSuccessfully = await UserRepository.RejectContactRequest(userDTO.ObjectId, senderUserObjectId);
+
+        if (rejectedSuccessfully == false)
+        {
+            ShowToastMessage(
+                MatToastType.Danger, 
+                "Failed", 
+                "Failed to reject contact request. Try again later."
+            );
+        }
+        else
+        {
+            ShowToastMessage(
+                MatToastType.Info, 
+                "Success!", 
+                "The contact request was rejected"
+            );
+
+            var contactRequest = _userContactRequests!.FirstOrDefault(cr =>
+                cr.SenderUserObjectId == senderUserObjectId &&
+                cr.ReceiverUserObjectId == userDTO.ObjectId);
+
+            _userContactRequests!.Remove(contactRequest!);
+
+            await InvokeAsync(StateHasChanged);
         }
     }
 

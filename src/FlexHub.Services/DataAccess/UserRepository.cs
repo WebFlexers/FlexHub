@@ -231,6 +231,43 @@ public class UserRepository : EfCoreRepositoryBase, IUserRepository
     }
 
     /// <summary>
+    /// Gets all the contact requests of the user with the given id asynchronously
+    /// </summary>
+    public async Task<List<ContactRequestDTO>?> GetUserContactRequests(string userObjectId)
+    {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
+        try
+        {
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            var contactRequests = await dbContext.ContactRequests
+                .AsNoTracking()
+                .Where(cr => cr.ReceiverUserObjectId == userObjectId)
+                .Select(cr => new ContactRequestDTO
+                {
+                    SenderUserObjectId = cr.SenderUserObjectId,
+                    ReceiverUserObjectId = cr.ReceiverUserObjectId,
+                    SenderUserDisplayName = cr.SenderUser.DisplayName,
+                    ReceiverUserDisplayName = cr.ReceiverUser.DisplayName,
+                })
+                .ToListAsync().ConfigureAwait(false);
+
+            return contactRequests;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get contacts requests of user with id {objectId}", userObjectId);
+            return default;
+        }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
+    } 
+
+    /// <summary>
     /// Checks if two users are contacts
     /// </summary>
     public async Task<bool> AreUsersContacts(string userObjectId, string contactObjectId)
@@ -260,6 +297,8 @@ public class UserRepository : EfCoreRepositoryBase, IUserRepository
             await CleanUpAsync(dbContext, createdNewDbContext);
         }
     }
+
+
 
     /// <summary>
     /// Creates a user from the given UserDTO
@@ -424,24 +463,64 @@ public class UserRepository : EfCoreRepositoryBase, IUserRepository
         {
             (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
 
-            // Remove contact request
+            // Find contact request to remove it
             var contactRequest = dbContext.ContactRequests
-                .FirstOrDefault(contactRequest => contactRequest.SenderUserObjectId == senderUserObjectId && contactRequest.ReceiverUserObjectId == receiverUserObjectId);
+                .FirstOrDefault(contactRequest => contactRequest.SenderUserObjectId == senderUserObjectId && 
+                                                  contactRequest.ReceiverUserObjectId == receiverUserObjectId);
 
-            if (contactRequest != null)
-            {
-                dbContext.ContactRequests.Remove(contactRequest);
-                await dbContext.SaveChangesAsync().ConfigureAwait(false);
-            }
+            if (contactRequest == null) return false;
+
+            dbContext.ContactRequests.Remove(contactRequest);
 
             // Add contact to user's contact list
             var contact = new Contact()
             {
-                UserObjectId = receiverUserObjectId,
-                ContactObjectId = senderUserObjectId,
+                UserObjectId = senderUserObjectId,
+                ContactObjectId = receiverUserObjectId,
                 CreatedAt = DateTime.UtcNow
             };
+
             await dbContext.Contacts.AddAsync(contact).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+
+            return true;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to accept contact request");
+            return false;
+        }
+        finally
+        {
+            await CleanUpAsync(dbContext, createdNewDbContext);
+        }
+    }
+
+    /// <summary>
+    /// Rejects the user request from the sender user to the primary user by
+    /// deleting the contact request from the contact requests table
+    /// </summary>
+    /// <param name="receiverUserObjectId">The receiving user object id</param>
+    /// <param name="senderUserObjectId">The user object id of the user who sent the contact request</param>
+    /// <returns>True if the operation is successful and false if it fails</returns>
+    public async Task<bool> RejectContactRequest(string receiverUserObjectId, string senderUserObjectId)
+    {
+        ApplicationDbContext? dbContext = null; 
+        var createdNewDbContext = false;
+
+        try
+        {
+            (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
+
+            // Remove contact request
+            var contactRequest = dbContext.ContactRequests
+                .FirstOrDefault(contactRequest => contactRequest.SenderUserObjectId == senderUserObjectId && 
+                                                  contactRequest.ReceiverUserObjectId == receiverUserObjectId);
+
+            if (contactRequest == null) return false;
+
+            dbContext.ContactRequests.Remove(contactRequest);
             await dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return true;
@@ -471,18 +550,15 @@ public class UserRepository : EfCoreRepositoryBase, IUserRepository
         {
             (dbContext, createdNewDbContext) = GetThreadSafeDbContext();
 
-            // Find contact
-            var contact = dbContext.Contacts
-                .FirstOrDefault(contact => 
+            // Delete contacts that are between the 2 users
+            var deleteCount = await dbContext.Contacts
+                .AsNoTracking()
+                .Where(contact => 
                     (contact.UserObjectId == primaryUserObjectId && contact.ContactObjectId == contactToDeleteUserObjectId) ||
-                    (contact.UserObjectId == contactToDeleteUserObjectId && contact.ContactObjectId == primaryUserObjectId));
+                    (contact.UserObjectId == contactToDeleteUserObjectId && contact.ContactObjectId == primaryUserObjectId))
+                .ExecuteDeleteAsync();
 
-            if (contact == null) return false;
-
-            dbContext.Contacts.Remove(contact);
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
-
-            return true;
+            return deleteCount > 0;
         }
         catch (Exception ex)
         {
