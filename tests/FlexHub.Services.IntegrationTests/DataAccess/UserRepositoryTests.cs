@@ -71,7 +71,7 @@ public class UserRepositoryTests
         await using var userRepository = new UserRepository(_logger, dbContextFactory);
 
         var senderUserObjectId = SampleData.UserObjectIds.First();
-        var receiverUserObjectId = SampleData.UserObjectIds.ElementAt(6);
+        var receiverUserObjectId = SampleData.UserObjectIds.ElementAt(4);
 
         // Testing
         var (isSuccessfull, errorMessage) = await userRepository.CreateContactRequest(senderUserObjectId, receiverUserObjectId);
