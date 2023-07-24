@@ -3,7 +3,7 @@
   <img src="https://i.imgur.com/D4xp3In.png" />
 </div>
 Flexhub is an interactive web application that allows users to search and chat with others who share similar interests, form workgroups and categorise posts. 
-The application uses ASP.NET Core Blazor Server, with an MSSQL database. It includes unit tests in a variety of functions to ensure smooth operation.
+The application uses ASP.NET Core Blazor Server, with an MSSQL database accessed with the help of Entity Framework Core. It includes unit tests in a variety of functions to ensure smooth operation.
 
 <br/>
 <br/>
