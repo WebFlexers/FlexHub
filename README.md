@@ -10,6 +10,11 @@ The application uses ASP.NET Core Blazor Server, with an MSSQL database accessed
 
 The website can be accessed here: https://flexhub.azurewebsites.net/
 
+## Database Diagram
+
+![DatabaseDiagram](https://github.com/WebFlexers/FlexHub/assets/57811193/b3097330-48c8-4ec8-97d4-7b5818e6e29b)
+
+
 ## Home Page:
 ![](https://i.imgur.com/q85DBpM.png)
 
